@@ -1,5 +1,15 @@
 {
-  "framework": "react-router",
   "buildCommand": "npm run build",
-  "outputDirectory": "build/client"
+  "outputDirectory": "build/client",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ]
 }
