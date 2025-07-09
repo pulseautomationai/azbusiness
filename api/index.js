@@ -1,44 +1,37 @@
-// Vercel serverless function adapter for React Router v7
-import pkg from '@react-router/node';
-const { createRequestHandler } = pkg;
+// api/index.js - Vercel function handler for React Router v7
 
-export default async function handler(req, res) {
+export default async function handler(request) {
   try {
-    console.log("Function invoked:", req.method, req.url);
-    console.log("Environment variables:", {
-      NODE_ENV: process.env.NODE_ENV,
-      CONVEX_URL: process.env.VITE_CONVEX_URL ? "SET" : "NOT SET",
-      CLERK_KEY: process.env.VITE_CLERK_PUBLISHABLE_KEY ? "SET" : "NOT SET"
+    // Import the React Router server build directly
+    const { default: handleRequest } = await import('../build/server/index.js');
+    
+    // Create a proper Request object
+    const url = new URL(request.url || `https://${request.headers.host}${request.path || '/'}`);
+    const fetchRequest = new Request(url.toString(), {
+      method: request.method || 'GET',
+      headers: request.headers,
+      body: request.method !== 'GET' && request.method !== 'HEAD' ? request.body : undefined,
     });
+
+    // Call the React Router handler directly
+    const response = await handleRequest(fetchRequest);
     
-    console.log("createRequestHandler type:", typeof createRequestHandler);
+    // Convert Response to Vercel format
+    const responseBody = await response.text();
     
-    // Import the React Router build dynamically
-    const build = await import("../build/server/index.js");
-    console.log("Imported build, keys:", Object.keys(build));
-    
-    // Create the request handler
-    const requestHandler = createRequestHandler({
-      build: build.default || build,
-      mode: process.env.NODE_ENV || "production",
+    return new Response(responseBody, {
+      status: response.status,
+      headers: response.headers,
     });
-    console.log("Created request handler");
-    
-    // Use the request handler directly with Vercel's req/res
-    return await requestHandler(req, res);
-    
   } catch (error) {
-    console.error("Server function error:", error);
-    console.error("Error stack:", error.stack);
-    
-    return res.status(500).json({ 
+    console.error('Handler error:', error);
+    return new Response(JSON.stringify({
       error: "Internal server error",
       message: error.message,
-      stack: error.stack,
-      env: {
-        NODE_ENV: process.env.NODE_ENV,
-        CONVEX_URL: process.env.VITE_CONVEX_URL ? "SET" : "NOT SET",
-      }
+      stack: error.stack
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 }
