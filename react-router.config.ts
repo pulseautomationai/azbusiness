@@ -1,11 +1,11 @@
 import type { Config } from "@react-router/dev/config";
+import { vercelPreset } from "@vercel/react-router";
 
 export default {
-  // Config options...
   // Server-side render by default, to enable SPA mode set this to `false`
   ssr: true,
-  // Remove Vercel preset for Netlify deployment
-  // presets: [vercelPreset()],
+  // Enable Vercel preset for Vercel deployment
+  presets: [vercelPreset()],
   
   // Ensure resource routes work properly
   buildEnd: async ({ buildManifest }) => {
