@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { ComponentLoading } from "~/components/loading-spinner";
 import { cn } from "~/lib/utils";
+import { SlugGenerator } from "~/utils/slug-generator";
 
 interface Business {
   _id: string;
@@ -134,7 +135,9 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
                       </div>
                       <CardTitle className="line-clamp-1">
                         <Link 
-                          to={`/business/${business.slug}`}
+                          to={business.category 
+                            ? SlugGenerator.generateURLPath(business.name, business.city, business.category.name)
+                            : `/business/${business.slug}`}
                           className="hover:text-primary transition-colors"
                         >
                           {business.name}
@@ -194,7 +197,9 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
                       <Button asChild size="sm" className="flex-1">
-                        <Link to={`/business/${business.slug}`}>
+                        <Link to={business.category 
+                          ? SlugGenerator.generateURLPath(business.name, business.city, business.category.name)
+                          : `/business/${business.slug}`}>
                           View Details
                         </Link>
                       </Button>

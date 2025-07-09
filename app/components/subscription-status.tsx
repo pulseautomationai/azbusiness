@@ -14,20 +14,59 @@ import { Calendar, CreditCard, ExternalLink, Loader2 } from "lucide-react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
 import { LoadingSpinner } from "~/components/loading-spinner";
+import { useQueryWithRetry } from "~/hooks/useRetryableQuery";
+import { RetryableQueryWrapper } from "~/components/ui/query-error-boundary";
 
 export default function SubscriptionStatus() {
   const { isSignedIn, userId } = useAuth();
   const [loadingDashboard, setLoadingDashboard] = useState(false);
 
-  const subscription = useQuery(
+  // Use original queries first
+  const subscriptionQuery = useQuery(
     api.subscriptions.fetchUserSubscription,
     isSignedIn ? {} : "skip"
   );
-  const subscriptionStatus = useQuery(
+  const subscriptionStatusQuery = useQuery(
     api.subscriptions.checkUserSubscriptionStatus,
     isSignedIn && userId ? { userId } : "skip"
   );
+  
+  // Enhance with retry logic
+  const subscriptionWithRetry = useQueryWithRetry(
+    subscriptionQuery,
+    null, // No error from useQuery
+    Boolean(!subscriptionQuery && isSignedIn), // isLoading
+    undefined, // No refetch available from useQuery
+    {
+      maxRetries: 3,
+      retryDelay: 1000,
+      enableAutoRetry: false, // Manual retry only
+      retryCondition: (error: any) => {
+        return error?.message?.includes('network') || error?.message?.includes('fetch');
+      }
+    }
+  );
+
+  const subscriptionStatusWithRetry = useQueryWithRetry(
+    subscriptionStatusQuery,
+    null, // No error from useQuery  
+    Boolean(!subscriptionStatusQuery && isSignedIn && userId), // isLoading
+    undefined, // No refetch available from useQuery
+    {
+      maxRetries: 3,
+      retryDelay: 1000,
+      enableAutoRetry: false,
+      retryCondition: (error: any) => {
+        return error?.message?.includes('network') || error?.message?.includes('fetch');
+      }
+    }
+  );
+
   const createPortalUrl = useAction(api.subscriptions.createCustomerPortalUrl);
+
+  // Use data from retry-enhanced queries
+  const subscription = subscriptionWithRetry.data;
+  const subscriptionStatus = subscriptionStatusWithRetry.data;
 
   const handleManageSubscription = async () => {
     if (!subscription?.customerId) return;
@@ -58,16 +97,40 @@ export default function SubscriptionStatus() {
     );
   }
 
-  if (!subscription) {
+  // Show loading state with retry wrapper
+  const isLoading = subscriptionWithRetry.isLoading || subscriptionStatusWithRetry.isLoading;
+  const hasError = subscriptionWithRetry.error || subscriptionStatusWithRetry.error;
+
+  if (!subscription && (isLoading || hasError)) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Subscription Status</CardTitle>
-          <CardDescription>
-            <LoadingSpinner size="sm" text="Loading subscription details..." />
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <RetryableQueryWrapper
+        data={subscription}
+        error={hasError}
+        isLoading={isLoading}
+        retryFn={() => {
+          // For demo purposes - in reality, useQuery doesn't provide refetch
+          window.location.reload();
+        }}
+        loadingFallback={
+          <Card>
+            <CardHeader>
+              <CardTitle>Subscription Status</CardTitle>
+              <CardDescription>
+                <LoadingSpinner size="sm" text="Loading subscription details..." />
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        }
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle>Subscription Status</CardTitle>
+            <CardDescription>
+              Loading subscription details...
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </RetryableQueryWrapper>
     );
   }
 
@@ -102,6 +165,19 @@ export default function SubscriptionStatus() {
     }
   };
 
+  if (!subscription) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription Status</CardTitle>
+          <CardDescription>
+            Unable to load subscription data
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -111,9 +187,9 @@ export default function SubscriptionStatus() {
               Subscription Status
               <Badge
                 variant="outline"
-                className={getStatusColor(subscription.status || "unknown")}
+                className={getStatusColor(subscription?.status || "unknown")}
               >
-                {subscription.status || "unknown"}
+                {subscription?.status || "unknown"}
               </Badge>
             </CardTitle>
             <CardDescription>
@@ -130,10 +206,10 @@ export default function SubscriptionStatus() {
               <p className="text-sm font-medium">Amount</p>
               <p className="text-sm text-muted-foreground">
                 $
-                {subscription.amount
+                {subscription?.amount
                   ? (subscription.amount / 100).toFixed(2)
                   : "0.00"}{" "}
-                {subscription.currency
+                {subscription?.currency
                   ? subscription.currency.toUpperCase()
                   : "USD"}
               </p>
@@ -144,14 +220,14 @@ export default function SubscriptionStatus() {
             <div>
               <p className="text-sm font-medium">Next Billing</p>
               <p className="text-sm text-muted-foreground">
-                {subscription.currentPeriodEnd
+                {subscription?.currentPeriodEnd
                   ? new Date(subscription.currentPeriodEnd).toLocaleDateString()
                   : "N/A"}
               </p>
             </div>
           </div>
         </div>
-        {subscription.cancelAtPeriodEnd && (
+        {subscription?.cancelAtPeriodEnd && (
           <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
             <p className="text-sm text-yellow-800">
               Your subscription will be canceled at the end of the current
@@ -163,7 +239,7 @@ export default function SubscriptionStatus() {
           <Button
             variant="outline"
             onClick={handleManageSubscription}
-            disabled={loadingDashboard || !subscription.customerId}
+            disabled={loadingDashboard || !subscription?.customerId}
             className="flex-1"
           >
             {loadingDashboard ? (

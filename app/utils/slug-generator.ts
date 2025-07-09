@@ -1,0 +1,112 @@
+/**
+ * Slug generation utilities for business URLs
+ */
+
+export class SlugGenerator {
+  /**
+   * Generate a URL-friendly slug from text
+   */
+  static generateSlug(text: string): string {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')     // Remove special characters except hyphens and spaces
+      .replace(/\s+/g, '-')         // Replace spaces with hyphens
+      .replace(/--+/g, '-')         // Replace multiple hyphens with single hyphen
+      .replace(/^-+|-+$/g, '');     // Remove leading/trailing hyphens
+  }
+
+  /**
+   * Generate category slug from category name
+   */
+  static generateCategorySlug(categoryName: string): string {
+    return this.generateSlug(categoryName);
+  }
+
+  /**
+   * Generate city slug from city name
+   */
+  static generateCitySlug(cityName: string): string {
+    return this.generateSlug(cityName);
+  }
+
+  /**
+   * Generate business name slug from business name
+   */
+  static generateBusinessNameSlug(businessName: string): string {
+    return this.generateSlug(businessName);
+  }
+
+  /**
+   * Generate full business slug in format: category-city-businessname
+   */
+  static generateFullBusinessSlug(businessName: string, cityName: string, categoryName: string): string {
+    const categorySlug = this.generateCategorySlug(categoryName);
+    const citySlug = this.generateCitySlug(cityName);
+    const businessSlug = this.generateBusinessNameSlug(businessName);
+    
+    return `${categorySlug}-${citySlug}-${businessSlug}`;
+  }
+
+  /**
+   * Generate URL path in format: /category/city/businessname
+   */
+  static generateURLPath(businessName: string, cityName: string, categoryName: string): string {
+    const categorySlug = this.generateCategorySlug(categoryName);
+    const citySlug = this.generateCitySlug(cityName);
+    const businessSlug = this.generateBusinessNameSlug(businessName);
+    
+    return `/${categorySlug}/${citySlug}/${businessSlug}`;
+  }
+
+  /**
+   * Parse URL path to extract components
+   */
+  static parseURLPath(urlPath: string): { category: string; city: string; business: string } | null {
+    // Remove leading slash and split by /
+    const parts = urlPath.replace(/^\//, '').split('/');
+    
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    return {
+      category: parts[0],
+      city: parts[1],
+      business: parts[2]
+    };
+  }
+
+  /**
+   * Validate slug format
+   */
+  static isValidSlug(slug: string): boolean {
+    // Check if slug only contains lowercase letters, numbers, and hyphens
+    // Should not start or end with hyphen
+    return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
+  }
+
+  /**
+   * Ensure slug uniqueness by appending number if needed
+   */
+  static ensureUnique(baseSlug: string, existingSlugs: string[]): string {
+    let slug = baseSlug;
+    let counter = 1;
+    
+    while (existingSlugs.includes(slug)) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+    
+    return slug;
+  }
+
+  /**
+   * Generate short description from business name and category
+   */
+  static generateShortDescription(businessName: string, categoryName: string, cityName: string): string {
+    return `${businessName} - ${categoryName} in ${cityName}, Arizona`;
+  }
+}
+
+export default SlugGenerator;

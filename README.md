@@ -74,6 +74,7 @@ VITE_CONVEX_URL=your_convex_url_here
 # Clerk Authentication
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
 CLERK_SECRET_KEY=your_clerk_secret_key_here
+VITE_CLERK_FRONTEND_API_URL=your_clerk_frontend_api_url_here
 
 # Polar.sh Configuration
 POLAR_ACCESS_TOKEN=your_polar_access_token_here
@@ -207,6 +208,7 @@ Make sure to deploy the output of `npm run build`
 - `VITE_CONVEX_URL` - Your Convex client URL
 - `VITE_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
 - `CLERK_SECRET_KEY` - Clerk secret key
+- `VITE_CLERK_FRONTEND_API_URL` - Clerk frontend API URL
 - `POLAR_ACCESS_TOKEN` - Polar.sh API access token
 - `POLAR_ORGANIZATION_ID` - Your Polar.sh organization ID
 - `POLAR_WEBHOOK_SECRET` - Polar.sh webhook secret

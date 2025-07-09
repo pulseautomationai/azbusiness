@@ -18,7 +18,13 @@ export default [
   route("category/:category", "routes/category/$category.tsx"),
   route("cities", "routes/cities.tsx"),
   route("city/:city", "routes/city/$city.tsx"),
+  
+  // New URL structure: /[category]/[city]/[businessName]
+  route(":category/:city/:businessName", "routes/[$category].[$city].[$businessName].tsx"),
+  
+  // Keep old business route temporarily for migration
   route("business/:slug", "routes/business/$slug.tsx"),
+  route("demo/business", "routes/demo.business.tsx"),
   route("add-business", "routes/add-business.tsx"),
   route("blog", "routes/blog.tsx"),
   route("blog/:slug", "routes/blog/$slug.tsx"),

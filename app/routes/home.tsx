@@ -6,6 +6,7 @@ import FeaturedBusinesses from "~/components/homepage/featured-businesses";
 import CTACards from "~/components/homepage/cta-cards";
 import Footer from "~/components/homepage/footer";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
+import { withConvexRetry } from "~/utils/retry";
 import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/home";
 
@@ -53,22 +54,50 @@ export function meta({}: Route.MetaArgs) {
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
-  // Parallel data fetching
+  // Create retryable query functions
+  const fetchSubscriptionData = () => 
+    fetchQuery(api.subscriptions.checkUserSubscriptionStatus, { userId: userId || '' });
+  
+  const fetchFeaturedBusinesses = () => 
+    fetchQuery(api.businesses.getFeaturedBusinesses, { limit: 6 });
+  
+  const fetchCities = () => 
+    fetchQuery(api.cities.getCities);
+
+  // Parallel data fetching with retry logic
   const [subscriptionData, featuredBusinesses, cities] = await Promise.all([
     userId
-      ? fetchQuery(api.subscriptions.checkUserSubscriptionStatus, {
-          userId,
+      ? withConvexRetry(fetchSubscriptionData, {
+          maxAttempts: 3,
+          baseDelay: 500,
+          onRetry: (error, attempt) => {
+            console.warn(`Retrying subscription fetch (attempt ${attempt}):`, error.message);
+          }
         }).catch((error) => {
-          console.error("Failed to fetch subscription data:", error);
+          console.error("Failed to fetch subscription data after retries:", error);
           return null;
         })
       : Promise.resolve(null),
-    fetchQuery(api.businesses.getFeaturedBusinesses, { limit: 6 }).catch((error) => {
-      console.error("Failed to fetch featured businesses:", error);
+    
+    withConvexRetry(fetchFeaturedBusinesses, {
+      maxAttempts: 3,
+      baseDelay: 500,
+      onRetry: (error, attempt) => {
+        console.warn(`Retrying featured businesses fetch (attempt ${attempt}):`, error.message);
+      }
+    }).catch((error) => {
+      console.error("Failed to fetch featured businesses after retries:", error);
       return [];
     }),
-    fetchQuery(api.cities.getCities).catch((error) => {
-      console.error("Failed to fetch cities:", error);
+    
+    withConvexRetry(fetchCities, {
+      maxAttempts: 3,
+      baseDelay: 500,
+      onRetry: (error, attempt) => {
+        console.warn(`Retrying cities fetch (attempt ${attempt}):`, error.message);
+      }
+    }).catch((error) => {
+      console.error("Failed to fetch cities after retries:", error);
       return [];
     }),
   ]);

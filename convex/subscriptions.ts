@@ -272,52 +272,56 @@ export const handleWebhookEvent = mutation({
     body: v.any(),
   },
   handler: async (ctx, args) => {
-    // Extract event type from webhook payload
-    const eventType = args.body.type;
+    try {
+      // Extract event type from webhook payload
+      const eventType = args.body.type;
+      const eventData = args.body.data;
 
-    // Store webhook event
-    await ctx.db.insert("webhookEvents", {
-      type: eventType,
-      polarEventId: args.body.data.id,
-      createdAt: args.body.data.created_at,
-      modifiedAt: args.body.data.modified_at || args.body.data.created_at,
-      data: args.body.data,
-    });
+      if (!eventType) {
+        throw new Error("Webhook event missing type field");
+      }
 
-    switch (eventType) {
-      case "subscription.created":
-        // Insert new subscription
-        await ctx.db.insert("subscriptions", {
-          polarId: args.body.data.id,
-          polarPriceId: args.body.data.price_id,
-          currency: args.body.data.currency,
-          interval: args.body.data.recurring_interval,
-          userId: args.body.data.metadata.userId,
-          status: args.body.data.status,
-          currentPeriodStart: new Date(
-            args.body.data.current_period_start
-          ).getTime(),
-          currentPeriodEnd: new Date(
-            args.body.data.current_period_end
-          ).getTime(),
-          cancelAtPeriodEnd: args.body.data.cancel_at_period_end,
-          amount: args.body.data.amount,
-          startedAt: new Date(args.body.data.started_at).getTime(),
-          endedAt: args.body.data.ended_at
-            ? new Date(args.body.data.ended_at).getTime()
-            : undefined,
-          canceledAt: args.body.data.canceled_at
-            ? new Date(args.body.data.canceled_at).getTime()
-            : undefined,
-          customerCancellationReason:
-            args.body.data.customer_cancellation_reason || undefined,
-          customerCancellationComment:
-            args.body.data.customer_cancellation_comment || undefined,
-          metadata: args.body.data.metadata || {},
-          customFieldData: args.body.data.custom_field_data || {},
-          customerId: args.body.data.customer_id,
-        });
-        break;
+      if (!eventData) {
+        throw new Error("Webhook event missing data field");
+      }
+
+      // Store webhook event
+      await ctx.db.insert("webhookEvents", {
+        type: eventType,
+        polarEventId: eventData.id,
+        createdAt: eventData.created_at,
+        modifiedAt: eventData.modified_at || eventData.created_at,
+        data: eventData,
+      });
+
+      console.log(`Stored webhook event: ${eventType} with ID: ${eventData.id}`);
+
+      switch (eventType) {
+        case "subscription.created":
+          console.log(`Processing subscription.created for user: ${eventData.metadata?.userId}`);
+          // Insert new subscription
+          await ctx.db.insert("subscriptions", {
+            polarId: eventData.id,
+            polarPriceId: eventData.price_id,
+            currency: eventData.currency,
+            interval: eventData.recurring_interval,
+            userId: eventData.metadata?.userId,
+            status: eventData.status,
+            currentPeriodStart: new Date(eventData.current_period_start).getTime(),
+            currentPeriodEnd: new Date(eventData.current_period_end).getTime(),
+            cancelAtPeriodEnd: eventData.cancel_at_period_end,
+            amount: eventData.amount,
+            startedAt: eventData.started_at ? new Date(eventData.started_at).getTime() : undefined,
+            endedAt: eventData.ended_at ? new Date(eventData.ended_at).getTime() : undefined,
+            canceledAt: eventData.canceled_at ? new Date(eventData.canceled_at).getTime() : undefined,
+            customerCancellationReason: eventData.customer_cancellation_reason || undefined,
+            customerCancellationComment: eventData.customer_cancellation_comment || undefined,
+            metadata: eventData.metadata || {},
+            customFieldData: eventData.custom_field_data || {},
+            customerId: eventData.customer_id,
+          });
+          console.log(`Created subscription record for Polar ID: ${eventData.id}`);
+          break;
 
       case "subscription.updated":
         // Find existing subscription
@@ -418,9 +422,15 @@ export const handleWebhookEvent = mutation({
         // Orders are handled through the subscription events
         break;
 
-      default:
-        console.log(`Unhandled event type: ${eventType}`);
-        break;
+        default:
+          console.log(`Unhandled event type: ${eventType}`);
+          break;
+      }
+      
+      console.log(`Successfully processed webhook event: ${eventType}`);
+    } catch (error) {
+      console.error("Error processing webhook event:", error);
+      throw error; // Re-throw to let the HTTP handler deal with it
     }
   },
 });
@@ -451,29 +461,50 @@ export const paymentWebhook = httpAction(async (ctx, request) => {
 
     // Validate the webhook event
     if (!process.env.POLAR_WEBHOOK_SECRET) {
+      console.error("POLAR_WEBHOOK_SECRET environment variable is not configured");
       throw new Error(
         "POLAR_WEBHOOK_SECRET environment variable is not configured"
       );
     }
+    
     validateEvent(rawBody, headers, process.env.POLAR_WEBHOOK_SECRET);
 
     const body = JSON.parse(rawBody);
+    
+    // Log the webhook event for debugging
+    console.log(`Processing webhook event: ${body.type}`, {
+      eventId: body.data?.id,
+      type: body.type,
+      timestamp: new Date().toISOString()
+    });
 
     // track events and based on events store data
     await ctx.runMutation(api.subscriptions.handleWebhookEvent, {
       body,
     });
 
-    return new Response(JSON.stringify({ message: "Webhook received!" }), {
+    console.log(`Successfully processed webhook event: ${body.type}`);
+
+    return new Response(JSON.stringify({ 
+      message: "Webhook received!", 
+      eventType: body.type,
+      eventId: body.data?.id 
+    }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
       },
     });
   } catch (error) {
+    console.error("Webhook processing error:", error);
+    
     if (error instanceof WebhookVerificationError) {
+      console.error("Webhook signature verification failed");
       return new Response(
-        JSON.stringify({ message: "Webhook verification failed" }),
+        JSON.stringify({ 
+          message: "Webhook verification failed",
+          error: "Invalid signature" 
+        }),
         {
           status: 403,
           headers: {
@@ -483,8 +514,15 @@ export const paymentWebhook = httpAction(async (ctx, request) => {
       );
     }
 
-    return new Response(JSON.stringify({ message: "Webhook failed" }), {
-      status: 400,
+    // Log specific error details for debugging
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Webhook processing failed:", errorMessage);
+
+    return new Response(JSON.stringify({ 
+      message: "Webhook processing failed",
+      error: errorMessage 
+    }), {
+      status: 500,
       headers: {
         "Content-Type": "application/json",
       },
@@ -511,4 +549,27 @@ export const createCustomerPortalUrl = action({
       throw new Error("Failed to create customer session");
     }
   },
+});
+
+// Test endpoint to verify webhook configuration
+export const testWebhookEndpoint = httpAction(async (ctx, request) => {
+  if (request.method !== "GET") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  return new Response(JSON.stringify({
+    message: "Webhook endpoint is active",
+    timestamp: new Date().toISOString(),
+    environment: {
+      hasWebhookSecret: !!process.env.POLAR_WEBHOOK_SECRET,
+      hasAccessToken: !!process.env.POLAR_ACCESS_TOKEN,
+      hasOrganizationId: !!process.env.POLAR_ORGANIZATION_ID,
+    }
+  }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" }
+  });
 });

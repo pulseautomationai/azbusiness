@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { useFormValidation } from "~/hooks/useFormValidation";
+import { contactFormSchema, type ContactFormData } from "~/utils/validation";
 
 interface ContactFormProps {
   business: {
@@ -17,31 +18,49 @@ interface ContactFormProps {
 }
 
 export default function ContactForm({ business, onClose }: ContactFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    service: "",
-    message: "",
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // TODO: Implement actual form submission to Convex
-    // For now, just simulate a submission
-    setTimeout(() => {
+  const {
+    data,
+    updateField,
+    touchField,
+    getFieldValue,
+    getFieldError,
+    hasFieldError,
+    isFieldTouched,
+    handleSubmit,
+    isSubmitting,
+    errors
+  } = useFormValidation<ContactFormData>({
+    schema: contactFormSchema,
+    initialData: {
+      name: "",
+      email: "",
+      phone: "",
+      service: "",
+      message: "",
+    },
+    onSubmit: async (formData) => {
+      // TODO: Implement actual form submission to Convex
+      // For now, just simulate a submission
       console.log("Form submitted:", formData);
-      setIsSubmitting(false);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       onClose();
       // Show success message
-    }, 1500);
+    }
+  });
+
+  const handleFieldChange = (field: keyof ContactFormData, value: string) => {
+    updateField(field, value);
   };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleFieldBlur = (field: keyof ContactFormData) => {
+    touchField(field);
+  };
+
+  const showFieldError = (field: keyof ContactFormData) => {
+    return isFieldTouched(field) && hasFieldError(field);
   };
 
   return (
@@ -62,17 +81,31 @@ export default function ContactForm({ business, onClose }: ContactFormProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {errors.general && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <span className="text-sm text-destructive">{errors.general[0]}</span>
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Name *</Label>
                 <Input
                   id="name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
+                  value={getFieldValue("name") || ""}
+                  onChange={(e) => handleFieldChange("name", e.target.value)}
+                  onBlur={() => handleFieldBlur("name")}
                   placeholder="John Doe"
+                  className={showFieldError("name") ? "border-destructive" : ""}
                 />
+                {showFieldError("name") && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {getFieldError("name")}
+                  </p>
+                )}
               </div>
               
               <div className="space-y-2">
@@ -80,10 +113,18 @@ export default function ContactForm({ business, onClose }: ContactFormProps) {
                 <Input
                   id="phone"
                   type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
+                  value={getFieldValue("phone") || ""}
+                  onChange={(e) => handleFieldChange("phone", e.target.value)}
+                  onBlur={() => handleFieldBlur("phone")}
                   placeholder="(555) 123-4567"
+                  className={showFieldError("phone") ? "border-destructive" : ""}
                 />
+                {showFieldError("phone") && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {getFieldError("phone")}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -92,17 +133,27 @@ export default function ContactForm({ business, onClose }: ContactFormProps) {
               <Input
                 id="email"
                 type="email"
-                required
-                value={formData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
+                value={getFieldValue("email") || ""}
+                onChange={(e) => handleFieldChange("email", e.target.value)}
+                onBlur={() => handleFieldBlur("email")}
                 placeholder="john@example.com"
+                className={showFieldError("email") ? "border-destructive" : ""}
               />
+              {showFieldError("email") && (
+                <p className="text-sm text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {getFieldError("email")}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="service">Service Interested In</Label>
-              <Select value={formData.service} onValueChange={(value) => handleChange("service", value)}>
-                <SelectTrigger id="service">
+              <Select 
+                value={getFieldValue("service") || ""} 
+                onValueChange={(value) => handleFieldChange("service", value)}
+              >
+                <SelectTrigger id="service" className={showFieldError("service") ? "border-destructive" : ""}>
                   <SelectValue placeholder="Select a service" />
                 </SelectTrigger>
                 <SelectContent>
@@ -114,18 +165,31 @@ export default function ContactForm({ business, onClose }: ContactFormProps) {
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
+              {showFieldError("service") && (
+                <p className="text-sm text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {getFieldError("service")}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="message">Message *</Label>
               <Textarea
                 id="message"
-                required
                 rows={4}
-                value={formData.message}
-                onChange={(e) => handleChange("message", e.target.value)}
+                value={getFieldValue("message") || ""}
+                onChange={(e) => handleFieldChange("message", e.target.value)}
+                onBlur={() => handleFieldBlur("message")}
                 placeholder="Please describe what you need help with..."
+                className={showFieldError("message") ? "border-destructive" : ""}
               />
+              {showFieldError("message") && (
+                <p className="text-sm text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {getFieldError("message")}
+                </p>
+              )}
             </div>
 
             <div className="flex gap-3 pt-4">

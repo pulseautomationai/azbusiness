@@ -2,7 +2,7 @@ import { useState } from "react";
 import { 
   Star, Phone, Mail, Globe, MapPin, Clock, Shield, Award, 
   ChevronRight, ExternalLink, Facebook, Instagram, Twitter, 
-  Linkedin, Edit, Share2, Heart, MessageSquare 
+  Linkedin, Edit, MessageSquare 
 } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
@@ -448,6 +448,31 @@ export default function BusinessProfile({
               )}
             </div>
           </div>
+
+          {/* Claim Listing Section */}
+          {!business.claimed && !isOwner && (
+            <div className="mt-12">
+              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+                <CardContent className="py-8 px-6 text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    Is this your business?
+                  </h3>
+                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
+                    Claim your listing to update information and respond to reviews.
+                  </p>
+                  <Button 
+                    size="lg" 
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold"
+                    asChild
+                  >
+                    <Link to="/sign-up">
+                      Claim This Listing
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* Related Businesses */}
           {relatedBusinesses.length > 0 && (

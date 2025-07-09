@@ -49,6 +49,7 @@ export default defineSchema({
     // Basic info
     name: v.string(),
     slug: v.string(),
+    urlPath: v.optional(v.string()), // New URL structure path
     logo: v.optional(v.string()),
     heroImage: v.optional(v.string()),
     description: v.string(),
@@ -56,7 +57,7 @@ export default defineSchema({
     
     // Contact & Location
     phone: v.string(),
-    email: v.string(),
+    email: v.optional(v.string()),
     website: v.optional(v.string()),
     address: v.string(),
     city: v.string(),
@@ -97,7 +98,17 @@ export default defineSchema({
       instagram: v.optional(v.string()),
       twitter: v.optional(v.string()),
       linkedin: v.optional(v.string()),
+      youtube: v.optional(v.string()),
     })),
+    
+    // Additional Google My Business Data
+    imageUrl: v.optional(v.string()), // Main business image from GMB
+    favicon: v.optional(v.string()), // Business favicon/logo
+    reviewUrl: v.optional(v.string()), // Direct link to Google reviews
+    serviceOptions: v.optional(v.string()), // "Onsite services | Online estimates"
+    fromTheBusiness: v.optional(v.string()), // "Identifies as veteran-owned"
+    offerings: v.optional(v.string()), // "Repair services"
+    planning: v.optional(v.string()), // "Appointment required"
     
     // Ratings
     rating: v.number(), // Average rating
@@ -108,6 +119,7 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_slug", ["slug"])
+    .index("by_url_path", ["urlPath"])
     .index("by_category", ["categoryId"])
     .index("by_city", ["city"])
     .index("by_owner", ["ownerId"])
@@ -190,4 +202,13 @@ export default defineSchema({
       searchField: "title",
       filterFields: ["published"],
     }),
+    
+  rateLimits: defineTable({
+    userId: v.string(), // User ID or IP address
+    endpoint: v.string(), // API endpoint being rate limited
+    timestamp: v.number(), // When the request was made
+    ipAddress: v.optional(v.string()), // IP address for additional tracking
+  })
+    .index("by_user_endpoint", ["userId", "endpoint"])
+    .index("by_timestamp", ["timestamp"]),
 });

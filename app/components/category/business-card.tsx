@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { cn } from "~/lib/utils";
+import { SlugGenerator } from "~/utils/slug-generator";
 
 interface BusinessCardProps {
   business: {
@@ -49,6 +50,11 @@ export default function BusinessCard({ business }: BusinessCardProps) {
     }
   };
 
+  // Generate new URL format: /[category]/[city]/[businessName]
+  const businessUrl = business.category 
+    ? SlugGenerator.generateURLPath(business.name, business.city, business.category.name)
+    : `/business/${business.slug}`; // Fallback to old format if no category
+
   return (
     <Card className={cn(
       "relative overflow-hidden hover:shadow-lg transition-all duration-200",
@@ -66,7 +72,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
           <div className="flex-1">
             <CardTitle className="line-clamp-1 text-xl">
               <Link 
-                to={`/business/${business.slug}`}
+                to={businessUrl}
                 className="hover:text-primary transition-colors"
               >
                 {business.name}
@@ -139,7 +145,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
         {/* Actions */}
         <div className="flex gap-2 pt-2">
           <Button asChild size="sm" className="flex-1">
-            <Link to={`/business/${business.slug}`}>
+            <Link to={businessUrl}>
               View Details
             </Link>
           </Button>

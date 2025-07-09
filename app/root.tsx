@@ -14,6 +14,7 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Analytics } from "@vercel/analytics/react";
+import { usePerformanceMonitoring } from "./hooks/usePerformanceMonitoring";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -82,6 +83,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function PerformanceMonitor({ children }: { children: React.ReactNode }) {
+  const { metrics, navigationTiming } = usePerformanceMonitoring();
+  
+  return <>{children}</>;
+}
+
 export default function App({ loaderData }: Route.ComponentProps) {
   return (
     <ClerkProvider
@@ -90,7 +97,9 @@ export default function App({ loaderData }: Route.ComponentProps) {
       signInFallbackRedirectUrl="/"
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <Outlet />
+        <PerformanceMonitor>
+          <Outlet />
+        </PerformanceMonitor>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );

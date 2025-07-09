@@ -99,6 +99,27 @@ export const getBusinessBySlug = query({
   },
 });
 
+// Get single business by URL path
+export const getBusinessByUrlPath = query({
+  args: { urlPath: v.string() },
+  handler: async (ctx, args) => {
+    const business = await ctx.db
+      .query("businesses")
+      .withIndex("by_url_path", (q) => q.eq("urlPath", args.urlPath))
+      .filter((q) => q.eq(q.field("active"), true))
+      .first();
+
+    if (!business) return null;
+
+    const category = await ctx.db.get(business.categoryId);
+    
+    return {
+      ...business,
+      category: category || null,
+    };
+  },
+});
+
 // Get featured businesses for homepage
 export const getFeaturedBusinesses = query({
   args: { limit: v.optional(v.number()) },
@@ -205,6 +226,7 @@ export const createBusiness = mutation({
   args: {
     name: v.string(),
     slug: v.string(),
+    urlPath: v.optional(v.string()),
     shortDescription: v.string(),
     description: v.string(),
     phone: v.string(),
@@ -257,5 +279,34 @@ export const createBusiness = mutation({
     });
 
     return businessId;
+  },
+});
+
+// Update business URLs for migration
+export const updateBusinessUrls = mutation({
+  args: {
+    businessId: v.id("businesses"),
+    newSlug: v.string(),
+    newUrlPath: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check if new slug already exists (avoid duplicates)
+    const existingBusiness = await ctx.db
+      .query("businesses")
+      .withIndex("by_slug", (q) => q.eq("slug", args.newSlug))
+      .first();
+    
+    if (existingBusiness && existingBusiness._id !== args.businessId) {
+      throw new Error(`A business with slug "${args.newSlug}" already exists`);
+    }
+
+    // Update the business
+    await ctx.db.patch(args.businessId, {
+      slug: args.newSlug,
+      urlPath: args.newUrlPath,
+      updatedAt: Date.now(),
+    });
+
+    return { success: true };
   },
 });

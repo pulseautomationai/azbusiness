@@ -9,11 +9,13 @@
  */
 
 import type * as archived_schema_backup from "../archived_schema_backup.js";
+import type * as batchImport from "../batchImport.js";
 import type * as businesses from "../businesses.js";
 import type * as categories from "../categories.js";
 import type * as cities from "../cities.js";
 import type * as http from "../http.js";
 import type * as leads from "../leads.js";
+import type * as rateLimit from "../rateLimit.js";
 import type * as seed from "../seed.js";
 import type * as seedBusinesses from "../seedBusinesses.js";
 import type * as seedData from "../seedData.js";
@@ -36,11 +38,13 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   archived_schema_backup: typeof archived_schema_backup;
+  batchImport: typeof batchImport;
   businesses: typeof businesses;
   categories: typeof categories;
   cities: typeof cities;
   http: typeof http;
   leads: typeof leads;
+  rateLimit: typeof rateLimit;
   seed: typeof seed;
   seedBusinesses: typeof seedBusinesses;
   seedData: typeof seedData;
