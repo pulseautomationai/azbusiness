@@ -3,14 +3,14 @@
   "buildCommand": "npm run build",
   "framework": null,
   "functions": {
-    "build/server/index.js": {
-      "runtime": "@vercel/node@3.0.7"
+    "api/index.js": {
+      "includeFiles": "build/server/**"
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/build/server/index.js"
+      "dest": "/api/index"
     }
   ]
 }
