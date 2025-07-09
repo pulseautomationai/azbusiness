@@ -1,5 +1,6 @@
 // Vercel serverless function adapter for React Router v7
-import { createRequestHandler } from "@react-router/node";
+import pkg from '@react-router/node';
+const { createRequestHandler } = pkg;
 
 export default async function handler(req, res) {
   try {
