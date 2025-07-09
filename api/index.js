@@ -1,4 +1,6 @@
 // Vercel serverless function adapter for React Router v7
+import { createRequestHandler } from "@react-router/node";
+
 export default async function handler(req, res) {
   try {
     console.log("Function invoked:", req.method, req.url);
@@ -8,10 +10,7 @@ export default async function handler(req, res) {
       CLERK_KEY: process.env.VITE_CLERK_PUBLISHABLE_KEY ? "SET" : "NOT SET"
     });
     
-    // Import required modules using CommonJS style for compatibility
-    const reactRouterNode = await import("@react-router/node");
-    const createRequestHandler = reactRouterNode.createRequestHandler || reactRouterNode.default?.createRequestHandler;
-    console.log("Imported createRequestHandler");
+    console.log("createRequestHandler type:", typeof createRequestHandler);
     
     // Import the React Router build dynamically
     const build = await import("../build/server/index.js");
