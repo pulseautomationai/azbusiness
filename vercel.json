@@ -3,11 +3,6 @@
   "outputDirectory": "build/client",
   "framework": "react-router",
   "regions": ["iad1"],
-  "functions": {
-    "app/**": {
-      "maxDuration": 30
-    }
-  },
   "headers": [
     {
       "source": "/assets/(.*)",
