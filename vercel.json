@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "build/client",
   "functions": {
@@ -7,14 +8,14 @@
       "includeFiles": "build/server/**"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/api/index"
+      "src": "/(.*)",
+      "dest": "/api/index"
     }
   ]
 }
