@@ -1,7 +1,7 @@
 # Dependencies
 node_modules
 
-# Build files
+# Build files (but keep build/server for the API function)
 build/server/.vite
 .vite
 
