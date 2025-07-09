@@ -37,13 +37,41 @@ exports.handler = async (event, context) => {
     if (!buildPath) {
       // List the actual directory structure
       console.log("Build not found, checking directory structure:");
-      const buildDir = path.resolve(process.cwd(), "build");
-      if (fs.existsSync(buildDir)) {
-        console.log("build/ directory contents:", fs.readdirSync(buildDir));
-        const serverDir = path.join(buildDir, "server");
-        if (fs.existsSync(serverDir)) {
-          console.log("build/server/ directory contents:", fs.readdirSync(serverDir));
+      
+      try {
+        // Check root directory contents
+        console.log("Root directory (/var/task) contents:", fs.readdirSync("/var/task"));
+        
+        // Check if build directory exists
+        const buildDir = path.resolve(process.cwd(), "build");
+        console.log("Looking for build directory at:", buildDir);
+        if (fs.existsSync(buildDir)) {
+          console.log("build/ directory contents:", fs.readdirSync(buildDir));
+          const serverDir = path.join(buildDir, "server");
+          if (fs.existsSync(serverDir)) {
+            console.log("build/server/ directory contents:", fs.readdirSync(serverDir));
+          }
+        } else {
+          console.log("build/ directory does not exist");
         }
+        
+        // Check if the files are in a different location
+        const possibleBuildDirs = [
+          "/var/task/build",
+          "/var/task/.netlify/functions-internal/build",
+          "/var/task/dist",
+          "/var/task/out"
+        ];
+        
+        for (const dir of possibleBuildDirs) {
+          if (fs.existsSync(dir)) {
+            console.log(`Found directory: ${dir}`);
+            console.log(`Contents: ${fs.readdirSync(dir)}`);
+          }
+        }
+        
+      } catch (dirError) {
+        console.log("Error checking directories:", dirError.message);
       }
       
       throw new Error("No valid build file found");
