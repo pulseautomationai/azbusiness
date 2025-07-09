@@ -9,6 +9,8 @@
   node_bundler = "esbuild"
   directory = "netlify/functions"
   external_node_modules = ["@react-router/node"]
+  # Include the React Router server build in the function bundle
+  included_files = ["build/server/**"]
 
 # Static assets should be served directly (higher priority)
 [[redirects]]

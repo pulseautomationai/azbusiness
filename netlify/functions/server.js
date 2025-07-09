@@ -10,10 +10,10 @@ exports.handler = async (event, context) => {
     
     // Check different possible build paths
     const possiblePaths = [
-      path.resolve(__dirname, "../../build/server/index.js"),
       path.resolve(process.cwd(), "build/server/index.js"),
-      path.resolve(__dirname, "../build/server/index.js"),
+      path.resolve(__dirname, "../../build/server/index.js"),
       path.resolve("/var/task/build/server/index.js"),
+      path.resolve(__dirname, "../build/server/index.js"),
       path.resolve(__dirname, "../../build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js"),
       path.resolve(process.cwd(), "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js"),
     ];
