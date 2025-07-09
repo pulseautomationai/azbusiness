@@ -55,9 +55,11 @@ export const Header = ({
                 className="flex items-center space-x-3 font-bold text-xl"
                 prefetch="viewport"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Building2 className="h-6 w-6" />
-                </div>
+                <img 
+                  src="/azbusiness1.png" 
+                  alt="AZ Business Services"
+                  className="h-15 w-15 rounded-lg object-cover"
+                />
                 <span className="hidden sm:inline">AZ Business Services</span>
                 <span className="sm:hidden">AZ Business</span>
               </Link>
@@ -79,7 +81,7 @@ export const Header = ({
                     <Link
                       to={item.href}
                       onClick={() => handleNavClick(item.href)}
-                      className="text-muted-foreground hover:text-foreground block duration-150 transition-colors"
+                      className="text-muted-foreground hover:text-saguaro-teal block duration-150 transition-colors"
                       prefetch="viewport"
                     >
                       <span>{item.name}</span>
@@ -97,7 +99,7 @@ export const Header = ({
                       <Link
                         to={item.href}
                         onClick={() => handleNavClick(item.href)}
-                        className="text-muted-foreground hover:text-foreground block duration-150 transition-colors w-full text-left"
+                        className="text-muted-foreground hover:text-saguaro-teal block duration-150 transition-colors w-full text-left"
                         prefetch="viewport"
                       >
                         <span>{item.name}</span>
