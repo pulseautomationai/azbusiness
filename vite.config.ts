@@ -7,8 +7,17 @@ export default defineConfig(({ command, ssrBuild }) => {
   return {
     plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
     build: {
-      // Disable sourcemaps for production builds
-      sourcemap: command === "serve",
+      // Completely disable sourcemaps for production builds
+      sourcemap: false,
+      rollupOptions: {
+        onLog(level, log, handler) {
+          // Ignore sourcemap errors to clean up build output
+          if (log.code === 'SOURCEMAP_ERROR') {
+            return;
+          }
+          handler(level, log);
+        }
+      }
     },
     // SSR-specific configuration
     ssr: {
