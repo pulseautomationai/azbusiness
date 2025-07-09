@@ -1,52 +1,69 @@
-// api/index.js - Vercel function handler for React Router v7
+// api/index.js - Correct Vercel function handler for React Router v7
 
-export default async function handler(request, response) {
+import React from "react";
+import { createStaticHandler, createStaticRouter, StaticRouterProvider } from "react-router";
+import { renderToString } from "react-dom/server";
+
+export default async function handler(request) {
   try {
-    // Import the React Router server build
-    const { default: handleRequest } = await import('../build/server/index.js');
+    // Import your routes - adjust path as needed
+    const { default: routes } = await import('../app/routes.ts');
     
-    // Build proper Request URL 
-    const protocol = request.headers['x-forwarded-proto'] || 'https';
-    const host = request.headers['x-forwarded-host'] || request.headers.host;
-    const url = new URL(request.url || '/', `${protocol}://${host}`);
+    // Create static handler
+    const { query, dataRoutes } = createStaticHandler(routes);
     
-    // Create Web API Request object
-    const webRequest = new Request(url.toString(), {
+    // Convert Vercel request to standard Request
+    const url = new URL(request.url || `https://${request.headers.host}${request.path || '/'}`);
+    const fetchRequest = new Request(url.toString(), {
       method: request.method || 'GET',
-      headers: new Headers(request.headers),
+      headers: request.headers,
       body: request.method !== 'GET' && request.method !== 'HEAD' ? request.body : undefined,
     });
 
-    // Create router context and headers
-    const responseHeaders = new Headers();
-    let responseStatusCode = 200;
+    // Query the handler for context
+    const context = await query(fetchRequest);
 
-    // Call React Router's handleRequest function with proper parameters
-    const webResponse = await handleRequest(
-      webRequest,
-      responseStatusCode,
-      responseHeaders,
-      {}, // routerContext - empty for now
-      {} // loadContext - empty for now
+    // If query returns a Response (like a redirect), send it
+    if (context instanceof Response) {
+      return context;
+    }
+
+    // Create static router for SSR
+    const router = createStaticRouter(dataRoutes, context);
+
+    // Render to string
+    const html = renderToString(
+      <StaticRouterProvider router={router} context={context} />
     );
 
-    // Convert Web API Response to Vercel Response
-    const body = await webResponse.text();
+    // Set up headers
+    const leaf = context.matches[context.matches.length - 1];
+    const actionHeaders = context.actionHeaders[leaf?.route?.id];
+    const loaderHeaders = context.loaderHeaders[leaf?.route?.id];
+    const headers = new Headers(actionHeaders);
     
-    // Set headers
-    webResponse.headers.forEach((value, key) => {
-      response.setHeader(key, value);
+    if (loaderHeaders) {
+      for (const [key, value] of loaderHeaders.entries()) {
+        headers.append(key, value);
+      }
+    }
+    
+    headers.set("Content-Type", "text/html; charset=utf-8");
+
+    return new Response(`<!DOCTYPE html>${html}`, {
+      status: context.statusCode,
+      headers,
     });
-    
-    // Set status and send response
-    response.status(webResponse.status).send(body);
-    
+
   } catch (error) {
     console.error('Handler error:', error);
-    response.status(500).json({
+    return new Response(JSON.stringify({
       error: "Internal server error",
       message: error.message,
       stack: error.stack
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 }
