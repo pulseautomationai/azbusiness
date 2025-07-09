@@ -8,7 +8,31 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
-  external_node_modules = ["@react-router/node", "isbot"]
+  external_node_modules = [
+    "@react-router/node",
+    "isbot",
+    "@clerk/react-router",
+    "convex",
+    "react",
+    "react-dom",
+    "@radix-ui/react-dialog",
+    "@radix-ui/react-dropdown-menu",
+    "@radix-ui/react-select",
+    "@radix-ui/react-separator",
+    "@radix-ui/react-slot",
+    "@radix-ui/react-tabs",
+    "@radix-ui/react-toggle",
+    "@radix-ui/react-tooltip",
+    "@radix-ui/react-avatar",
+    "@radix-ui/react-checkbox",
+    "@radix-ui/react-label",
+    "@radix-ui/react-toggle-group",
+    "lucide-react",
+    "class-variance-authority",
+    "clsx",
+    "next-themes",
+    "motion"
+  ]
   # Include the React Router server build in the function bundle
   included_files = ["build/server/**"]
 
