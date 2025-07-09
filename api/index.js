@@ -21,8 +21,10 @@ export default async function handler(request) {
           id: route.id,
           path: route.path || undefined,
           index: route.index || undefined,
-          // We'll need to load the actual component modules later
-          Component: () => null, // Placeholder for now
+          // Use the actual component from the module
+          Component: route.module?.default || (() => React.createElement('div', null, `Route: ${routeId}`)),
+          loader: route.module?.loader,
+          action: route.module?.action,
         };
         
         routeMap.set(routeId, routeObj);
