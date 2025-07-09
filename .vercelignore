@@ -26,7 +26,3 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Netlify (since we're using Vercel now)
-netlify/
-netlify.toml
