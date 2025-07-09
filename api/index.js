@@ -10,12 +10,31 @@ export default async function handler(request) {
     // Import the build manifest
     const build = await import('../build/server/index.js');
     
-    // Get routes from the build
-    const routes = build.routes;
+    // Debug: log what's in the build
+    console.log('Build manifest keys:', Object.keys(build));
+    console.log('Build.routes type:', typeof build.routes);
+    console.log('Build.routes:', build.routes);
+    console.log('Build.default:', build.default);
     
-    if (!routes) {
-      throw new Error('No routes found in build manifest');
+    // Try different ways to get routes
+    let routes = build.routes || build.default?.routes || build.default;
+    
+    // If routes is still not an array, create a fallback
+    if (!Array.isArray(routes)) {
+      console.log('Routes not found, creating debug response');
+      return new Response(JSON.stringify({
+        error: 'Routes not found in build',
+        buildKeys: Object.keys(build),
+        buildRoutes: build.routes,
+        buildDefault: build.default,
+        routesType: typeof routes
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
+    
+    console.log('Found routes:', routes.length, 'routes');
     
     // Create static handler
     const { query, dataRoutes } = createStaticHandler(routes);
