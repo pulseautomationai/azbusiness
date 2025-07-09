@@ -22,15 +22,31 @@ export default async function handler(request) {
     // If routes is still not an array, create a fallback
     if (!Array.isArray(routes)) {
       console.log('Routes not found, creating debug response');
-      return new Response(JSON.stringify({
+      const debugInfo = {
         error: 'Routes not found in build',
         buildKeys: Object.keys(build),
         buildRoutes: build.routes,
         buildDefault: build.default,
-        routesType: typeof routes
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        routesType: typeof routes,
+        url: request.url,
+        method: request.method
+      };
+      console.log('Debug info:', JSON.stringify(debugInfo, null, 2));
+      
+      return new Response(`
+        <!DOCTYPE html>
+        <html>
+          <head><title>Debug Info</title></head>
+          <body>
+            <h1>Debug Information</h1>
+            <pre style="background: #f5f5f5; padding: 20px; overflow: auto;">
+${JSON.stringify(debugInfo, null, 2)}
+            </pre>
+          </body>
+        </html>
+      `, {
+        status: 200,
+        headers: { 'Content-Type': 'text/html' }
       });
     }
     
