@@ -2,9 +2,15 @@
 export default async function handler(req, res) {
   try {
     console.log("Function invoked:", req.method, req.url);
+    console.log("Environment variables:", {
+      NODE_ENV: process.env.NODE_ENV,
+      CONVEX_URL: process.env.VITE_CONVEX_URL ? "SET" : "NOT SET",
+      CLERK_KEY: process.env.VITE_CLERK_PUBLISHABLE_KEY ? "SET" : "NOT SET"
+    });
     
-    // Import required modules
-    const { createRequestHandler } = await import("@react-router/node");
+    // Import required modules using CommonJS style for compatibility
+    const reactRouterNode = await import("@react-router/node");
+    const createRequestHandler = reactRouterNode.createRequestHandler || reactRouterNode.default?.createRequestHandler;
     console.log("Imported createRequestHandler");
     
     // Import the React Router build dynamically
@@ -28,7 +34,11 @@ export default async function handler(req, res) {
     return res.status(500).json({ 
       error: "Internal server error",
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
+      env: {
+        NODE_ENV: process.env.NODE_ENV,
+        CONVEX_URL: process.env.VITE_CONVEX_URL ? "SET" : "NOT SET",
+      }
     });
   }
 }
