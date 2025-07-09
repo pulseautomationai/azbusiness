@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://azbusiness.services/sitemap.xml
+
+# Disallow admin and internal paths
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /.netlify/
+
+# Allow specific important paths
+Allow: /category/
+Allow: /city/
+Allow: /business/
+Allow: /blog/
+Allow: /pricing
+Allow: /about
+Allow: /contact

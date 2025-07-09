@@ -33,6 +33,10 @@ export default [
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
   
+  // SEO routes
+  route("sitemap.xml", "routes/sitemap.xml.ts"),
+  route("robots.txt", "routes/robots.txt.ts"),
+  
   layout("routes/dashboard/layout.tsx", [
     route("dashboard", "routes/dashboard/index.tsx"),
     route("dashboard/chat", "routes/dashboard/chat.tsx"),

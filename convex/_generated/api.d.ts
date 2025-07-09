@@ -19,6 +19,7 @@ import type * as rateLimit from "../rateLimit.js";
 import type * as seed from "../seed.js";
 import type * as seedBusinesses from "../seedBusinesses.js";
 import type * as seedData from "../seedData.js";
+import type * as seo from "../seo.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
 
@@ -48,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   seed: typeof seed;
   seedBusinesses: typeof seedBusinesses;
   seedData: typeof seedData;
+  seo: typeof seo;
   subscriptions: typeof subscriptions;
   users: typeof users;
 }>;

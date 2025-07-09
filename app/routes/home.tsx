@@ -11,42 +11,14 @@ import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "AZ Business Services - Find Trusted Local Service Providers in Arizona";
-  const description =
-    "Connect with verified HVAC, plumbing, electrical, and other home service professionals across Arizona. Get quotes, read reviews, and hire the best local contractors.";
-  const keywords = "Arizona business directory, local services, HVAC, plumbing, electrical, contractors, home services, Phoenix, Tucson, Mesa";
-  const siteUrl = "https://azbusiness.services/";
-  const imageUrl = "/favicon.png"; // We'll use a placeholder for now
-
+  const { SEOGenerator } = require("~/utils/seo");
+  const { generateMetaTags } = require("~/components/seo/seo-meta");
+  const seo = SEOGenerator.generateHomepageSEO();
+  const { metaTags, links } = generateMetaTags(seo);
+  
   return [
-    { title },
-    {
-      name: "description",
-      content: description,
-    },
-
-    // Open Graph / Facebook
-    { property: "og:type", content: "website" },
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
-    { property: "og:image", content: imageUrl },
-    { property: "og:image:width", content: "1200" },
-    { property: "og:image:height", content: "630" },
-    { property: "og:url", content: siteUrl },
-    { property: "og:site_name", content: "AZ Business Services" },
-
-    // Twitter Card
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: title },
-    {
-      name: "twitter:description",
-      content: description,
-    },
-    { name: "twitter:image", content: imageUrl },
-    {
-      name: "keywords",
-      content: keywords,
-    },
+    ...metaTags,
+    ...links,
     { name: "author", content: "AZ Business Services" },
   ];
 }
@@ -111,8 +83,19 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
+  const { SEOGenerator } = require("~/utils/seo");
+  const seo = SEOGenerator.generateHomepageSEO();
+  
   return (
     <>
+      {/* JSON-LD Structured Data for Homepage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(seo.jsonLd),
+        }}
+      />
+      
       <Header loaderData={loaderData} />
       <ComponentErrorBoundary componentName="Hero Section">
         <HeroSection cities={loaderData.cities} />

@@ -211,4 +211,12 @@ export default defineSchema({
   })
     .index("by_user_endpoint", ["userId", "endpoint"])
     .index("by_timestamp", ["timestamp"]),
+    
+  sitemapCache: defineTable({
+    lastInvalidated: v.number(),
+    reason: v.string(),
+    status: v.union(v.literal("pending"), v.literal("completed")),
+  })
+    .index("by_timestamp", ["lastInvalidated"])
+    .index("by_status", ["status"]),
 });
