@@ -62,7 +62,18 @@ export default async function handler(request) {
     const { query, dataRoutes } = createStaticHandler(routes);
     
     // Convert Vercel request to standard Web API Request
-    const url = new URL(request.url || `https://${request.headers.host}${request.path || '/'}`);
+    // Handle both relative and absolute URLs
+    let urlString;
+    if (request.url && request.url.startsWith('http')) {
+      urlString = request.url;
+    } else {
+      const protocol = request.headers['x-forwarded-proto'] || 'https';
+      const host = request.headers['x-forwarded-host'] || request.headers.host || 'localhost';
+      const path = request.url || request.path || '/';
+      urlString = `${protocol}://${host}${path}`;
+    }
+    
+    const url = new URL(urlString);
     
     const webRequest = new Request(url.toString(), {
       method: request.method || 'GET',
