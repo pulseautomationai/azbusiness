@@ -4,6 +4,7 @@ import { redirect } from "react-router";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import BusinessProfile from "~/components/business/business-profile";
+import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../../convex/_generated/api";
 import type { Route } from "./+types/$slug";
 
@@ -75,12 +76,14 @@ export default function BusinessPage({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Header loaderData={loaderData} />
-      <BusinessProfile 
-        business={loaderData.business}
-        relatedBusinesses={loaderData.relatedBusinesses}
-        reviews={loaderData.reviews}
-        isOwner={loaderData.isOwner}
-      />
+      <ComponentErrorBoundary componentName="Business Profile">
+        <BusinessProfile 
+          business={loaderData.business}
+          relatedBusinesses={loaderData.relatedBusinesses}
+          reviews={loaderData.reviews}
+          isOwner={loaderData.isOwner}
+        />
+      </ComponentErrorBoundary>
       <Footer />
     </>
   );

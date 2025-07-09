@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
+import { ComponentLoading } from "~/components/loading-spinner";
 import { cn } from "~/lib/utils";
 
 interface Business {
@@ -17,8 +18,8 @@ interface Business {
   planTier: "free" | "pro" | "power";
   category?: {
     name: string;
-    icon: string;
-  };
+    icon?: string;
+  } | null;
   services: string[];
 }
 
@@ -61,6 +62,25 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
         return "Free";
     }
   };
+
+  // Show loading state when no businesses are provided
+  if (!businesses || businesses.length === 0) {
+    return (
+      <section className="py-16 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Featured Businesses
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Top-rated service providers ready to help
+            </p>
+          </div>
+          <ComponentLoading text="Loading featured businesses..." />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 bg-muted/30">
@@ -105,7 +125,7 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        {business.category && (
+                        {business.category && business.category.icon && (
                           <span className="text-2xl">{business.category.icon}</span>
                         )}
                         <Badge variant={planBadgeVariant(business.planTier)}>

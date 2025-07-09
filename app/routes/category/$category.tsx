@@ -4,6 +4,7 @@ import { redirect } from "react-router";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import CategoryPageContent from "~/components/category/category-page-content";
+import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../../convex/_generated/api";
 import type { Route } from "./+types/$category";
 
@@ -51,7 +52,7 @@ export async function loader(args: Route.LoaderArgs) {
     fetchQuery(api.businesses.getBusinesses, {
       categorySlug: categorySlug,
     }),
-    fetchQuery(api.cities.getCitiesWithCount),
+    fetchQuery(api.cities.getCitiesWithCount, {}),
   ]);
 
   return {
@@ -68,11 +69,13 @@ export default function CategoryPage({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Header loaderData={loaderData} />
-      <CategoryPageContent 
-        category={loaderData.category}
-        businesses={loaderData.businesses}
-        cities={loaderData.cities}
-      />
+      <ComponentErrorBoundary componentName="Category Page">
+        <CategoryPageContent 
+          category={loaderData.category}
+          businesses={loaderData.businesses}
+          cities={loaderData.cities}
+        />
+      </ComponentErrorBoundary>
       <Footer />
     </>
   );

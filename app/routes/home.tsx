@@ -5,6 +5,7 @@ import HeroSection from "~/components/homepage/hero";
 import FeaturedBusinesses from "~/components/homepage/featured-businesses";
 import CTACards from "~/components/homepage/cta-cards";
 import Footer from "~/components/homepage/footer";
+import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/home";
 
@@ -84,9 +85,15 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Header loaderData={loaderData} />
-      <HeroSection cities={loaderData.cities} />
-      <CTACards />
-      <FeaturedBusinesses businesses={loaderData.featuredBusinesses} />
+      <ComponentErrorBoundary componentName="Hero Section">
+        <HeroSection cities={loaderData.cities} />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="CTA Cards">
+        <CTACards />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="Featured Businesses">
+        <FeaturedBusinesses businesses={loaderData.featuredBusinesses} />
+      </ComponentErrorBoundary>
       <Footer />
     </>
   );

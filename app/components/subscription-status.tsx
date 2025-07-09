@@ -13,6 +13,7 @@ import { Badge } from "~/components/ui/badge";
 import { Calendar, CreditCard, ExternalLink, Loader2 } from "lucide-react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
+import { LoadingSpinner } from "~/components/loading-spinner";
 
 export default function SubscriptionStatus() {
   const { isSignedIn, userId } = useAuth();
@@ -20,7 +21,7 @@ export default function SubscriptionStatus() {
 
   const subscription = useQuery(
     api.subscriptions.fetchUserSubscription,
-    isSignedIn && userId ? { userId } : "skip"
+    isSignedIn ? {} : "skip"
   );
   const subscriptionStatus = useQuery(
     api.subscriptions.checkUserSubscriptionStatus,
@@ -63,10 +64,7 @@ export default function SubscriptionStatus() {
         <CardHeader>
           <CardTitle>Subscription Status</CardTitle>
           <CardDescription>
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Loading subscription details...
-            </div>
+            <LoadingSpinner size="sm" text="Loading subscription details..." />
           </CardDescription>
         </CardHeader>
       </Card>

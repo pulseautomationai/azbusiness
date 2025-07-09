@@ -32,7 +32,7 @@ interface BusinessProfileProps {
     state: string;
     zip: string;
     coordinates?: { lat: number; lng: number };
-    category?: { name: string; icon: string; slug: string };
+    category?: { name: string; icon?: string; slug: string } | null;
     services: string[];
     hours: Record<string, string>;
     planTier: "free" | "pro" | "power";
@@ -129,7 +129,7 @@ export default function BusinessProfile({
                         to={`/category/${business.category.slug}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
-                        <span className="text-lg">{business.category.icon}</span>
+                        {business.category.icon && <span className="text-lg">{business.category.icon}</span>}
                         <span>{business.category.name}</span>
                       </Link>
                     )}

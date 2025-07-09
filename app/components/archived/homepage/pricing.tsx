@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 
 export default function Pricing({ loaderData }: { loaderData: any }) {
   const { isSignedIn } = useAuth();

@@ -5,8 +5,9 @@ import { Button } from "~/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Card } from "~/components/ui/card";
 import { categories } from "../../../convex/seedData";
+import type { Doc } from "../../../convex/_generated/dataModel";
 
-export default function HeroSection({ cities }: { cities: any[] }) {
+export default function HeroSection({ cities }: { cities: Doc<"cities">[] }) {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
@@ -28,7 +29,7 @@ export default function HeroSection({ cities }: { cities: any[] }) {
     }
     acc[city.region].push(city);
     return acc;
-  }, {} as Record<string, typeof cities>);
+  }, {} as Record<string, Doc<"cities">[]>);
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background pt-32 pb-16">

@@ -34,7 +34,7 @@ export async function loader(args: Route.LoaderArgs) {
   ]);
 
   // Get business counts for each city
-  const citiesWithCount = await fetchQuery(api.cities.getCitiesWithCount);
+  const citiesWithCount = await fetchQuery(api.cities.getCitiesWithCount, {});
   const cityCountMap = citiesWithCount.reduce((acc, city) => {
     acc[city.slug] = city.businessCount;
     return acc;

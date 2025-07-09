@@ -24,7 +24,8 @@ export default function Success() {
     if (isSignedIn) {
       upsertUser();
     }
-  }, [isSignedIn, upsertUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn]); // upsertUser is stable and doesn't need to be in deps
 
   if (!isSignedIn) {
     return (
