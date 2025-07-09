@@ -36,6 +36,7 @@ export default [
   // SEO routes
   route("sitemap.xml", "routes/sitemap.xml.ts"),
   route("robots.txt", "routes/robots.txt.ts"),
+  route("test", "routes/test.ts"),
   
   layout("routes/dashboard/layout.tsx", [
     route("dashboard", "routes/dashboard/index.tsx"),

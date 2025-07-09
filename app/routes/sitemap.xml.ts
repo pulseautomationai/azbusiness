@@ -9,6 +9,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   try {
     // Fetch all data needed for sitemap using the new SEO function
     const sitemapData = await fetchQuery(api.seo.getSitemapData);
+    
+    if (!sitemapData) {
+      throw new Error("Failed to fetch sitemap data");
+    }
+    
     const { businesses, categories, cities } = sitemapData;
 
     const sitemap = generateSitemap(baseUrl, businesses, categories, cities);

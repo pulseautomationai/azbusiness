@@ -6,4 +6,9 @@ export default {
   ssr: true,
   // Remove Vercel preset for Netlify deployment
   // presets: [vercelPreset()],
+  
+  // Ensure resource routes work properly
+  buildEnd: async ({ buildManifest }) => {
+    console.log("Build complete, manifest:", Object.keys(buildManifest.routes));
+  },
 } satisfies Config;
