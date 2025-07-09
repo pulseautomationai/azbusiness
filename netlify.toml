@@ -8,6 +8,7 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
+  external_node_modules = ["@react-router/node"]
 
 # Static assets should be served directly (higher priority)
 [[redirects]]

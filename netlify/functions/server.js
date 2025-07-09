@@ -1,13 +1,20 @@
-import { createRequestHandler } from "@react-router/node";
-import path from "path";
-import { fileURLToPath } from "url";
+const { createRequestHandler } = require("@react-router/node");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const build = await import(path.join(__dirname, "../../build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js"));
-
-export const handler = createRequestHandler({
-  build,
-  mode: process.env.NODE_ENV || "production",
-});
+exports.handler = async (event, context) => {
+  try {
+    const build = await import("../../build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js");
+    
+    const requestHandler = createRequestHandler({
+      build,
+      mode: process.env.NODE_ENV || "production",
+    });
+    
+    return await requestHandler(event, context);
+  } catch (error) {
+    console.error("Server function error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal server error" }),
+    };
+  }
+};

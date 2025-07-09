@@ -7,12 +7,12 @@ import CTACards from "~/components/homepage/cta-cards";
 import Footer from "~/components/homepage/footer";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { withConvexRetry } from "~/utils/retry";
+import { SEOGenerator } from "~/utils/seo";
+import { generateMetaTags } from "~/components/seo/seo-meta";
 import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
-  const { SEOGenerator } = require("~/utils/seo");
-  const { generateMetaTags } = require("~/components/seo/seo-meta");
   const seo = SEOGenerator.generateHomepageSEO();
   const { metaTags, links } = generateMetaTags(seo);
   
@@ -83,7 +83,6 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { SEOGenerator } = require("~/utils/seo");
   const seo = SEOGenerator.generateHomepageSEO();
   
   return (
