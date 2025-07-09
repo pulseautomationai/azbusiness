@@ -67,10 +67,10 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
   // Show loading state when no businesses are provided
   if (!businesses || businesses.length === 0) {
     return (
-      <section className="py-16 bg-muted/30">
+      <section className="py-16 bg-clay-beige/30">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-desert-night">
               Featured Businesses
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -84,10 +84,10 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
   }
 
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-16 bg-clay-beige/30">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-desert-night">
             Featured Businesses
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -160,7 +160,7 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
                             className={cn(
                               "h-4 w-4",
                               i < Math.floor(business.rating)
-                                ? "fill-yellow-400 text-yellow-400"
+                                ? "fill-sun-gold text-sun-gold"
                                 : "text-muted-foreground"
                             )}
                           />
@@ -176,7 +176,7 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
 
                     {/* Location */}
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-4 w-4 text-agave-green" />
                       <span>{business.city}, AZ</span>
                     </div>
 
@@ -204,7 +204,7 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
                         </Link>
                       </Button>
                       <Button size="sm" variant="outline">
-                        <Phone className="h-4 w-4" />
+                        <Phone className="h-4 w-4 text-agave-green" />
                       </Button>
                     </div>
                   </div>
@@ -223,8 +223,8 @@ export default function FeaturedBusinesses({ businesses }: { businesses: Busines
                   className={cn(
                     "h-2 w-2 rounded-full transition-all",
                     index === currentIndex
-                      ? "w-8 bg-primary"
-                      : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                      ? "w-8 bg-saguaro-teal"
+                      : "bg-muted-foreground/30 hover:bg-mesa-terracotta/50"
                   )}
                   aria-label={`Go to page ${index + 1}`}
                 />
