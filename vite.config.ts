@@ -11,6 +11,7 @@ export default defineConfig(({ isSsrBuild, command }) => ({
       ? {
           output: {
             sourcemap: false,
+            format: 'esm'
           },
         }
       : {
@@ -32,4 +33,8 @@ export default defineConfig(({ isSsrBuild, command }) => ({
   define: {
     __APP_ENV__: JSON.stringify(process.env.VITE_VERCEL_ENV || 'development'),
   },
+  ssr: {
+    // Bundle all dependencies for SSR to avoid module resolution issues
+    noExternal: true
+  }
 }));
