@@ -10,47 +10,53 @@ export default async function handler(request) {
     // Import the build manifest
     const build = await import('../build/server/index.js');
     
-    // Debug: log what's in the build
-    console.log('Build manifest keys:', Object.keys(build));
-    console.log('Build.routes type:', typeof build.routes);
-    console.log('Build.routes:', build.routes);
-    console.log('Build.default:', build.default);
-    
-    // Try different ways to get routes
-    let routes = build.routes || build.default?.routes || build.default;
-    
-    // If routes is still not an array, create a fallback
-    if (!Array.isArray(routes)) {
-      console.log('Routes not found, creating debug response');
-      const debugInfo = {
-        error: 'Routes not found in build',
-        buildKeys: Object.keys(build),
-        buildRoutes: build.routes,
-        buildDefault: build.default,
-        routesType: typeof routes,
-        url: request.url,
-        method: request.method
-      };
-      console.log('Debug info:', JSON.stringify(debugInfo, null, 2));
+    // Convert React Router v7 build routes object to array format expected by createStaticHandler
+    function convertBuildRoutesToArray(buildRoutes) {
+      const routesArray = [];
+      const routeMap = new Map();
       
-      return new Response(`
-        <!DOCTYPE html>
-        <html>
-          <head><title>Debug Info</title></head>
-          <body>
-            <h1>Debug Information</h1>
-            <pre style="background: #f5f5f5; padding: 20px; overflow: auto;">
-${JSON.stringify(debugInfo, null, 2)}
-            </pre>
-          </body>
-        </html>
-      `, {
-        status: 200,
-        headers: { 'Content-Type': 'text/html' }
-      });
+      // First pass: create route objects
+      for (const [routeId, route] of Object.entries(buildRoutes)) {
+        const routeObj = {
+          id: route.id,
+          path: route.path || undefined,
+          index: route.index || undefined,
+          // We'll need to load the actual component modules later
+          Component: () => null, // Placeholder for now
+        };
+        
+        routeMap.set(routeId, routeObj);
+        
+        // Root route goes directly into array
+        if (routeId === 'root') {
+          routesArray.push(routeObj);
+        }
+      }
+      
+      // Second pass: build hierarchy
+      for (const [routeId, route] of Object.entries(buildRoutes)) {
+        if (route.parentId && routeMap.has(route.parentId)) {
+          const parentRoute = routeMap.get(route.parentId);
+          const childRoute = routeMap.get(routeId);
+          
+          if (!parentRoute.children) {
+            parentRoute.children = [];
+          }
+          parentRoute.children.push(childRoute);
+        }
+      }
+      
+      return routesArray;
     }
     
-    console.log('Found routes:', routes.length, 'routes');
+    // Get routes from build and convert to proper format
+    const buildRoutes = build.routes;
+    if (!buildRoutes || typeof buildRoutes !== 'object') {
+      throw new Error('No routes found in build manifest');
+    }
+    
+    const routes = convertBuildRoutesToArray(buildRoutes);
+    console.log('Converted routes:', routes.length, 'top-level routes');
     
     // Create static handler
     const { query, dataRoutes } = createStaticHandler(routes);
