@@ -8,7 +8,7 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
-  external_node_modules = ["@react-router/node"]
+  external_node_modules = ["@react-router/node", "isbot"]
   # Include the React Router server build in the function bundle
   included_files = ["build/server/**"]
 
