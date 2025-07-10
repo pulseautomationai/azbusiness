@@ -200,7 +200,7 @@ class CSVImporter {
           email: data.email || undefined,
           website: data.website,
           address: data.address,
-          city: data.city,
+          city: this.normalizeCityName(data.city),
           state: data.state,
           zip: data.zip,
           categoryId: categoryId,
@@ -318,6 +318,20 @@ class CSVImporter {
         console.log(`  ... and ${this.stats.errorDetails.length - 5} more errors`);
       }
     }
+  }
+
+  /**
+   * Normalize city names to match the cities table format
+   * Example: "phoenix" -> "Phoenix", "scottsdale" -> "Scottsdale"
+   */
+  private normalizeCityName(city: string): string {
+    if (!city) return '';
+    
+    // Trim whitespace and capitalize first letter of each word
+    return city.trim()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 }
 

@@ -38,7 +38,11 @@ export const getBusinesses = query({
         .first();
       
       if (city) {
-        businesses = businesses.filter(b => b.city === city.name);
+        // Use case-insensitive comparison and normalize whitespace
+        const cityNameLower = city.name.toLowerCase().trim();
+        businesses = businesses.filter(b => 
+          b.city.toLowerCase().trim() === cityNameLower
+        );
       }
     }
 
@@ -310,3 +314,4 @@ export const updateBusinessUrls = mutation({
     return { success: true };
   },
 });
+

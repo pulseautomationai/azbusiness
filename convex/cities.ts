@@ -76,11 +76,17 @@ export const getCitiesWithCount = query({
     // Get business count for each city
     const citiesWithCount = await Promise.all(
       cities.map(async (city) => {
-        const businesses = await ctx.db
+        // Get all active businesses and filter by city with case-insensitive matching
+        const allBusinesses = await ctx.db
           .query("businesses")
-          .withIndex("by_city", (q) => q.eq("city", city.name))
           .filter((q) => q.eq(q.field("active"), true))
           .collect();
+        
+        // Filter businesses by city name (case-insensitive)
+        const cityNameLower = city.name.toLowerCase().trim();
+        const businesses = allBusinesses.filter(b => 
+          b.city.toLowerCase().trim() === cityNameLower
+        );
         
         return {
           ...city,

@@ -1,11 +1,10 @@
-import { getAuth } from "@clerk/react-router/ssr.server";
-import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { MapPin, Users } from "lucide-react";
 import { Link } from "react-router";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/cities";
 
@@ -52,22 +51,10 @@ export async function loader(args: Route.LoaderArgs) {
 */
 
 export default function CitiesPage() {
-  // Temporary mock data for SPA mode
-  const citiesByRegion = {
-    "Phoenix Metro Area": [
-      { name: "Phoenix", slug: "phoenix" },
-      { name: "Scottsdale", slug: "scottsdale" },
-      { name: "Mesa", slug: "mesa" },
-      { name: "Chandler", slug: "chandler" },
-      { name: "Glendale", slug: "glendale" },
-      { name: "Tempe", slug: "tempe" },
-    ],
-    "Tucson Metro Area": [
-      { name: "Tucson", slug: "tucson" },
-      { name: "Oro Valley", slug: "oro-valley" },
-    ],
-  };
-  const cityCountMap = {};
+  // Fetch cities with business counts
+  const citiesWithCount = useQuery(api.cities.getCitiesWithCount);
+  const citiesByRegion = useQuery(api.cities.getCitiesByRegion);
+  
   const regionOrder = [
     "Phoenix Metro Area",
     "Tucson Metro Area",
@@ -76,6 +63,36 @@ export default function CitiesPage() {
     "Eastern Arizona",
     "Other",
   ];
+
+  // Create city count map from data
+  const cityCountMap = citiesWithCount?.reduce((acc, city) => {
+    acc[city.slug] = city.businessCount;
+    return acc;
+  }, {} as Record<string, number>) || {};
+
+  // Debug logging
+  console.log('🏙️ Cities data:', { 
+    citiesByRegion: citiesByRegion ? Object.keys(citiesByRegion) : 'loading',
+    citiesWithCount: citiesWithCount?.length || 'loading',
+    cityCountMap: Object.keys(cityCountMap).length > 0 ? cityCountMap : 'empty'
+  });
+
+  if (!citiesByRegion || !citiesWithCount) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background pt-24">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-4 text-muted-foreground">Loading cities...</p>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -94,7 +111,7 @@ export default function CitiesPage() {
 
             <div className="space-y-12">
               {regionOrder.map((region) => {
-                const cities = citiesByRegion[region];
+                const cities = citiesByRegion?.[region];
                 if (!cities || cities.length === 0) return null;
 
                 return (
@@ -109,7 +126,7 @@ export default function CitiesPage() {
                         const businessCount = cityCountMap[city.slug] || 0;
                         
                         return (
-                          <Link key={city._id} to={`/city/${city.slug}`}>
+                          <Link key={city.slug} to={`/city/${city.slug}`}>
                             <Card className="h-full hover:shadow-lg transition-shadow">
                               <CardHeader>
                                 <CardTitle className="text-lg">
@@ -124,11 +141,9 @@ export default function CitiesPage() {
                                       </>
                                     )}
                                   </span>
-                                  {businessCount > 0 && (
-                                    <Badge variant="secondary">
-                                      {businessCount} {businessCount === 1 ? "business" : "businesses"}
-                                    </Badge>
-                                  )}
+                                  <Badge variant="secondary">
+                                    {businessCount} {businessCount === 1 ? "business" : "businesses"}
+                                  </Badge>
                                 </CardDescription>
                               </CardHeader>
                             </Card>
