@@ -95,12 +95,27 @@ export default async function handler(request) {
     const router = createStaticRouter(dataRoutes, context);
 
     // Render app to string  
-    const html = renderToString(
+    const appHtml = renderToString(
       React.createElement(StaticRouterProvider, { router, context })
     );
 
     // Get status code
     const statusCode = context.statusCode || 200;
+
+    // Create complete HTML document
+    const html = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AZ Business Services - Arizona Local Business Directory</title>
+    <link rel="stylesheet" href="/assets/root-D4hMtljK.css" />
+  </head>
+  <body>
+    <div id="root">${appHtml}</div>
+    <script type="module" src="/assets/entry.client-z4aaqQ3H.js"></script>
+  </body>
+</html>`;
 
     // Collect headers
     const headers = new Headers();
@@ -117,7 +132,7 @@ export default async function handler(request) {
       });
     }
 
-    return new Response(`<!DOCTYPE html>${html}`, {
+    return new Response(html, {
       status: statusCode,
       headers,
     });
