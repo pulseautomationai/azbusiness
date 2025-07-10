@@ -42,11 +42,11 @@ export default async function handler(req, res) {
       ])
     ].filter(Boolean));
     
-    // PHASE 1 DEBUGGING: Skip real routes completely for now
-    console.log('PHASE 1 DEBUG: Skipping real routes to test SSR infrastructure...');
+    // PHASE 1B DEBUGGING: Test with limited routes to isolate issue
+    console.log('PHASE 1B DEBUG: Testing with home route only...');
     
     // Force minimal routes only to test if SSR works without app components
-    const forceMinimalTest = true;
+    const forceMinimalTest = false; // PHASE 1B: Test with home route only
     
     if (!forceMinimalTest) {
       // Add a try-catch around the route import
@@ -63,11 +63,18 @@ export default async function handler(req, res) {
         const routesArray = [];
         const routeMap = new Map();
         
+        // PHASE 1B: Filter routes for testing - start with home route only
+        const allowedRoutes = ['root', 'routes/home']; // Only test root and home route
+        const filteredRoutes = Object.fromEntries(
+          Object.entries(buildRoutes).filter(([routeId]) => allowedRoutes.includes(routeId))
+        );
+        
         // Log each route being processed
-        console.log('Processing routes:', Object.keys(buildRoutes));
+        console.log('All routes:', Object.keys(buildRoutes));
+        console.log('PHASE 1B: Filtered routes for testing:', Object.keys(filteredRoutes));
         
         // First pass: create route objects with error logging
-        for (const [routeId, route] of Object.entries(buildRoutes)) {
+        for (const [routeId, route] of Object.entries(filteredRoutes)) {
           console.log(`Processing route: ${routeId}, path: ${route.path}`);
           
           try {
@@ -100,7 +107,7 @@ export default async function handler(req, res) {
         }
         
         // Second pass: build hierarchy
-        for (const [routeId, route] of Object.entries(buildRoutes)) {
+        for (const [routeId, route] of Object.entries(filteredRoutes)) {
           if (route.parentId && routeMap.has(route.parentId)) {
             const parentRoute = routeMap.get(route.parentId);
             const childRoute = routeMap.get(routeId);
