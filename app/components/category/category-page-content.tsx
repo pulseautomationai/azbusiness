@@ -97,9 +97,18 @@ export default function CategoryPageContent({
     setSearchParams(newParams);
   };
 
+  // Calculate business count per city for this specific category
+  const cityBusinessCounts = cities.reduce((acc, city) => {
+    const businessesInCity = businesses.filter(b => 
+      b.city.toLowerCase().trim() === city.name.toLowerCase().trim()
+    ).length;
+    acc[city.slug] = businessesInCity;
+    return acc;
+  }, {} as Record<string, number>);
+
   const topCities = cities
-    .filter(city => city.businessCount > 0)
-    .sort((a, b) => b.businessCount - a.businessCount)
+    .filter(city => cityBusinessCounts[city.slug] > 0)
+    .sort((a, b) => cityBusinessCounts[b.slug] - cityBusinessCounts[a.slug])
     .slice(0, 10);
 
   return (
@@ -143,7 +152,7 @@ export default function CategoryPageContent({
                   <Separator className="my-1" />
                   {topCities.map((city) => (
                     <SelectItem key={city.slug} value={city.slug}>
-                      {city.name} ({city.businessCount})
+                      {city.name} ({cityBusinessCounts[city.slug]})
                     </SelectItem>
                   ))}
                 </SelectContent>

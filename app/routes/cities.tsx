@@ -70,12 +70,6 @@ export default function CitiesPage() {
     return acc;
   }, {} as Record<string, number>) || {};
 
-  // Debug logging
-  console.log('🏙️ Cities data:', { 
-    citiesByRegion: citiesByRegion ? Object.keys(citiesByRegion) : 'loading',
-    citiesWithCount: citiesWithCount?.length || 'loading',
-    cityCountMap: Object.keys(cityCountMap).length > 0 ? cityCountMap : 'empty'
-  });
 
   if (!citiesByRegion || !citiesWithCount) {
     return (

@@ -315,3 +315,14 @@ export const updateBusinessUrls = mutation({
   },
 });
 
+// Delete a business
+export const deleteBusiness = mutation({
+  args: {
+    businessId: v.id("businesses"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.businessId);
+    return { success: true };
+  },
+});
+
