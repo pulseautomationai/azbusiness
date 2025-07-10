@@ -326,3 +326,29 @@ export const deleteBusiness = mutation({
   },
 });
 
+// Update business featured status
+export const updateBusinessFeaturedStatus = mutation({
+  args: {
+    businessId: v.id("businesses"),
+    featured: v.boolean(),
+    priority: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const updateData: any = {
+      featured: args.featured,
+      updatedAt: Date.now(),
+    };
+
+    // Only update priority if provided
+    if (args.priority !== undefined) {
+      updateData.priority = args.priority;
+    }
+
+    await ctx.db.patch(args.businessId, updateData);
+    
+    // Get the updated business to return
+    const business = await ctx.db.get(args.businessId);
+    return { success: true, business };
+  },
+});
+

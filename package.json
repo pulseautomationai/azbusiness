@@ -9,7 +9,8 @@
     "typecheck": "react-router typegen && tsc",
     "import-csv": "tsx scripts/csv-importer.ts",
     "import-all-csv": "tsx scripts/csv-importer.ts --all",
-    "migrate-urls": "tsx scripts/migrate-business-urls.ts"
+    "migrate-urls": "tsx scripts/migrate-business-urls.ts",
+    "featured-businesses": "tsx scripts/manage-featured-businesses.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.22",

@@ -50,7 +50,11 @@ export default function CategoryPageContent({
   if (selectedCity !== "all") {
     const cityName = cities.find(c => c.slug === selectedCity)?.name;
     if (cityName) {
-      filteredBusinesses = filteredBusinesses.filter(b => b.city === cityName);
+      // Use case-insensitive matching to handle data inconsistencies
+      const cityNameLower = cityName.toLowerCase().trim();
+      filteredBusinesses = filteredBusinesses.filter(b => 
+        b.city.toLowerCase().trim() === cityNameLower
+      );
     }
   }
 
