@@ -1,6 +1,6 @@
-import { getAuth } from "@clerk/react-router/ssr.server";
-import { fetchQuery } from "convex/nextjs";
-import { redirect } from "react-router";
+import { useParams, Navigate } from "react-router";
+import { useQuery } from "convex/react";
+import { useUser } from "@clerk/react-router";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import BusinessProfile from "~/components/business/business-profile";
@@ -29,6 +29,8 @@ export function meta({ data }: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
   const businessSlug = args.params.slug;
@@ -71,17 +73,64 @@ export async function loader(args: Route.LoaderArgs) {
     isOwner: userId === business.ownerId,
   };
 }
+*/
 
-export default function BusinessPage({ loaderData }: Route.ComponentProps) {
+export default function BusinessPage() {
+  const { slug: businessSlug } = useParams();
+  const { user } = useUser();
+  
+  // Fetch business details client-side
+  const business = useQuery(api.businesses.getBusinessBySlug, {
+    slug: businessSlug || "",
+  });
+
+  const isLoading = business === undefined;
+  
+  // If business doesn't exist, redirect to categories
+  if (!isLoading && !business) {
+    return <Navigate to="/categories" replace />;
+  }
+
+  // Get related businesses if we have the business data
+  const relatedBusinesses = useQuery(
+    api.businesses.getBusinesses,
+    business ? {
+      categorySlug: business.category?.slug || "",
+      citySlug: business.city.toLowerCase().replace(/\s+/g, "-"),
+      limit: 4,
+    } : "skip"
+  );
+
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background pt-24">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-lg text-muted-foreground">Loading business information...</div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // Filter out the current business from related businesses and limit to 3
+  const filteredRelatedBusinesses = relatedBusinesses 
+    ? relatedBusinesses.filter(b => b._id !== business._id).slice(0, 3)
+    : [];
+
+  const isOwner = user?.id === business.ownerId;
+
   return (
     <>
-      <Header loaderData={loaderData} />
+      <Header />
       <ComponentErrorBoundary componentName="Business Profile">
         <BusinessProfile 
-          business={loaderData.business}
-          relatedBusinesses={loaderData.relatedBusinesses}
-          reviews={loaderData.reviews}
-          isOwner={loaderData.isOwner}
+          business={business}
+          relatedBusinesses={filteredRelatedBusinesses}
+          reviews={[]} // Placeholder for reviews
+          isOwner={isOwner}
         />
       </ComponentErrorBoundary>
       <Footer />

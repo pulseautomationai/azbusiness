@@ -18,17 +18,18 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader() {
-  return {
-    isSignedIn: false, // Simplified for about page
-    hasActiveSubscription: false,
-  };
-}
+// Temporarily disabled for SPA mode
+// export async function loader() {
+//   return {
+//     isSignedIn: false, // Simplified for about page
+//     hasActiveSubscription: false,
+//   };
+// }
 
 export default function AboutPage() {
   return (
     <>
-      <Header loaderData={{ isSignedIn: false, hasActiveSubscription: false }} />
+      <Header />
       <div className="min-h-screen bg-background pt-24">
         {/* Hero Section */}
         <section className="py-16 bg-muted/30">

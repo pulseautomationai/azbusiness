@@ -12,17 +12,18 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader() {
-  return {
-    isSignedIn: false,
-    hasActiveSubscription: false,
-  };
-}
+// Temporarily disabled for SPA mode
+// export async function loader() {
+//   return {
+//     isSignedIn: false,
+//     hasActiveSubscription: false,
+//   };
+// }
 
 export default function PrivacyPage() {
   return (
     <>
-      <Header loaderData={{ isSignedIn: false, hasActiveSubscription: false }} />
+      <Header />
       <div className="min-h-screen bg-background pt-24">
         <section className="py-16">
           <div className="mx-auto max-w-4xl px-6 lg:px-8">
