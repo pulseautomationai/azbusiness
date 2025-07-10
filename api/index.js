@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     
     // Keep the working minimal route as fallback
     const MinimalComponent = () => React.createElement('div', null, [
-      React.createElement('h1', { key: 'title' }, 'Minimal Route Test Working - Fallback Mode'),
+      React.createElement('h1', { key: 'title' }, 'PHASE 1 DEBUG: Minimal Route Test - SSR Infrastructure Check'),
       React.createElement('p', { key: 'url' }, `Current URL: ${String(req.url)}`),
       React.createElement('p', { key: 'timestamp' }, `Server Time: ${new Date().toISOString()}`),
       React.createElement('p', { key: 'source' }, `Route Source: ${String(routeSource)}`),
@@ -33,21 +33,29 @@ export default async function handler(req, res) {
         React.createElement('h3', { key: 'error-title' }, 'Route Error Details'),
         React.createElement('p', { key: 'error-msg' }, `Error: ${String(routeError)}`)
       ]) : null,
-      React.createElement('div', { key: 'info', style: { background: '#f0f0f0', padding: '10px', margin: '10px 0' } }, [
-        React.createElement('h3', { key: 'debug-title' }, 'Debug Info'),
-        React.createElement('p', { key: 'debug1' }, 'Fallback active - real routes failed'),
-        React.createElement('p', { key: 'debug2' }, 'Check console for specific component errors'),
-        React.createElement('p', { key: 'debug3' }, 'Some component is using Router hooks incorrectly')
+      React.createElement('div', { key: 'info', style: { background: '#e6f3ff', padding: '10px', margin: '10px 0' } }, [
+        React.createElement('h3', { key: 'debug-title' }, 'Phase 1 Debug Info'),
+        React.createElement('p', { key: 'debug1' }, '✅ SSR Infrastructure: Working'),
+        React.createElement('p', { key: 'debug2' }, '✅ React Router Static Handler: Working'),
+        React.createElement('p', { key: 'debug3' }, '✅ No React Router hooks in minimal route'),
+        React.createElement('p', { key: 'debug4' }, '🔍 Next: Test individual app routes to isolate the problematic component')
       ])
     ].filter(Boolean));
     
-    // Add a try-catch around the route import
-    console.log('Attempting to import real routes...');
-    try {
-      // Try to import your real routes first
-      const build = await import('../build/server/index.js');
-      
-      if (build.routes && typeof build.routes === 'object') {
+    // PHASE 1 DEBUGGING: Skip real routes completely for now
+    console.log('PHASE 1 DEBUG: Skipping real routes to test SSR infrastructure...');
+    
+    // Force minimal routes only to test if SSR works without app components
+    const forceMinimalTest = true;
+    
+    if (!forceMinimalTest) {
+      // Add a try-catch around the route import
+      console.log('Attempting to import real routes...');
+      try {
+        // Try to import your real routes first
+        const build = await import('../build/server/index.js');
+        
+        if (build.routes && typeof build.routes === 'object') {
         console.log('Real routes imported successfully, converting to array...');
         
         // Convert build routes object to array format
@@ -104,13 +112,14 @@ export default async function handler(req, res) {
           }
         }
         
-        routes = routesArray;
-        routeSource = 'build';
-        console.log(`Successfully converted ${routes.length} routes from build`);
+          routes = routesArray;
+          routeSource = 'build';
+          console.log(`Successfully converted ${routes.length} routes from build`);
+        }
+      } catch (importError) {
+        console.error('Failed to import real routes:', String(importError.message));
+        routeError = `Import failed: ${importError.message}`;
       }
-    } catch (importError) {
-      console.error('Failed to import real routes:', String(importError.message));
-      routeError = `Import failed: ${importError.message}`;
     }
     
     // If import failed, create fallback minimal routes
