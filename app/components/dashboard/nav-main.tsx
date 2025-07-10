@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 import { type Icon } from "@tabler/icons-react";
 
 import { Link, useLocation } from "react-router";
@@ -19,14 +19,21 @@ export const NavMain = memo(({
     icon?: Icon;
   }[];
 }) => {
-  const location = useLocation();
+  // SSR-safe location hook usage
+  const [currentPathname, setCurrentPathname] = useState('/');
+
+  // Initialize location only on client-side
+  useEffect(() => {
+    const location = useLocation();
+    setCurrentPathname(location.pathname);
+  }, []);
 
   const navItems = useMemo(() => 
     items.map((item) => ({
       ...item,
-      isActive: location.pathname === item.url,
+      isActive: currentPathname === item.url,
     })), 
-    [items, location.pathname]
+    [items, currentPathname]
   );
 
   return (

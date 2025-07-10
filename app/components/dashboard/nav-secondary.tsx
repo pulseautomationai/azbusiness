@@ -22,15 +22,22 @@ export function NavSecondary({
     icon: Icon
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
-  const location = useLocation();
+  // SSR-safe location hook usage
+  const [currentPathname, setCurrentPathname] = React.useState('/');
+
+  // Initialize location only on client-side
+  React.useEffect(() => {
+    const location = useLocation();
+    setCurrentPathname(location.pathname);
+  }, []);
 
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => {
-            const isActive = location.pathname === item.url ||
-                           (item.url.startsWith("/dashboard") && location.pathname.startsWith(item.url));
+            const isActive = currentPathname === item.url ||
+                           (item.url.startsWith("/dashboard") && currentPathname.startsWith(item.url));
             const isImplemented = item.url !== "#";
             
             return (

@@ -1,5 +1,5 @@
 import { Search, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
@@ -8,11 +8,20 @@ import { categories } from "../../../convex/seedData";
 import type { Doc } from "../../../convex/_generated/dataModel";
 
 export default function HeroSection({ cities }: { cities: Doc<"cities">[] }) {
-  const navigate = useNavigate();
+  // SSR-safe navigation hook usage
+  const [navigate, setNavigate] = useState<ReturnType<typeof useNavigate> | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
+  // Initialize navigation only on client-side
+  useEffect(() => {
+    setNavigate(useNavigate());
+  }, []);
+
   const handleSearch = () => {
+    // Only navigate if we're on the client-side and have navigate function
+    if (!navigate) return;
+    
     if (selectedCategory && selectedCity) {
       navigate(`/category/${selectedCategory}?city=${selectedCity}`);
     } else if (selectedCategory) {

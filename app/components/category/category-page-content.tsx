@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Star, Filter } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 import { Button } from "~/components/ui/button";
@@ -29,10 +29,19 @@ export default function CategoryPageContent({
   businesses, 
   cities 
 }: CategoryPageContentProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const selectedCity = searchParams.get("city") || "all";
-  const selectedRating = searchParams.get("rating") || "all";
+  // SSR-safe search params hook usage
+  const [searchParams, setSearchParams] = useState<URLSearchParams | null>(null);
+  const [selectedCity, setSelectedCity] = useState("all");
+  const [selectedRating, setSelectedRating] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
+
+  // Initialize search params only on client-side
+  useEffect(() => {
+    const params = useSearchParams();
+    setSearchParams(params[0]);
+    setSelectedCity(params[0].get("city") || "all");
+    setSelectedRating(params[0].get("rating") || "all");
+  }, []);
 
   // Filter businesses
   let filteredBusinesses = [...businesses];
@@ -67,6 +76,7 @@ export default function CategoryPageContent({
   });
 
   const handleCityChange = (city: string) => {
+    if (!searchParams) return;
     const newParams = new URLSearchParams(searchParams);
     if (city === "all") {
       newParams.delete("city");
@@ -77,6 +87,7 @@ export default function CategoryPageContent({
   };
 
   const handleRatingChange = (rating: string) => {
+    if (!searchParams) return;
     const newParams = new URLSearchParams(searchParams);
     if (rating === "all") {
       newParams.delete("rating");
@@ -183,7 +194,11 @@ export default function CategoryPageContent({
                   variant="outline" 
                   className="mt-4"
                   onClick={() => {
-                    setSearchParams(new URLSearchParams());
+                    if (searchParams) {
+                      setSearchParams(new URLSearchParams());
+                    }
+                    setSelectedCity("all");
+                    setSelectedRating("all");
                     setSortBy("featured");
                   }}
                 >
