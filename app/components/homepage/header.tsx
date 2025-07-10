@@ -55,8 +55,14 @@ export const Header = () => {
                 <img 
                   src="/azbusiness1.png" 
                   alt="AZ Business Services"
-                  className="h-15 w-15 rounded-lg object-cover"
+                  className="h-10 w-10 rounded-lg object-cover"
+                  onError={(e) => {
+                    // Fallback to a simple icon if image fails to load
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
                 />
+                <Building2 className="h-10 w-10 text-primary hidden" />
                 <span className="hidden sm:inline">AZ Business Services</span>
                 <span className="sm:hidden">AZ Business</span>
               </Link>
