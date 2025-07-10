@@ -5,11 +5,11 @@ const footerLinks = {
   services: {
     title: "Popular Services",
     links: [
-      { name: "HVAC Services", href: "/category/hvac-services" },
-      { name: "Plumbing", href: "/category/plumbing" },
-      { name: "Electrical", href: "/category/electrical" },
-      { name: "Landscaping", href: "/category/landscaping" },
-      { name: "Home Security", href: "/category/home-security" },
+      { name: "HVAC Services", href: "/hvac-services" },
+      { name: "Plumbing", href: "/plumbing" },
+      { name: "Electrical", href: "/electrical" },
+      { name: "Landscaping", href: "/landscaping" },
+      { name: "Home Security", href: "/home-security" },
     ],
   },
   cities: {

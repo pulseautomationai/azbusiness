@@ -96,8 +96,8 @@ export class SEOGenerator {
     const keywords = `${category.name}, ${city || "Arizona"}, contractors, professionals, local services, ${category.name.toLowerCase()} repair, ${category.name.toLowerCase()} installation`;
 
     const categoryUrl = city 
-      ? `${this.SITE_URL}/category/${category.slug}?city=${city.toLowerCase().replace(/\s+/g, "-")}`
-      : `${this.SITE_URL}/category/${category.slug}`;
+      ? `${this.SITE_URL}/${category.slug}?city=${city.toLowerCase().replace(/\s+/g, "-")}`
+      : `${this.SITE_URL}/${category.slug}`;
 
     return {
       title,
@@ -421,11 +421,11 @@ export class BreadcrumbGenerator {
     if (city) {
       breadcrumbs.push(
         { label: city, url: `/city/${city.toLowerCase().replace(/\s+/g, "-")}`, position: 3 },
-        { label: category.name, url: `/category/${category.slug}?city=${city.toLowerCase().replace(/\s+/g, "-")}`, position: 4 }
+        { label: category.name, url: `/${category.slug}?city=${city.toLowerCase().replace(/\s+/g, "-")}`, position: 4 }
       );
     } else {
       breadcrumbs.push(
-        { label: category.name, url: `/category/${category.slug}`, position: 3 }
+        { label: category.name, url: `/${category.slug}`, position: 3 }
       );
     }
 
@@ -448,7 +448,7 @@ export class BreadcrumbGenerator {
     if (category) {
       breadcrumbs.push(
         { label: "Categories", url: "/categories", position: 2 },
-        { label: category.name, url: `/category/${category.slug}`, position: 3 },
+        { label: category.name, url: `/${category.slug}`, position: 3 },
         { label: business.city, url: `/city/${business.city.toLowerCase().replace(/\s+/g, "-")}`, position: 4 },
         { label: business.name, url: `/business/${business.slug}`, position: 5 }
       );

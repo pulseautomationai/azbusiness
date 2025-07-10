@@ -27,9 +27,9 @@ export default function HeroSection() {
     if (!isClient) return;
     
     if (selectedCategory && selectedCity) {
-      navigate(`/category/${selectedCategory}?city=${selectedCity}`);
+      navigate(`/${selectedCategory}?city=${selectedCity}`);
     } else if (selectedCategory) {
-      navigate(`/category/${selectedCategory}`);
+      navigate(`/${selectedCategory}`);
     } else if (selectedCity) {
       navigate(`/city/${selectedCity}`);
     }
@@ -136,13 +136,13 @@ export default function HeroSection() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <span className="text-sm text-muted-foreground">Popular:</span>
             <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/category/hvac-services">HVAC Services</a>
+              <a href="/hvac-services">HVAC Services</a>
             </Button>
             <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/category/plumbing">Plumbing</a>
+              <a href="/plumbing">Plumbing</a>
             </Button>
             <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/category/electrical">Electrical</a>
+              <a href="/electrical">Electrical</a>
             </Button>
             <Button variant="link" size="sm" asChild className="h-auto p-0">
               <a href="/city/phoenix">Phoenix</a>

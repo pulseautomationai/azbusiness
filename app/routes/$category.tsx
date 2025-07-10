@@ -4,7 +4,7 @@ import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import CategoryPageContent from "~/components/category/category-page-content";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/$category";
 
 export function meta({ params }: Route.MetaArgs) {

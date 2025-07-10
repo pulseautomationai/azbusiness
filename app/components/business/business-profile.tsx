@@ -126,7 +126,7 @@ export default function BusinessProfile({
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                     {business.category && (
                       <Link 
-                        to={`/category/${business.category.slug}`}
+                        to={`/${business.category.slug}`}
                         className="flex items-center gap-1 hover:text-foreground"
                       >
                         {business.category.icon && <span className="text-lg">{business.category.icon}</span>}

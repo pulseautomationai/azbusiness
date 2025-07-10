@@ -144,7 +144,7 @@ export default function CityPageContent({
                   <div key={category._id} className="mb-8">
                     <div className="flex items-center justify-between mb-4">
                       <Link 
-                        to={`/category/${category.slug}?city=${city.slug}`}
+                        to={`/${category.slug}?city=${city.slug}`}
                         className="group flex items-center gap-3 hover:text-primary transition-colors"
                       >
                         <span className="text-2xl">{category.icon}</span>
@@ -163,7 +163,7 @@ export default function CityPageContent({
                     {businesses.length > 3 && (
                       <div className="mt-4 text-center">
                         <Button asChild variant="outline">
-                          <Link to={`/category/${category.slug}?city=${city.slug}`}>
+                          <Link to={`/${category.slug}?city=${city.slug}`}>
                             View All {category.name} ({businesses.length})
                           </Link>
                         </Button>
@@ -225,7 +225,7 @@ export default function CityPageContent({
             <ul>
               {categories.slice(0, 5).map((category) => (
                 <li key={category._id}>
-                  <Link to={`/category/${category.slug}?city=${city.slug}`} className="text-primary hover:underline">
+                  <Link to={`/${category.slug}?city=${city.slug}`} className="text-primary hover:underline">
                     {category.name}
                   </Link> - {category.cityBusinessCount} local providers
                 </li>

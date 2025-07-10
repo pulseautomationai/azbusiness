@@ -15,12 +15,14 @@ export default [
   
   // Business directory routes
   route("categories", "routes/categories.tsx"),
-  route("category/:category", "routes/category/$category.tsx"),
   route("cities", "routes/cities.tsx"),
   route("city/:city", "routes/city/$city.tsx"),
   
   // New URL structure: /[category]/[city]/[businessName]
   route(":category/:city/:businessName", "routes/[$category].[$city].[$businessName].tsx"),
+  
+  // Category routes at root level (must come after more specific routes)
+  route(":category", "routes/$category.tsx"),
   
   // Keep old business route temporarily for migration
   route("business/:slug", "routes/business/$slug.tsx"),

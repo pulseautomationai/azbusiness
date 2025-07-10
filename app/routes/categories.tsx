@@ -68,7 +68,7 @@ export default function CategoriesPage() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {categories.map((category) => (
-                <Link key={category._id} to={`/category/${category.slug}`}>
+                <Link key={category._id} to={`/${category.slug}`}>
                   <Card className="h-full hover:shadow-lg transition-shadow">
                     <CardHeader>
                       <div className="flex items-center gap-3">
