@@ -17,99 +17,45 @@ export default async function handler(req, res) {
     // Import React Router's createStaticHandler, createStaticRouter, and StaticRouterProvider
     const { createStaticHandler, createStaticRouter, StaticRouterProvider } = await import('react-router');
     
-    // Try to import the user's routes file, but wrap in try-catch
+    // Create minimal routes array with simple components that don't use React Router hooks
     let routes = [];
-    let routeSource = 'fallback';
+    let routeSource = 'minimal';
     
-    try {
-      // Try to import build routes first
-      const build = await import('../build/server/index.js');
-      if (build.routes && typeof build.routes === 'object') {
-        // Convert build routes object to array format
-        const buildRoutes = build.routes;
-        const routesArray = [];
-        const routeMap = new Map();
-        
-        // First pass: create route objects
-        for (const [routeId, route] of Object.entries(buildRoutes)) {
-          const routeObj = {
-            id: route.id,
-            path: route.path || undefined,
-            index: route.index || undefined,
-            Component: route.module?.default || (() => React.createElement('div', null, `Route: ${String(routeId)}`)),
-            loader: route.module?.loader,
-            action: route.module?.action,
-          };
-          
-          routeMap.set(routeId, routeObj);
-          
-          // Root route goes directly into array
-          if (routeId === 'root') {
-            routesArray.push(routeObj);
-          }
-        }
-        
-        // Second pass: build hierarchy
-        for (const [routeId, route] of Object.entries(buildRoutes)) {
-          if (route.parentId && routeMap.has(route.parentId)) {
-            const parentRoute = routeMap.get(route.parentId);
-            const childRoute = routeMap.get(routeId);
-            
-            if (!parentRoute.children) {
-              parentRoute.children = [];
-            }
-            parentRoute.children.push(childRoute);
-          }
-        }
-        
-        routes = routesArray;
-        routeSource = 'build';
-      }
-    } catch (buildError) {
-      console.log('Could not load build routes:', String(buildError.message));
-      
-      // Try app routes as fallback
-      try {
-        const appRoutes = await import('../app/routes.ts');
-        routes = appRoutes.default || appRoutes.routes || [];
-        routeSource = 'app';
-      } catch (appError) {
-        console.log('Could not load app routes:', String(appError.message));
-      }
-    }
+    console.log('Creating minimal routes for testing...');
     
-    // If route import fails, create a fallback route that matches all paths
-    if (!routes || routes.length === 0) {
-      routes = [
-        {
-          id: 'root',
-          path: '/',
-          Component: ({ children }) => React.createElement('div', null, [
-            React.createElement('h1', { key: 'title' }, 'React Router v7 - Step 2 Working!'),
-            React.createElement('p', { key: 'info' }, `Route source: ${String(routeSource)}`),
-            React.createElement('p', { key: 'url' }, `Current URL: ${String(req.url)}`),
-            children
-          ]),
-          children: [
-            {
-              id: 'catch-all',
-              path: '*',
-              Component: () => React.createElement('div', null, [
-                React.createElement('h2', { key: 'catch-title' }, 'Fallback Route'),
-                React.createElement('p', { key: 'catch-msg' }, 'This is a fallback route showing React Router is working!')
-              ])
-            }
-          ]
-        }
-      ];
-      routeSource = 'fallback';
-    }
+    // Create simple React element that shows minimal route test
+    const MinimalComponent = () => React.createElement('div', null, [
+      React.createElement('h1', { key: 'title' }, 'Minimal Route Test Working'),
+      React.createElement('p', { key: 'url' }, `Current URL: ${String(req.url)}`),
+      React.createElement('p', { key: 'timestamp' }, `Server Time: ${new Date().toISOString()}`),
+      React.createElement('p', { key: 'source' }, `Route Source: ${String(routeSource)}`),
+      React.createElement('p', { key: 'method' }, `Method: ${String(req.method)}`),
+      React.createElement('div', { key: 'info', style: { background: '#f0f0f0', padding: '10px', margin: '10px 0' } }, [
+        React.createElement('h3', { key: 'debug-title' }, 'Debug Info'),
+        React.createElement('p', { key: 'debug1' }, 'No React Router hooks used in this component'),
+        React.createElement('p', { key: 'debug2' }, 'Testing basic StaticRouterProvider context'),
+        React.createElement('p', { key: 'debug3' }, 'This should render without useContext errors')
+      ])
+    ]);
+    
+    // Create an array with one route that matches all paths
+    routes = [
+      {
+        id: 'minimal-test',
+        path: '*',
+        Component: MinimalComponent
+      }
+    ];
+    
+    console.log('Minimal routes created successfully:', routes.length);
     
     // Log how many routes were loaded for debugging
     console.log(`Loaded ${routes.length} routes from ${routeSource}`);
     
     // Create a static handler using createStaticHandler with the imported routes
+    console.log('Creating StaticHandler...');
     const { query, dataRoutes } = createStaticHandler(routes);
+    console.log('StaticHandler created successfully');
     
     // Convert the incoming req object to a proper URL and Request object for React Router
     const protocol = req.headers['x-forwarded-proto'] || 'https';
@@ -151,11 +97,14 @@ export default async function handler(req, res) {
     }
     
     // Create a static router and render using StaticRouterProvider
+    console.log('Creating StaticRouter...');
     const router = createStaticRouter(dataRoutes, context);
+    console.log('StaticRouter created successfully');
     
     // Add error boundary and proper context setup
     let reactHtml;
     try {
+      console.log('Creating StaticRouterProvider element...');
       // Wrap the StaticRouterProvider in React.StrictMode for proper context
       const routerElement = React.createElement(StaticRouterProvider, { 
         router: router, 
@@ -163,9 +112,11 @@ export default async function handler(req, res) {
       });
       
       const appElement = React.createElement(React.StrictMode, null, routerElement);
+      console.log('About to call renderToString...');
       
       // Use renderToString to convert React element to HTML with error isolation
       reactHtml = renderToString(appElement);
+      console.log('renderToString completed successfully');
     } catch (renderError) {
       console.error('React Router render error:', String(renderError.message));
       
