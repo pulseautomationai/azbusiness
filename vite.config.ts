@@ -3,38 +3,19 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-export default defineConfig(({ isSsrBuild, command }) => ({
+export default defineConfig({
   build: {
-    // Disable sourcemaps to fix the warnings
-    sourcemap: false,
-    rollupOptions: isSsrBuild
-      ? {
-          output: {
-            sourcemap: false,
-            format: 'esm'
-          },
-        }
-      : {
-          output: {
-            sourcemap: false,
-          },
-        },
+    target: 'es2015',
   },
   plugins: [
     tailwindcss(), 
-    reactRouter({
-      ssr: true,
-    }), 
+    reactRouter(), 
     tsconfigPaths()
   ],
   server: {
-    port: process.env.PORT as unknown as number || 5173,
+    port: Number(process.env.PORT) || 5173,
   },
   define: {
     __APP_ENV__: JSON.stringify(process.env.VITE_VERCEL_ENV || 'development'),
   },
-  ssr: {
-    // Bundle all dependencies for SSR to avoid module resolution issues
-    noExternal: true
-  }
-}));
+});

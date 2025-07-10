@@ -2,8 +2,8 @@ import type { Config } from "@react-router/dev/config";
 
 export default {
   ssr: true,
-  serverBuildFile: "index.js",
   serverModuleFormat: "esm",
+  serverPlatform: "node",
   
   buildEnd: async ({ buildManifest, serverBuildPath }) => {
     console.log("Build completed successfully!");

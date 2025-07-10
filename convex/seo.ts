@@ -67,10 +67,10 @@ export const getSitemapData = query({
         slug: business.slug,
         name: business.name,
         city: business.city,
-        category: business.category,
+        categoryId: business.categoryId,
         planTier: business.planTier,
         logo: business.logo,
-        images: business.images,
+        heroImage: business.heroImage,
         updatedAt: business.updatedAt,
         createdAt: business.createdAt,
       })),
@@ -117,8 +117,8 @@ export const getBusinessStructuredData = query({
     const business = await ctx.db.get(businessId);
     if (!business) return null;
 
-    const category = business.category 
-      ? await ctx.db.query("categories").filter(q => q.eq(q.field("slug"), business.category.slug)).first()
+    const category = business.categoryId 
+      ? await ctx.db.get(business.categoryId)
       : null;
 
     return {
@@ -137,8 +137,8 @@ export const getBusinessSEOData = query({
     const business = await ctx.db.get(businessId);
     if (!business) return null;
 
-    const category = business.category 
-      ? await ctx.db.query("categories").filter(q => q.eq(q.field("slug"), business.category.slug)).first()
+    const category = business.categoryId 
+      ? await ctx.db.get(business.categoryId)
       : null;
 
     // Get related businesses for "related" schema
