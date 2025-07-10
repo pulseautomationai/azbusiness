@@ -15,7 +15,9 @@ export default function HeroSection({ cities }: { cities: Doc<"cities">[] }) {
 
   // Initialize navigation only on client-side
   useEffect(() => {
-    setNavigate(useNavigate());
+    if (typeof window !== 'undefined') {
+      setNavigate(useNavigate());
+    }
   }, []);
 
   const handleSearch = () => {
