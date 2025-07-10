@@ -49,91 +49,44 @@ export default async function handler(req, res) {
     const forceMinimalTest = false; // PHASE 1B: Test with home route only
     
     if (!forceMinimalTest) {
-      // Add a try-catch around the route import
-      console.log('Attempting to import real routes...');
+      // PHASE 1E: Skip route module imports entirely and create manual routes
+      console.log('PHASE 1E: Creating manual routes without importing modules...');
       try {
-        // Try to import your real routes first
-        const build = await import('../build/server/index.js');
-        
-        if (build.routes && typeof build.routes === 'object') {
-        console.log('Real routes imported successfully, converting to array...');
-        
-        // Convert build routes object to array format
-        const buildRoutes = build.routes;
-        const routesArray = [];
-        const routeMap = new Map();
-        
-        // PHASE 1B: Filter routes for testing - start with home route only
-        const allowedRoutes = ['root', 'routes/home']; // Only test root and home route
-        const filteredRoutes = Object.fromEntries(
-          Object.entries(buildRoutes).filter(([routeId]) => allowedRoutes.includes(routeId))
-        );
-        
-        // Log each route being processed
-        console.log('All routes:', Object.keys(buildRoutes));
-        console.log('PHASE 1B: Filtered routes for testing:', Object.keys(filteredRoutes));
-        
-        // First pass: create route objects with error logging
-        for (const [routeId, route] of Object.entries(filteredRoutes)) {
-          console.log(`Processing route: ${routeId}, path: ${route.path}`);
-          
-          try {
-            const routeObj = {
-              id: route.id,
-              path: route.path || undefined,
-              index: route.index || undefined,
-              // PHASE 1C: Wrap problematic routes with minimal components for testing
-              Component: routeId === 'routes/home' ? (() => {
-                console.log(`PHASE 1C: Using minimal home component to isolate issue`);
+        // Create routes manually without importing any modules
+        const manualRoutes = [
+          {
+            id: 'root',
+            path: '/',
+            Component: () => {
+              console.log('PHASE 1E: Manual root component - no imports');
+              return React.createElement('div', null, [
+                React.createElement('h1', { key: 'title', style: { padding: '40px' } }, 'PHASE 1E: Manual Routes Test'),
+                React.createElement('p', { key: 'msg' }, 'Testing routes without any module imports'),
+                React.createElement('p', { key: 'debug' }, 'This completely bypasses all app code imports'),
+                React.createElement('p', { key: 'debug2' }, 'If this works: issue is in component imports/evaluations')
+              ]);
+            },
+            children: [{
+              id: 'routes/home',
+              path: '/home',
+              index: true,
+              Component: () => {
+                console.log('PHASE 1E: Manual home component - no imports');
                 return React.createElement('div', null, [
-                  React.createElement('h1', { key: 'title', style: { padding: '40px' } }, 'PHASE 1C: Minimal Home Route Test'),
-                  React.createElement('p', { key: 'msg' }, 'Testing if home route works without complex components'),
-                  React.createElement('p', { key: 'debug' }, 'If this works: issue is in home route components'),
-                  React.createElement('p', { key: 'debug2' }, 'If this fails: issue is in route loading itself')
+                  React.createElement('h2', { key: 'title' }, 'Manual Home Route'),
+                  React.createElement('p', { key: 'msg' }, 'No component imports, no loaders, no hooks')
                 ]);
-              }) : route.module?.default || (() => {
-                console.log(`Fallback component for route: ${String(routeId)}`);
-                return React.createElement('div', null, [
-                  React.createElement('h2', { key: 'title' }, `Route: ${String(routeId)}`),
-                  React.createElement('p', { key: 'msg' }, 'Component not found or failed to load')
-                ]);
-              }),
-              loader: route.module?.loader,
-              action: route.module?.action,
-            };
-            
-            routeMap.set(routeId, routeObj);
-            
-            // Root route goes directly into array
-            if (routeId === 'root') {
-              routesArray.push(routeObj);
-            }
-          } catch (routeProcessError) {
-            console.error(`Error processing route ${routeId}:`, String(routeProcessError.message));
-            routeError = `Route ${routeId}: ${routeProcessError.message}`;
+              }
+            }]
           }
-        }
+        ];
         
-        // Second pass: build hierarchy
-        for (const [routeId, route] of Object.entries(filteredRoutes)) {
-          if (route.parentId && routeMap.has(route.parentId)) {
-            const parentRoute = routeMap.get(route.parentId);
-            const childRoute = routeMap.get(routeId);
-            
-            if (!parentRoute.children) {
-              parentRoute.children = [];
-            }
-            parentRoute.children.push(childRoute);
-          }
-        }
-        
-          routes = routesArray;
-          routeSource = 'build';
-          console.log(`Successfully converted ${routes.length} routes from build`);
-        }
-      } catch (importError) {
-        console.error('Failed to import real routes:', String(importError.message));
-        routeError = `Import failed: ${importError.message}`;
+        routes = manualRoutes;
+        routeSource = 'manual';
+        console.log(`Created ${routes.length} manual routes`);
+      } catch (manualError) {
+        console.error('Failed to create manual routes:', String(manualError.message));
+        routeError = `Manual route creation failed: ${manualError.message}`;
       }
     }
     
