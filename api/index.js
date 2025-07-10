@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Import React and ReactDOM server-side rendering functions using dynamic imports
+    // Import React correctly for JSX createElement context
     const React = await import('react');
     const { renderToString } = await import('react-dom/server');
     
@@ -153,13 +153,32 @@ export default async function handler(req, res) {
     // Create a static router and render using StaticRouterProvider
     const router = createStaticRouter(dataRoutes, context);
     
-    const reactElement = React.createElement(StaticRouterProvider, { 
-      router: router, 
-      context: context 
-    });
-    
-    // Use renderToString to convert React element to HTML
-    const reactHtml = renderToString(reactElement);
+    // Add error boundary and proper context setup
+    let reactHtml;
+    try {
+      // Wrap the StaticRouterProvider in React.StrictMode for proper context
+      const routerElement = React.createElement(StaticRouterProvider, { 
+        router: router, 
+        context: context 
+      });
+      
+      const appElement = React.createElement(React.StrictMode, null, routerElement);
+      
+      // Use renderToString to convert React element to HTML with error isolation
+      reactHtml = renderToString(appElement);
+    } catch (renderError) {
+      console.error('React Router render error:', String(renderError.message));
+      
+      // Fallback to simple message if router context fails
+      const fallbackElement = React.createElement('div', null, [
+        React.createElement('h1', { key: 'title' }, 'React Router v7 - Context Error'),
+        React.createElement('p', { key: 'error' }, `Render Error: ${String(renderError.message)}`),
+        React.createElement('p', { key: 'url' }, `URL: ${String(req.url)}`),
+        React.createElement('p', { key: 'routes' }, `Routes loaded: ${routes.length} from ${String(routeSource)}`)
+      ]);
+      
+      reactHtml = renderToString(fallbackElement);
+    }
     
     // Get status code from context
     const statusCode = context.statusCode || 200;
