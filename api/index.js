@@ -82,8 +82,16 @@ export default async function handler(req, res) {
               id: route.id,
               path: route.path || undefined,
               index: route.index || undefined,
-              // Wrap components with error boundaries
-              Component: route.module?.default || (() => {
+              // PHASE 1C: Wrap problematic routes with minimal components for testing
+              Component: routeId === 'routes/home' ? (() => {
+                console.log(`PHASE 1C: Using minimal home component to isolate issue`);
+                return React.createElement('div', null, [
+                  React.createElement('h1', { key: 'title', style: { padding: '40px' } }, 'PHASE 1C: Minimal Home Route Test'),
+                  React.createElement('p', { key: 'msg' }, 'Testing if home route works without complex components'),
+                  React.createElement('p', { key: 'debug' }, 'If this works: issue is in home route components'),
+                  React.createElement('p', { key: 'debug2' }, 'If this fails: issue is in route loading itself')
+                ]);
+              }) : route.module?.default || (() => {
                 console.log(`Fallback component for route: ${String(routeId)}`);
                 return React.createElement('div', null, [
                   React.createElement('h2', { key: 'title' }, `Route: ${String(routeId)}`),
