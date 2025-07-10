@@ -102,6 +102,27 @@ export default async function handler(request) {
     // Get status code
     const statusCode = context.statusCode || 200;
 
+    // Get assets from build manifest
+    const assets = build.assets || {};
+    const entry = build.entry || {};
+    
+    // Find CSS and JS files
+    let cssFile = '';
+    let jsFile = entry.module || '';
+    
+    // Look for root CSS in assets
+    if (assets && assets.routes && assets.routes.root) {
+      const rootAssets = assets.routes.root;
+      if (rootAssets.css && rootAssets.css.length > 0) {
+        cssFile = rootAssets.css[0];
+      }
+    }
+    
+    // Log assets for debugging
+    console.log('Build entry:', entry);
+    console.log('CSS file:', cssFile);
+    console.log('JS file:', jsFile);
+    
     // Create complete HTML document
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -109,11 +130,11 @@ export default async function handler(request) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AZ Business Services - Arizona Local Business Directory</title>
-    <link rel="stylesheet" href="/assets/root-D4hMtljK.css" />
+    ${cssFile ? `<link rel="stylesheet" href="${cssFile}" />` : ''}
   </head>
   <body>
     <div id="root">${appHtml}</div>
-    <script type="module" src="/assets/entry.client-z4aaqQ3H.js"></script>
+    ${jsFile ? `<script type="module" src="${jsFile}"></script>` : ''}
   </body>
 </html>`;
 
