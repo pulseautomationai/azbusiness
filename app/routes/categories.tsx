@@ -1,5 +1,6 @@
 import { getAuth } from "@clerk/react-router/ssr.server";
 import { fetchQuery } from "convex/nextjs";
+import { useQuery } from "convex/react";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -19,6 +20,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -37,11 +40,15 @@ export async function loader(args: Route.LoaderArgs) {
     categories: categories || [],
   };
 }
+*/
 
-export default function CategoriesPage({ loaderData }: Route.ComponentProps) {
+export default function CategoriesPage() {
+  // Fetch categories client-side
+  const categories = useQuery(api.categories.getCategoriesWithCount) || [];
+  const isLoading = categories === undefined;
   return (
     <>
-      <Header loaderData={loaderData} />
+      <Header />
       <div className="min-h-screen bg-background pt-24">
         <section className="py-12">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -54,8 +61,13 @@ export default function CategoriesPage({ loaderData }: Route.ComponentProps) {
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {loaderData.categories.map((category) => (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-lg text-muted-foreground">Loading categories...</div>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {categories.map((category) => (
                 <Link key={category._id} to={`/category/${category.slug}`}>
                   <Card className="h-full hover:shadow-lg transition-shadow">
                     <CardHeader>
@@ -77,8 +89,9 @@ export default function CategoriesPage({ loaderData }: Route.ComponentProps) {
                     </CardHeader>
                   </Card>
                 </Link>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>

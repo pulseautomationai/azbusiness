@@ -1,6 +1,7 @@
 import { getAuth } from "@clerk/react-router/ssr.server";
 import { fetchQuery } from "convex/nextjs";
-import { redirect, useLoaderData } from "react-router";
+import { redirect, useLoaderData, Navigate } from "react-router";
+import { useUser } from "@clerk/react-router";
 import { AppSidebar } from "~/components/dashboard/app-sidebar";
 import { SiteHeader } from "~/components/dashboard/site-header";
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
@@ -9,6 +10,8 @@ import type { Route } from "./+types/layout";
 import { createClerkClient } from "@clerk/react-router/api.server";
 import { Outlet } from "react-router";
 
+// Temporarily disabled for SPA mode - using client-side auth instead
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -38,9 +41,19 @@ export async function loader(args: Route.LoaderArgs) {
 
   return { user };
 }
+*/
 
 export default function DashboardLayout() {
-  const { user } = useLoaderData();
+  const { user, isLoaded } = useUser();
+  
+  // Client-side auth protection
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/sign-in" replace />;
+  }
 
   return (
     <SidebarProvider

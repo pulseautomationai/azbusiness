@@ -1,15 +1,18 @@
 import { Search, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useQuery } from "convex/react";
 import { Button } from "~/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Card } from "~/components/ui/card";
 import { categories } from "../../../convex/seedData";
+import { api } from "../../../convex/_generated/api";
 import type { Doc } from "../../../convex/_generated/dataModel";
 
-export default function HeroSection({ cities }: { cities: Doc<"cities">[] }) {
+export default function HeroSection() {
   // Call hooks at top level - this is the correct React pattern
   const navigate = useNavigate();
+  const cities = useQuery(api.cities.getCities) || [];
   const [isClient, setIsClient] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCity, setSelectedCity] = useState("");

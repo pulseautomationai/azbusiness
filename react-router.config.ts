@@ -1,8 +1,8 @@
 import type { Config } from "@react-router/dev/config";
 
 export default {
-  // Ensure SSR is set to true
-  ssr: true,
+  // Use SPA mode due to React Router v7 + Vite 6 compatibility issues
+  ssr: false,
   
   // Set serverBuildFile to "index.js"
   serverBuildFile: "index.js",

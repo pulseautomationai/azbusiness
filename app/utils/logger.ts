@@ -10,7 +10,8 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDevelopment = process.env.NODE_ENV === 'development';
+  private isDevelopment = import.meta.env.DEV;
+  private logPerformance = import.meta.env.PROD || import.meta.env.VITE_DEBUG_PERFORMANCE;
 
   private formatTimestamp(): string {
     return new Date().toISOString();
@@ -68,6 +69,14 @@ class Logger {
   }
 
   info(message: string, data?: any, context?: string): void {
+    // Skip performance logs unless specifically enabled
+    if (message.includes('[PERFORMANCE]') && !this.logPerformance) {
+      return;
+    }
+    // Also skip other verbose performance-related logs
+    if (this.isDevelopment && (message.includes('PERFORMANCE') || message.includes('TIMING'))) {
+      return;
+    }
     this.log('info', message, data, undefined, context);
   }
 

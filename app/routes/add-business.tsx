@@ -1,4 +1,4 @@
-import { getAuth } from "@clerk/react-router/ssr.server";
+import { useUser } from "@clerk/react-router";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -19,6 +19,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -27,11 +29,14 @@ export async function loader(args: Route.LoaderArgs) {
     hasActiveSubscription: false, // Simplified for add-business page
   };
 }
+*/
 
-export default function AddBusinessPage({ loaderData }: Route.ComponentProps) {
+export default function AddBusinessPage() {
+  const { isSignedIn } = useUser();
+  
   return (
     <>
-      <Header loaderData={loaderData} />
+      <Header />
       <div className="min-h-screen bg-background pt-24">
         <section className="py-16">
           <div className="mx-auto max-w-4xl px-6 lg:px-8">
@@ -120,7 +125,7 @@ export default function AddBusinessPage({ loaderData }: Route.ComponentProps) {
 
             {/* CTA */}
             <div className="text-center">
-              {loaderData.isSignedIn ? (
+              {isSignedIn ? (
                 <Button size="lg" asChild>
                   <Link to="/dashboard">
                     Go to Dashboard

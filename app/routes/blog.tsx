@@ -19,6 +19,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -59,11 +61,42 @@ export async function loader(args: Route.LoaderArgs) {
     posts: samplePosts,
   };
 }
+*/
 
-export default function BlogPage({ loaderData }: Route.ComponentProps) {
+export default function BlogPage() {
+  // Temporary sample posts for SPA mode
+  const samplePosts = [
+    {
+      id: "1",
+      title: "10 Essential Marketing Tips for Arizona HVAC Companies",
+      excerpt: "Learn how to market your HVAC business effectively in Arizona's unique climate and competitive landscape.",
+      author: "AZ Business Team",
+      publishedAt: "2025-01-05",
+      tags: ["HVAC", "Marketing", "Phoenix"],
+      slug: "hvac-marketing-tips-arizona",
+    },
+    {
+      id: "2", 
+      title: "Best Practices for Local SEO in Arizona Cities",
+      excerpt: "Dominate local search results in Phoenix, Tucson, Mesa, and other Arizona markets with these proven SEO strategies.",
+      author: "SEO Expert",
+      publishedAt: "2025-01-03",
+      tags: ["SEO", "Local Business", "Digital Marketing"],
+      slug: "local-seo-arizona-cities",
+    },
+    {
+      id: "3",
+      title: "How to Handle Summer Seasonality for Arizona Businesses",
+      excerpt: "Navigate the unique challenges of Arizona's extreme summer heat and its impact on customer behavior and business operations.",
+      author: "Business Coach",
+      publishedAt: "2025-01-01",
+      tags: ["Business Strategy", "Seasonal", "Arizona"],
+      slug: "seasonal-business-strategies-arizona",
+    },
+  ];
   return (
     <>
-      <Header loaderData={loaderData} />
+      <Header />
       <div className="min-h-screen bg-background pt-24">
         <section className="py-16">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
@@ -84,36 +117,36 @@ export default function BlogPage({ loaderData }: Route.ComponentProps) {
                     <Badge className="w-fit mb-4">Featured Post</Badge>
                     <CardTitle className="text-2xl">
                       <Link 
-                        to={`/blog/${loaderData.posts[0].slug}`}
+                        to={`/blog/${samplePosts[0].slug}`}
                         className="hover:text-primary transition-colors"
                       >
-                        {loaderData.posts[0].title}
+                        {samplePosts[0].title}
                       </Link>
                     </CardTitle>
                     <CardDescription className="text-base">
-                      {loaderData.posts[0].excerpt}
+                      {samplePosts[0].excerpt}
                     </CardDescription>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <User className="h-4 w-4" />
-                        {loaderData.posts[0].author}
+                        {samplePosts[0].author}
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        {new Date(loaderData.posts[0].publishedAt).toLocaleDateString()}
+                        {new Date(samplePosts[0].publishedAt).toLocaleDateString()}
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {loaderData.posts[0].tags.map((tag) => (
+                      {samplePosts[0].tags.map((tag) => (
                         <Badge key={tag} variant="secondary">
                           {tag}
                         </Badge>
                       ))}
                     </div>
                     <Link 
-                      to={`/blog/${loaderData.posts[0].slug}`}
+                      to={`/blog/${samplePosts[0].slug}`}
                       className="inline-flex items-center text-primary hover:underline"
                     >
                       Read More
@@ -125,7 +158,7 @@ export default function BlogPage({ loaderData }: Route.ComponentProps) {
                 {/* Recent Posts */}
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold">Recent Posts</h2>
-                  {loaderData.posts.slice(1).map((post) => (
+                  {samplePosts.slice(1).map((post) => (
                     <Card key={post.id}>
                       <CardHeader>
                         <CardTitle>

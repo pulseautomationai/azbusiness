@@ -15,6 +15,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { Analytics } from "@vercel/analytics/react";
 import { usePerformanceMonitoring } from "./hooks/usePerformanceMonitoring";
+import { HydrateFallback } from "./components/hydrate-fallback";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -42,20 +43,6 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
   
-  // Preload critical assets
-  {
-    rel: "preload",
-    href: "/rsk.png",
-    as: "image",
-    type: "image/png",
-  },
-  {
-    rel: "preload",
-    href: "/favicon.png", 
-    as: "image",
-    type: "image/png",
-  },
-  
   // Icon
   {
     rel: "icon",
@@ -74,7 +61,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Analytics />
+        <Analytics debug={false} />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -92,6 +79,7 @@ function PerformanceMonitor({ children }: { children: React.ReactNode }) {
 export default function App({ loaderData }: Route.ComponentProps) {
   return (
     <ClerkProvider
+      publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
       loaderData={loaderData}
       signUpFallbackRedirectUrl="/"
       signInFallbackRedirectUrl="/"
@@ -104,6 +92,8 @@ export default function App({ loaderData }: Route.ComponentProps) {
     </ClerkProvider>
   );
 }
+
+export { HydrateFallback };
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";

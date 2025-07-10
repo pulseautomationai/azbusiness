@@ -1,6 +1,5 @@
-import { getAuth } from "@clerk/react-router/ssr.server";
-import { fetchQuery } from "convex/nextjs";
-import { redirect } from "react-router";
+import { useParams, Navigate } from "react-router";
+import { useQuery } from "convex/react";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import CategoryPageContent from "~/components/category/category-page-content";
@@ -28,6 +27,8 @@ export function meta({ params }: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
   const categorySlug = args.params.category;
@@ -64,16 +65,45 @@ export async function loader(args: Route.LoaderArgs) {
     currentCategorySlug: categorySlug,
   };
 }
+*/
 
-export default function CategoryPage({ loaderData }: Route.ComponentProps) {
+export default function CategoryPage() {
+  const { category: categorySlug } = useParams();
+  
+  // Fetch data client-side
+  const category = useQuery(api.categories.getCategoryBySlug, { slug: categorySlug || "" });
+  const businesses = useQuery(api.businesses.getBusinesses, { categorySlug: categorySlug || "" });
+  const cities = useQuery(api.cities.getCitiesWithCount, {});
+  
+  const isLoading = category === undefined || businesses === undefined || cities === undefined;
+  
+  // Redirect to categories page if category doesn't exist (once loaded)
+  if (!isLoading && !category) {
+    return <Navigate to="/categories" replace />;
+  }
+  
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background pt-24">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-lg text-muted-foreground">Loading category information...</div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
-      <Header loaderData={loaderData} />
+      <Header />
       <ComponentErrorBoundary componentName="Category Page">
         <CategoryPageContent 
-          category={loaderData.category}
-          businesses={loaderData.businesses}
-          cities={loaderData.cities}
+          category={category}
+          businesses={businesses || []}
+          cities={cities || []}
         />
       </ComponentErrorBoundary>
       <Footer />

@@ -23,6 +23,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -81,8 +83,9 @@ export async function loader(args: Route.LoaderArgs) {
     cities: cities || [],
   };
 }
+*/
 
-export default function Home({ loaderData }: Route.ComponentProps) {
+export default function Home() {
   const seo = SEOGenerator.generateHomepageSEO();
   
   return (
@@ -95,15 +98,15 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         }}
       />
       
-      <Header loaderData={loaderData} />
+      <Header />
       <ComponentErrorBoundary componentName="Hero Section">
-        <HeroSection cities={loaderData.cities} />
+        <HeroSection />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="CTA Cards">
         <CTACards />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="Featured Businesses">
-        <FeaturedBusinesses businesses={loaderData.featuredBusinesses} />
+        <FeaturedBusinesses />
       </ComponentErrorBoundary>
       <Footer />
     </>

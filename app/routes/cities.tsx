@@ -21,6 +21,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -47,8 +49,25 @@ export async function loader(args: Route.LoaderArgs) {
     cityCountMap,
   };
 }
+*/
 
-export default function CitiesPage({ loaderData }: Route.ComponentProps) {
+export default function CitiesPage() {
+  // Temporary mock data for SPA mode
+  const citiesByRegion = {
+    "Phoenix Metro Area": [
+      { name: "Phoenix", slug: "phoenix" },
+      { name: "Scottsdale", slug: "scottsdale" },
+      { name: "Mesa", slug: "mesa" },
+      { name: "Chandler", slug: "chandler" },
+      { name: "Glendale", slug: "glendale" },
+      { name: "Tempe", slug: "tempe" },
+    ],
+    "Tucson Metro Area": [
+      { name: "Tucson", slug: "tucson" },
+      { name: "Oro Valley", slug: "oro-valley" },
+    ],
+  };
+  const cityCountMap = {};
   const regionOrder = [
     "Phoenix Metro Area",
     "Tucson Metro Area",
@@ -60,7 +79,7 @@ export default function CitiesPage({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <Header loaderData={loaderData} />
+      <Header />
       <div className="min-h-screen bg-background pt-24">
         <section className="py-12">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -75,7 +94,7 @@ export default function CitiesPage({ loaderData }: Route.ComponentProps) {
 
             <div className="space-y-12">
               {regionOrder.map((region) => {
-                const cities = loaderData.citiesByRegion[region];
+                const cities = citiesByRegion[region];
                 if (!cities || cities.length === 0) return null;
 
                 return (
@@ -87,7 +106,7 @@ export default function CitiesPage({ loaderData }: Route.ComponentProps) {
                     
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {cities.map((city: any) => {
-                        const businessCount = loaderData.cityCountMap[city.slug] || 0;
+                        const businessCount = cityCountMap[city.slug] || 0;
                         
                         return (
                           <Link key={city._id} to={`/city/${city.slug}`}>

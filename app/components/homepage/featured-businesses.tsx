@@ -1,12 +1,14 @@
 import { Star, Phone, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
+import { useQuery } from "convex/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { ComponentLoading } from "~/components/loading-spinner";
 import { cn } from "~/lib/utils";
 import { SlugGenerator } from "~/utils/slug-generator";
+import { api } from "../../../convex/_generated/api";
 
 interface Business {
   _id: string;
@@ -24,7 +26,8 @@ interface Business {
   services: string[];
 }
 
-export default function FeaturedBusinesses({ businesses }: { businesses: Business[] }) {
+export default function FeaturedBusinesses() {
+  const businesses = useQuery(api.businesses.getFeaturedBusinesses) || [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 3;
   const totalPages = Math.ceil(businesses.length / itemsPerPage);

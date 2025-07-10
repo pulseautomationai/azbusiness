@@ -1,9 +1,7 @@
-import { getAuth } from "@clerk/react-router/ssr.server";
-import { fetchQuery } from "convex/nextjs";
+import { useUser } from "@clerk/react-router";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import PricingSection from "~/components/pricing/pricing-section";
-import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/pricing";
 
 export function meta({}: Route.MetaArgs) {
@@ -20,6 +18,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Temporarily disabled for SPA mode
+/*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -36,12 +36,15 @@ export async function loader(args: Route.LoaderArgs) {
     hasActiveSubscription: subscriptionData?.hasActiveSubscription || false,
   };
 }
+*/
 
-export default function PricingPage({ loaderData }: Route.ComponentProps) {
+export default function PricingPage() {
+  const { isSignedIn } = useUser();
+  
   return (
     <>
-      <Header loaderData={loaderData} />
-      <PricingSection isSignedIn={loaderData.isSignedIn} />
+      <Header />
+      <PricingSection isSignedIn={!!isSignedIn} />
       <Footer />
     </>
   );

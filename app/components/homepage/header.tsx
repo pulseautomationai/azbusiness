@@ -1,5 +1,5 @@
 "use client";
-import { UserButton } from "@clerk/react-router";
+import { UserButton, useUser } from "@clerk/react-router";
 import { Building2, Menu, X, Plus } from "lucide-react";
 import React, { useCallback } from "react";
 import { Link } from "react-router";
@@ -14,11 +14,8 @@ const menuItems = [
   { name: "Pricing", href: "/pricing" },
 ];
 
-export const Header = ({
-  loaderData,
-}: {
-  loaderData?: { isSignedIn: boolean; hasActiveSubscription: boolean };
-}) => {
+export const Header = () => {
+  const { isSignedIn } = useUser();
   const [menuState, setMenuState] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
 
@@ -109,7 +106,7 @@ export const Header = ({
                 </ul>
               </div>
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                {loaderData?.isSignedIn ? (
+                {isSignedIn ? (
                   <div className="flex items-center gap-3">
                     <Button asChild size="sm" variant="outline">
                       <Link to="/dashboard" prefetch="viewport">
