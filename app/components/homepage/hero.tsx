@@ -8,21 +8,20 @@ import { categories } from "../../../convex/seedData";
 import type { Doc } from "../../../convex/_generated/dataModel";
 
 export default function HeroSection({ cities }: { cities: Doc<"cities">[] }) {
-  // SSR-safe navigation hook usage
-  const [navigate, setNavigate] = useState<ReturnType<typeof useNavigate> | null>(null);
+  // Call hooks at top level - this is the correct React pattern
+  const navigate = useNavigate();
+  const [isClient, setIsClient] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
-  // Initialize navigation only on client-side
+  // Track when we're on the client side
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setNavigate(useNavigate());
-    }
+    setIsClient(true);
   }, []);
 
   const handleSearch = () => {
-    // Only navigate if we're on the client-side and have navigate function
-    if (!navigate) return;
+    // Only navigate if we're on the client side
+    if (!isClient) return;
     
     if (selectedCategory && selectedCity) {
       navigate(`/category/${selectedCategory}?city=${selectedCity}`);

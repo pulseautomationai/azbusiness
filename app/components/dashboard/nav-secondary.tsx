@@ -22,16 +22,16 @@ export function NavSecondary({
     icon: Icon
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
-  // SSR-safe location hook usage
+  // Call hooks at top level - correct React pattern
+  const location = useLocation();
+  const [isClient, setIsClient] = React.useState(false);
   const [currentPathname, setCurrentPathname] = React.useState('/');
 
-  // Initialize location only on client-side
+  // Track when we're on client side and update pathname
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const location = useLocation();
-      setCurrentPathname(location.pathname);
-    }
-  }, []);
+    setIsClient(true);
+    setCurrentPathname(location.pathname);
+  }, [location.pathname]);
 
   return (
     <SidebarGroup {...props}>

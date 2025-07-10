@@ -19,16 +19,16 @@ export const NavMain = memo(({
     icon?: Icon;
   }[];
 }) => {
-  // SSR-safe location hook usage
+  // Call hooks at top level - correct React pattern
+  const location = useLocation();
+  const [isClient, setIsClient] = useState(false);
   const [currentPathname, setCurrentPathname] = useState('/');
 
-  // Initialize location only on client-side
+  // Track when we're on client side and update pathname
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const location = useLocation();
-      setCurrentPathname(location.pathname);
-    }
-  }, []);
+    setIsClient(true);
+    setCurrentPathname(location.pathname);
+  }, [location.pathname]);
 
   const navItems = useMemo(() => 
     items.map((item) => ({

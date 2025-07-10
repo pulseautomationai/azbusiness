@@ -29,21 +29,19 @@ export default function CategoryPageContent({
   businesses, 
   cities 
 }: CategoryPageContentProps) {
-  // SSR-safe search params hook usage
-  const [searchParams, setSearchParams] = useState<URLSearchParams | null>(null);
+  // Call hooks at top level - correct React pattern
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isClient, setIsClient] = useState(false);
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedRating, setSelectedRating] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
 
-  // Initialize search params only on client-side
+  // Track when we're on client side and initialize from search params
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = useSearchParams();
-      setSearchParams(params[0]);
-      setSelectedCity(params[0].get("city") || "all");
-      setSelectedRating(params[0].get("rating") || "all");
-    }
-  }, []);
+    setIsClient(true);
+    setSelectedCity(searchParams.get("city") || "all");
+    setSelectedRating(searchParams.get("rating") || "all");
+  }, [searchParams]);
 
   // Filter businesses
   let filteredBusinesses = [...businesses];
@@ -78,7 +76,7 @@ export default function CategoryPageContent({
   });
 
   const handleCityChange = (city: string) => {
-    if (!searchParams) return;
+    if (!isClient) return;
     const newParams = new URLSearchParams(searchParams);
     if (city === "all") {
       newParams.delete("city");
@@ -89,7 +87,7 @@ export default function CategoryPageContent({
   };
 
   const handleRatingChange = (rating: string) => {
-    if (!searchParams) return;
+    if (!isClient) return;
     const newParams = new URLSearchParams(searchParams);
     if (rating === "all") {
       newParams.delete("rating");
@@ -196,12 +194,12 @@ export default function CategoryPageContent({
                   variant="outline" 
                   className="mt-4"
                   onClick={() => {
-                    if (searchParams) {
+                    if (isClient) {
                       setSearchParams(new URLSearchParams());
+                      setSelectedCity("all");
+                      setSelectedRating("all");
+                      setSortBy("featured");
                     }
-                    setSelectedCity("all");
-                    setSelectedRating("all");
-                    setSortBy("featured");
                   }}
                 >
                   Clear Filters
