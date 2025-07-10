@@ -27,8 +27,10 @@ export function NavSecondary({
 
   // Initialize location only on client-side
   React.useEffect(() => {
-    const location = useLocation();
-    setCurrentPathname(location.pathname);
+    if (typeof window !== 'undefined') {
+      const location = useLocation();
+      setCurrentPathname(location.pathname);
+    }
   }, []);
 
   return (

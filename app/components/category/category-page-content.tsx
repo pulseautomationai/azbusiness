@@ -37,10 +37,12 @@ export default function CategoryPageContent({
 
   // Initialize search params only on client-side
   useEffect(() => {
-    const params = useSearchParams();
-    setSearchParams(params[0]);
-    setSelectedCity(params[0].get("city") || "all");
-    setSelectedRating(params[0].get("rating") || "all");
+    if (typeof window !== 'undefined') {
+      const params = useSearchParams();
+      setSearchParams(params[0]);
+      setSelectedCity(params[0].get("city") || "all");
+      setSelectedRating(params[0].get("rating") || "all");
+    }
   }, []);
 
   // Filter businesses

@@ -24,8 +24,10 @@ export const NavMain = memo(({
 
   // Initialize location only on client-side
   useEffect(() => {
-    const location = useLocation();
-    setCurrentPathname(location.pathname);
+    if (typeof window !== 'undefined') {
+      const location = useLocation();
+      setCurrentPathname(location.pathname);
+    }
   }, []);
 
   const navItems = useMemo(() => 
