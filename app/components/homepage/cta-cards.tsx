@@ -9,39 +9,46 @@ export default function CTACards() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-2">
           {/* Add Your Business Card */}
-          <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-colors">
+          <Card className="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white hover:shadow-lg transition-shadow">
             <div className="absolute right-0 top-0 -mr-4 -mt-4 h-24 w-24 rounded-full bg-primary/10" />
-            <CardHeader>
+            <CardHeader className="px-6 py-6">
+              <span className="text-xs font-medium bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 mb-3 inline-block">
+                Free Forever
+              </span>
               <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Store className="h-6 w-6" />
               </div>
-              <CardTitle className="text-2xl">Add Your Business</CardTitle>
+              <CardTitle className="text-2xl">Claim Your Free Listing</CardTitle>
               <CardDescription className="text-base">
-                Get listed for free and start reaching customers across Arizona
+                Start building trust and visibility in your local market — completely free.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-6 pb-6">
               <ul className="mb-6 space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Free basic listing
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Appear in local search results</span>
                 </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Manage your business profile
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Manage and improve your profile</span>
                 </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Receive customer reviews
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Collect and display customer reviews</span>
                 </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Get found by local customers
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Add your logo for more credibility</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Get a free SEO backlink to your site</span>
                 </li>
               </ul>
-              <Button asChild className="w-full">
+              <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white">
                 <Link to="/add-business">
-                  Get Started
+                  Claim Your Free Listing
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -49,39 +56,46 @@ export default function CTACards() {
           </Card>
 
           {/* Upgrade Listing Card */}
-          <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-colors">
+          <Card className="relative overflow-hidden rounded-lg shadow-sm border border-gray-200 bg-white hover:shadow-lg transition-shadow">
             <div className="absolute right-0 top-0 -mr-4 -mt-4 h-24 w-24 rounded-full bg-primary/10" />
-            <CardHeader>
+            <CardHeader className="px-6 py-6">
+              <span className="text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full px-2 py-0.5 mb-3 inline-block">
+                Premium Features
+              </span>
               <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Rocket className="h-6 w-6" />
               </div>
-              <CardTitle className="text-2xl">Upgrade Your Listing</CardTitle>
+              <CardTitle className="text-2xl">Boost Visibility & Get More Leads</CardTitle>
               <CardDescription className="text-base">
-                Stand out from competitors with premium features
+                Unlock premium tools to help your business grow faster across Arizona.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-6 pb-6">
               <ul className="mb-6 space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Homepage featured placement
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Get featured on the homepage for added visibility</span>
                 </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Priority in search results
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Show up higher in search results</span>
                 </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  Advanced analytics & leads
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>Receive leads sent straight to your inbox</span>
                 </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-primary">✓</span>
-                  SEO-optimized blog posts
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>1 blog post written for you every month</span>
+                </li>
+                <li className="flex gap-2 items-start">
+                  <span className="text-primary mt-0.5">✓</span>
+                  <span>AI-enhanced listings for style and performance</span>
                 </li>
               </ul>
-              <Button asChild variant="outline" className="w-full">
+              <Button asChild className="w-full bg-yellow-600 hover:bg-yellow-700 text-white">
                 <Link to="/pricing">
-                  View Plans
+                  Explore Premium Features
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
