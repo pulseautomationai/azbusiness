@@ -91,6 +91,22 @@ export const batchImportBusinesses = mutation({
           updatedAt: Date.now(),
         });
 
+        // Create corresponding business_content record
+        await ctx.db.insert("businessContent", {
+          businessId,
+          customSummary: undefined,
+          heroImageUrl: undefined,
+          serviceCards: undefined,
+          customOffers: undefined,
+          additionalSocialLinks: undefined,
+          seoAudit: undefined,
+          reviewAnalysis: undefined,
+          journeyPreview: undefined,
+          aiEnrichment: undefined,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        });
+
         results.successful++;
       } catch (error) {
         results.failed++;

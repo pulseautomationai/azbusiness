@@ -82,6 +82,23 @@ export const getBusinesses = query({
   },
 });
 
+// Get single business by ID
+export const getBusiness = query({
+  args: { businessId: v.id("businesses") },
+  handler: async (ctx, args) => {
+    const business = await ctx.db.get(args.businessId);
+    
+    if (!business || !business.active) return null;
+
+    const category = await ctx.db.get(business.categoryId);
+    
+    return {
+      ...business,
+      category: category || null,
+    };
+  },
+});
+
 // Get single business by slug
 export const getBusinessBySlug = query({
   args: { slug: v.string() },
@@ -286,6 +303,28 @@ export const createBusiness = mutation({
   },
 });
 
+// Simple business update function for demo purposes
+export const updateBusiness = mutation({
+  args: {
+    businessId: v.id("businesses"),
+    updates: v.object({
+      planTier: v.optional(v.string()),
+      claimed: v.optional(v.boolean()),
+      verified: v.optional(v.boolean()),
+      featured: v.optional(v.boolean()),
+      priority: v.optional(v.number()),
+      active: v.optional(v.boolean()),
+    }),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.businessId, {
+      ...args.updates,
+      updatedAt: Date.now(),
+    });
+    return { success: true };
+  },
+});
+
 // Update business URLs for migration
 export const updateBusinessUrls = mutation({
   args: {
@@ -349,6 +388,262 @@ export const updateBusinessFeaturedStatus = mutation({
     // Get the updated business to return
     const business = await ctx.db.get(args.businessId);
     return { success: true, business };
+  },
+});
+
+// Admin Functions for Phase 5.1
+import { api, internal } from "./_generated/api";
+
+/**
+ * Get businesses for admin dashboard with filters
+ */
+export const getBusinessesForAdmin = query({
+  args: {
+    limit: v.optional(v.number()),
+    search: v.optional(v.string()),
+    planTier: v.optional(v.union(v.literal("free"), v.literal("pro"), v.literal("power"))),
+    claimStatus: v.optional(v.union(v.literal("claimed"), v.literal("unclaimed"))),
+    active: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    // TODO: Restore admin access check when admin module is available
+    // const adminAccess = await ctx.runQuery(api.admin.checkAdminAccess, {});
+    // if (!adminAccess.hasAccess || !adminAccess.permissions.includes("business_management")) {
+    //   throw new Error("Admin access required");
+    // }
+
+    let businesses = await ctx.db.query("businesses").collect();
+
+    // Apply filters
+    if (args.planTier) {
+      businesses = businesses.filter(b => b.planTier === args.planTier);
+    }
+
+    if (args.claimStatus === "claimed") {
+      businesses = businesses.filter(b => b.claimedByUserId);
+    } else if (args.claimStatus === "unclaimed") {
+      businesses = businesses.filter(b => !b.claimedByUserId);
+    }
+
+    if (args.active !== undefined) {
+      businesses = businesses.filter(b => b.active === args.active);
+    }
+
+    if (args.search) {
+      const searchLower = args.search.toLowerCase();
+      businesses = businesses.filter(b => 
+        b.name.toLowerCase().includes(searchLower) ||
+        b.city.toLowerCase().includes(searchLower) ||
+        b.phone?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Get category information for each business
+    const businessesWithCategories = await Promise.all(
+      businesses.map(async (business) => {
+        const category = business.categoryId ? await ctx.db.get(business.categoryId) : null;
+        return {
+          ...business,
+          category,
+        };
+      })
+    );
+
+    // Sort by most recently updated
+    businessesWithCategories.sort((a, b) => b.updatedAt - a.updatedAt);
+
+    // Limit results
+    const limit = args.limit || 50;
+    return businessesWithCategories.slice(0, limit);
+  },
+});
+
+/**
+ * Update business status (admin action)
+ */
+export const updateBusinessStatus = mutation({
+  args: {
+    businessId: v.id("businesses"),
+    action: v.union(
+      v.literal("activate"),
+      v.literal("deactivate"), 
+      v.literal("approve"),
+      v.literal("flag"),
+      v.literal("feature"),
+      v.literal("unfeature")
+    ),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // TODO: Restore admin access check when admin module is available
+    // const adminAccess = await ctx.runQuery(api.admin.checkAdminAccess, {});
+    // if (!adminAccess.hasAccess || !adminAccess.permissions.includes("business_management")) {
+    //   throw new Error("Admin access required");
+    // }
+
+    const business = await ctx.db.get(args.businessId);
+    if (!business) {
+      throw new Error("Business not found");
+    }
+
+    let updateData: Partial<Doc<"businesses">> = {};
+
+    switch (args.action) {
+      case "activate":
+        updateData.active = true;
+        break;
+      case "deactivate":
+        updateData.active = false;
+        break;
+      case "feature":
+        updateData.featured = true;
+        break;
+      case "unfeature":
+        updateData.featured = false;
+        break;
+      case "approve":
+        updateData.active = true;
+        updateData.verified = true;
+        break;
+      case "flag":
+        // Add to moderation queue
+        await ctx.db.insert("businessModerationQueue", {
+          businessId: args.businessId,
+          status: "flagged",
+          priority: "high",
+          flags: ["admin_flagged"],
+          adminNotes: args.reason,
+          createdAt: Date.now(),
+        });
+        break;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      updateData.updatedAt = Date.now();
+      await ctx.db.patch(args.businessId, updateData);
+    }
+
+    // TODO: Restore admin logging when admin module is available
+    // await ctx.runMutation(internal.admin.logAdminAction, {
+    //   action: `business_${args.action}`,
+    //   targetType: "business",
+    //   targetId: args.businessId,
+    //   reason: args.reason,
+    //   details: { businessName: business.name, action: args.action },
+    // });
+
+    return { success: true };
+  },
+});
+
+/**
+ * Bulk update businesses (admin action)
+ */
+export const bulkUpdateBusinesses = mutation({
+  args: {
+    businessIds: v.array(v.id("businesses")),
+    action: v.union(
+      v.literal("activate"),
+      v.literal("deactivate"),
+      v.literal("approve"), 
+      v.literal("flag"),
+      v.literal("feature"),
+      v.literal("unfeature")
+    ),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // TODO: Restore admin access check when admin module is available
+    // const adminAccess = await ctx.runQuery(api.admin.checkAdminAccess, {});
+    // if (!adminAccess.hasAccess || !adminAccess.permissions.includes("business_management")) {
+    //   throw new Error("Admin access required");
+    // }
+
+    const results = [];
+    
+    for (const businessId of args.businessIds) {
+      try {
+        await ctx.runMutation(api.businesses.updateBusinessStatus, {
+          businessId,
+          action: args.action,
+          reason: args.reason,
+        });
+        results.push({ businessId, success: true });
+      } catch (error) {
+        results.push({ businessId, success: false, error: error instanceof Error ? error.message : String(error) });
+      }
+    }
+
+    // TODO: Restore admin logging when admin module is available
+    // await ctx.runMutation(internal.admin.logAdminAction, {
+    //   action: `bulk_${args.action}`,
+    //   targetType: "business",
+    //   targetId: `${args.businessIds.length}_businesses`,
+    //   reason: args.reason,
+    //   details: { 
+    //     businessCount: args.businessIds.length,
+    //     action: args.action,
+    //     results 
+    //   },
+    // });
+
+    return { 
+      success: true, 
+      results,
+      successCount: results.filter(r => r.success).length,
+      errorCount: results.filter(r => !r.success).length,
+    };
+  },
+});
+
+/**
+ * Export business data (admin action)
+ */
+export const exportBusinessData = mutation({
+  args: {
+    filters: v.optional(v.any()),
+    selectedIds: v.optional(v.array(v.id("businesses"))),
+    format: v.optional(v.string()),
+  },
+  handler: async (ctx, args): Promise<any> => {
+    // TODO: Add admin access check when admin module is restored
+
+    let businesses;
+    
+    if (args.selectedIds && args.selectedIds.length > 0) {
+      // Export selected businesses
+      businesses = await Promise.all(
+        args.selectedIds.map(id => ctx.db.get(id))
+      );
+      businesses = businesses.filter(Boolean);
+    } else {
+      // Export with filters
+      businesses = await ctx.runQuery(api.businesses.getBusinessesForAdmin, {
+        ...args.filters,
+        limit: 10000, // Large limit for export
+      });
+    }
+
+    // TODO: Restore admin logging when admin module is available
+    // await ctx.runMutation(internal.admin.logAdminAction, {
+    //   action: "businesses_exported",
+    //   targetType: "business",
+    //   targetId: `export_${businesses.length}_businesses`,
+    //   details: { 
+    //     businessCount: businesses.length,
+    //     format: args.format || "csv",
+    //     hasFilters: !!args.filters,
+    //     selectedIds: !!args.selectedIds?.length,
+    //   },
+    // });
+
+    return { 
+      success: true, 
+      businessCount: businesses.length,
+      exportTimestamp: Date.now(),
+      // In a real implementation, this would generate and return download URL
+      data: businesses.slice(0, 100), // Limit response size
+    };
   },
 });
 

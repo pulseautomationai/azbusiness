@@ -136,6 +136,7 @@ export function OptimizedImage({
 
 // Specialized components for different image types
 export function BusinessLogo({ business, className, ...props }: OptimizedImageProps & { business: any }) {
+  const { src, alt, ...otherProps } = props;
   return (
     <OptimizedImage
       src={business.logo || "/favicon.png"}
@@ -143,12 +144,13 @@ export function BusinessLogo({ business, className, ...props }: OptimizedImagePr
       className={cn("rounded-lg object-cover", className)}
       business={business}
       priority={true}
-      {...props}
+      {...otherProps}
     />
   );
 }
 
 export function BusinessImage({ business, image, className, ...props }: OptimizedImageProps & { business: any; image: any }) {
+  const { src, alt, ...otherProps } = props;
   return (
     <OptimizedImage
       src={image.url}
@@ -156,7 +158,7 @@ export function BusinessImage({ business, image, className, ...props }: Optimize
       className={cn("rounded-lg object-cover", className)}
       business={business}
       loading="lazy"
-      {...props}
+      {...otherProps}
     />
   );
 }

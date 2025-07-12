@@ -1,6 +1,8 @@
-import { useParams, Navigate } from "react-router";
+import { useParams, Navigate, redirect } from "react-router";
 import { useQuery } from "convex/react";
 import { useUser } from "@clerk/react-router";
+import { getAuth } from "@clerk/react-router/ssr.server";
+import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import BusinessProfile from "~/components/business/business-profile";

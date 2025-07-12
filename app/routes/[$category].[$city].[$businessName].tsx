@@ -1,9 +1,11 @@
-import { useParams, Navigate } from "react-router";
+import { useParams, Navigate, redirect } from "react-router";
 import { useQuery } from "convex/react";
 import { useUser } from "@clerk/react-router";
+import { getAuth } from "@clerk/react-router/ssr.server";
+import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
-import BusinessProfile from "~/components/business/business-profile";
+import PowerTierProfile from "~/components/business/power-tier-profile";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../convex/_generated/api";
 import { SlugGenerator } from "~/utils/slug-generator";
@@ -38,7 +40,6 @@ export function meta({ data }: Route.MetaArgs) {
   ];
 }
 
-// Temporarily disabled for SPA mode
 /*
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
@@ -127,32 +128,20 @@ export default function BusinessDetailPage() {
   const { category, city, businessName } = useParams();
   const { user } = useUser();
   
-  // Validate URL parameters
-  if (!category || !city || !businessName) {
-    return <Navigate to="/categories" replace />;
-  }
-
-  // Reconstruct the full slug from URL parameters
-  const fullSlug = SlugGenerator.generateFullBusinessSlug(
+  // Reconstruct the full slug from URL parameters - do this before validation
+  const fullSlug = category && city && businessName ? SlugGenerator.generateFullBusinessSlug(
     businessName.replace(/-/g, ' '), // Convert back from slug
     city.replace(/-/g, ' '),
     category.replace(/-/g, ' ')
+  ) : "";
+
+  // Try to fetch business by the reconstructed slug - always call the hook
+  const business = useQuery(
+    api.businesses.getBusinessBySlug, 
+    fullSlug ? { slug: fullSlug } : "skip"
   );
-
-  // Try to fetch business by the reconstructed slug
-  const business = useQuery(api.businesses.getBusinessBySlug, {
-    slug: fullSlug,
-  });
-
-  // If business query is undefined, we're still loading
-  const isLoading = business === undefined;
   
-  // If business is null (not found), try alternative slug formats or redirect
-  if (!isLoading && !business) {
-    return <Navigate to="/categories" replace />;
-  }
-
-  // Get related businesses if we have the business data
+  // Get related businesses if we have the business data - always call the hook
   const expectedCategorySlug = business ? SlugGenerator.generateCategorySlug(business.category?.name || '') : '';
   const expectedCitySlug = business ? SlugGenerator.generateCitySlug(business.city) : '';
   
@@ -164,6 +153,19 @@ export default function BusinessDetailPage() {
       limit: 4,
     } : "skip"
   );
+  
+  // Validate URL parameters - after all hooks
+  if (!category || !city || !businessName) {
+    return <Navigate to="/categories" replace />;
+  }
+
+  // If business query is undefined, we're still loading
+  const isLoading = business === undefined;
+  
+  // If business is null (not found), try alternative slug formats or redirect
+  if (!isLoading && !business) {
+    return <Navigate to="/categories" replace />;
+  }
 
   if (isLoading) {
     return (
@@ -190,7 +192,7 @@ export default function BusinessDetailPage() {
     <>
       <Header />
       <ComponentErrorBoundary componentName="Business Profile">
-        <BusinessProfile 
+        <PowerTierProfile 
           business={business}
           relatedBusinesses={filteredRelatedBusinesses}
           reviews={[]} // Placeholder for now

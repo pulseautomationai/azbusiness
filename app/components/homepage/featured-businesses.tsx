@@ -27,7 +27,7 @@ interface Business {
 }
 
 export default function FeaturedBusinesses() {
-  const businesses = useQuery(api.businesses.getFeaturedBusinesses) || [];
+  const businesses = useQuery(api.businesses.getFeaturedBusinesses, {}) || [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 3;
   const totalPages = Math.ceil(businesses.length / itemsPerPage);

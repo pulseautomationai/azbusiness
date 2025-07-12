@@ -100,6 +100,11 @@ export default function CityPage() {
   if (!isLoading && !city) {
     return <Navigate to="/cities" replace />;
   }
+
+  // Type guard to ensure city is not null
+  if (!city) {
+    return null;
+  }
   
   // Filter categories to only show those with businesses in this city
   const relevantCategories = businesses && categoriesWithCount ? (() => {

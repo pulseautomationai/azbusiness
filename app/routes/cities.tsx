@@ -52,7 +52,7 @@ export async function loader(args: Route.LoaderArgs) {
 
 export default function CitiesPage() {
   // Fetch cities with business counts
-  const citiesWithCount = useQuery(api.cities.getCitiesWithCount);
+  const citiesWithCount = useQuery(api.cities.getCitiesWithCount, {});
   const citiesByRegion = useQuery(api.cities.getCitiesByRegion);
   
   const regionOrder = [

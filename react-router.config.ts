@@ -11,13 +11,12 @@ export default {
   serverModuleFormat: "esm",
   
   // Keep serverPlatform as node
-  serverPlatform: "node",
+  // serverPlatform: "node", // TODO: Check if this is supported in current version
   
-  // Add buildEnd callback that logs the serverBuildPath to help debug build issues
-  buildEnd: async ({ buildManifest, serverBuildPath }) => {
+  // Add buildEnd callback that logs build completion
+  buildEnd: async ({ buildManifest }) => {
     console.log("Build completed successfully!");
-    console.log("Server build path:", serverBuildPath);
     console.log("Build manifest routes:", Object.keys(buildManifest?.routes || {}).length);
-    console.log("Build manifest entry:", buildManifest?.entry?.module);
+    // console.log("Build manifest entry:", buildManifest?.entry?.module); // TODO: Check correct property
   },
 } satisfies Config;

@@ -214,7 +214,7 @@ export class SEOGenerator {
         streetAddress: business.address,
         addressLocality: business.city,
         addressRegion: "AZ",
-        postalCode: business.zipCode,
+        postalCode: business.zip,
         addressCountry: "US",
       },
       geo: business.coordinates ? {
@@ -223,7 +223,7 @@ export class SEOGenerator {
         longitude: business.coordinates.lng,
       } : undefined,
       openingHours: business.hours ? this.formatOpeningHours(business.hours) : undefined,
-      priceRange: business.priceRange,
+      priceRange: undefined, // TODO: Add priceRange to business schema
       areaServed: {
         "@type": "City",
         name: business.city,

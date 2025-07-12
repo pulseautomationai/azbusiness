@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { useFormValidation } from "~/hooks/useFormValidation";
 import { contactFormSchema, type ContactFormData } from "~/utils/validation";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 interface ContactFormProps {
   business: {
@@ -18,6 +21,8 @@ interface ContactFormProps {
 }
 
 export default function ContactForm({ business, onClose }: ContactFormProps) {
+  const createLead = useMutation(api.leads.createLead);
+  
   const {
     data,
     updateField,
@@ -39,15 +44,23 @@ export default function ContactForm({ business, onClose }: ContactFormProps) {
       message: "",
     },
     onSubmit: async (formData) => {
-      // TODO: Implement actual form submission to Convex
-      // For now, just simulate a submission
-      console.log("Form submitted:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      onClose();
-      // Show success message
+      try {
+        await createLead({
+          businessId: business._id as Id<"businesses">,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          service: formData.service,
+        });
+        
+        onClose();
+        // TODO: Show success message/toast
+      } catch (error) {
+        console.error("Failed to submit lead:", error);
+        // TODO: Show error message
+        throw error;
+      }
     }
   });
 

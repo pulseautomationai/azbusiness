@@ -25,9 +25,10 @@ interface BusinessCardProps {
       icon: string;
     };
   };
+  variant?: "default" | "compact";
 }
 
-export default function BusinessCard({ business }: BusinessCardProps) {
+export default function BusinessCard({ business, variant = "default" }: BusinessCardProps) {
   const planBadgeVariant = (tier: string) => {
     switch (tier) {
       case "power":

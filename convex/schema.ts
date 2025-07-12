@@ -8,7 +8,14 @@ export default defineSchema({
     email: v.optional(v.string()),
     image: v.optional(v.string()),
     tokenIdentifier: v.string(),
-  }).index("by_token", ["tokenIdentifier"]),
+    role: v.optional(v.string()),
+    adminPermissions: v.optional(v.array(v.string())),
+    isActive: v.optional(v.boolean()),
+    lastLoginAt: v.optional(v.number()),
+    createdAt: v.optional(v.number()),
+  }).index("by_token", ["tokenIdentifier"])
+    .index("by_role", ["role"])
+    .index("by_email", ["email"]),
   
   subscriptions: defineTable({
     userId: v.optional(v.string()),
@@ -44,16 +51,16 @@ export default defineSchema({
     .index("type", ["type"])
     .index("polarEventId", ["polarEventId"]),
     
-  // New tables for AZ Business Services
+  // New tables for AZ Business Services - simplified
   businesses: defineTable({
     // Basic info
     name: v.string(),
     slug: v.string(),
-    urlPath: v.optional(v.string()), // New URL structure path
+    urlPath: v.optional(v.string()),
     logo: v.optional(v.string()),
     heroImage: v.optional(v.string()),
     description: v.string(),
-    shortDescription: v.string(), // For cards
+    shortDescription: v.string(),
     
     // Contact & Location
     phone: v.string(),
@@ -63,36 +70,14 @@ export default defineSchema({
     city: v.string(),
     state: v.string(),
     zip: v.string(),
+    
+    // Business details
+    categoryId: v.id("categories"),
+    services: v.array(v.string()),
     coordinates: v.optional(v.object({
       lat: v.number(),
       lng: v.number(),
     })),
-    
-    // Business details
-    categoryId: v.id("categories"),
-    services: v.array(v.string()), // List of services offered
-    hours: v.object({
-      monday: v.optional(v.string()),
-      tuesday: v.optional(v.string()),
-      wednesday: v.optional(v.string()),
-      thursday: v.optional(v.string()),
-      friday: v.optional(v.string()),
-      saturday: v.optional(v.string()),
-      sunday: v.optional(v.string()),
-    }),
-    
-    // Subscription & Features
-    planTier: v.union(v.literal("free"), v.literal("pro"), v.literal("power")),
-    featured: v.boolean(), // Homepage featured spot
-    priority: v.number(), // Sorting priority (higher = top)
-    
-    // Ownership & Status
-    ownerId: v.optional(v.string()), // Clerk user ID
-    claimed: v.boolean(),
-    verified: v.boolean(),
-    active: v.boolean(),
-    
-    // SEO & Social
     socialLinks: v.optional(v.object({
       facebook: v.optional(v.string()),
       instagram: v.optional(v.string()),
@@ -100,18 +85,40 @@ export default defineSchema({
       linkedin: v.optional(v.string()),
       youtube: v.optional(v.string()),
     })),
+    hours: v.optional(v.object({
+      monday: v.optional(v.string()),
+      tuesday: v.optional(v.string()),
+      wednesday: v.optional(v.string()),
+      thursday: v.optional(v.string()),
+      friday: v.optional(v.string()),
+      saturday: v.optional(v.string()),
+      sunday: v.optional(v.string()),
+    })),
+    
+    // Subscription & Features
+    planTier: v.string(),
+    featured: v.boolean(),
+    priority: v.number(),
+    
+    // Ownership & Status
+    ownerId: v.optional(v.string()),
+    claimedByUserId: v.optional(v.string()),
+    claimedAt: v.optional(v.number()),
+    claimed: v.boolean(),
+    verified: v.boolean(),
+    active: v.boolean(),
     
     // Additional Google My Business Data
-    imageUrl: v.optional(v.string()), // Main business image from GMB
-    favicon: v.optional(v.string()), // Business favicon/logo
-    reviewUrl: v.optional(v.string()), // Direct link to Google reviews
-    serviceOptions: v.optional(v.string()), // "Onsite services | Online estimates"
-    fromTheBusiness: v.optional(v.string()), // "Identifies as veteran-owned"
-    offerings: v.optional(v.string()), // "Repair services"
-    planning: v.optional(v.string()), // "Appointment required"
+    imageUrl: v.optional(v.string()),
+    favicon: v.optional(v.string()),
+    reviewUrl: v.optional(v.string()),
+    serviceOptions: v.optional(v.string()),
+    fromTheBusiness: v.optional(v.string()),
+    offerings: v.optional(v.string()),
+    planning: v.optional(v.string()),
     
     // Ratings
-    rating: v.number(), // Average rating
+    rating: v.number(),
     reviewCount: v.number(),
     
     // Timestamps
@@ -133,8 +140,8 @@ export default defineSchema({
     name: v.string(),
     slug: v.string(),
     description: v.string(),
-    icon: v.optional(v.string()), // Icon name or emoji
-    order: v.number(), // Display order
+    icon: v.optional(v.string()),
+    order: v.number(),
     active: v.boolean(),
   })
     .index("by_slug", ["slug"])
@@ -143,7 +150,7 @@ export default defineSchema({
   cities: defineTable({
     name: v.string(),
     slug: v.string(),
-    region: v.string(), // e.g., "Phoenix Metro", "Northern Arizona"
+    region: v.string(),
     description: v.optional(v.string()),
     population: v.optional(v.number()),
     order: v.number(),
@@ -155,12 +162,12 @@ export default defineSchema({
     
   reviews: defineTable({
     businessId: v.id("businesses"),
-    userId: v.optional(v.string()), // Clerk user ID, optional for anonymous
+    userId: v.optional(v.string()),
     userName: v.string(),
-    rating: v.number(), // 1-5
+    rating: v.number(),
     comment: v.string(),
-    verified: v.boolean(), // Verified customer
-    helpful: v.number(), // Helpful votes count
+    verified: v.boolean(),
+    helpful: v.number(),
     createdAt: v.number(),
   })
     .index("by_business", ["businessId"])
@@ -173,8 +180,8 @@ export default defineSchema({
     email: v.string(),
     phone: v.optional(v.string()),
     message: v.string(),
-    service: v.optional(v.string()), // Which service they're interested in
-    status: v.union(v.literal("new"), v.literal("contacted"), v.literal("converted")),
+    service: v.optional(v.string()),
+    status: v.string(),
     createdAt: v.number(),
   })
     .index("by_business", ["businessId"])
@@ -186,10 +193,10 @@ export default defineSchema({
     slug: v.string(),
     content: v.string(),
     excerpt: v.string(),
-    authorId: v.optional(v.string()), // Clerk user ID
-    businessId: v.optional(v.id("businesses")), // For Power plan auto-posts
-    categoryTags: v.array(v.string()), // Category slugs
-    cityTags: v.array(v.string()), // City slugs
+    authorId: v.optional(v.string()),
+    businessId: v.optional(v.id("businesses")),
+    categoryTags: v.array(v.string()),
+    cityTags: v.array(v.string()),
     published: v.boolean(),
     publishedAt: v.optional(v.number()),
     createdAt: v.number(),
@@ -204,10 +211,10 @@ export default defineSchema({
     }),
     
   rateLimits: defineTable({
-    userId: v.string(), // User ID or IP address
-    endpoint: v.string(), // API endpoint being rate limited
-    timestamp: v.number(), // When the request was made
-    ipAddress: v.optional(v.string()), // IP address for additional tracking
+    userId: v.string(),
+    endpoint: v.string(),
+    timestamp: v.number(),
+    ipAddress: v.optional(v.string()),
   })
     .index("by_user_endpoint", ["userId", "endpoint"])
     .index("by_timestamp", ["timestamp"]),
@@ -215,8 +222,101 @@ export default defineSchema({
   sitemapCache: defineTable({
     lastInvalidated: v.number(),
     reason: v.string(),
-    status: v.union(v.literal("pending"), v.literal("completed")),
+    status: v.string(),
   })
     .index("by_timestamp", ["lastInvalidated"])
+    .index("by_status", ["status"]),
+    
+  // Business content for AI-generated and editable fields
+  businessContent: defineTable({
+    businessId: v.id("businesses"),
+    customSummary: v.optional(v.string()),
+    heroImageUrl: v.optional(v.string()),
+    serviceCards: v.optional(v.array(v.object({
+      name: v.string(),
+      icon: v.optional(v.string()),
+      description: v.optional(v.string()),
+      pricing: v.optional(v.string()),
+      featured: v.optional(v.boolean()),
+    }))),
+    customOffers: v.optional(v.array(v.object({
+      title: v.string(),
+      description: v.string(),
+      validUntil: v.optional(v.number()),
+      code: v.optional(v.string()),
+      type: v.string(),
+    }))),
+    additionalSocialLinks: v.optional(v.object({
+      tiktok: v.optional(v.string()),
+      pinterest: v.optional(v.string()),
+      yelp: v.optional(v.string()),
+    })),
+    seoAudit: v.optional(v.object({
+      lastRun: v.number(),
+      metaScore: v.number(),
+      performanceScore: v.number(),
+      mobileScore: v.number(),
+      suggestions: v.array(v.string()),
+    })),
+    reviewAnalysis: v.optional(v.object({
+      lastAnalyzed: v.number(),
+      sentiment: v.object({
+        positive: v.number(),
+        neutral: v.number(),
+        negative: v.number(),
+      }),
+      keywords: v.array(v.string()),
+      trends: v.array(v.string()),
+      highlights: v.array(v.string()),
+      improvements: v.array(v.string()),
+    })),
+    journeyPreview: v.optional(v.object({
+      serpPreview: v.optional(v.string()),
+      gmbPreview: v.optional(v.string()),
+    })),
+    aiEnrichment: v.optional(v.object({
+      summaryGeneratedAt: v.optional(v.number()),
+      servicesEnrichedAt: v.optional(v.number()),
+      reviewsAnalyzedAt: v.optional(v.number()),
+      offersGeneratedAt: v.optional(v.number()),
+      totalTokensUsed: v.optional(v.number()),
+      enrichmentVersion: v.optional(v.string()),
+    })),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_business", ["businessId"]),
+    
+  // Analytics events for tracking
+  analyticsEvents: defineTable({
+    businessId: v.optional(v.id("businesses")),
+    eventType: v.string(),
+    sourceUrl: v.optional(v.string()),
+    deviceType: v.optional(v.string()),
+    userAgent: v.optional(v.string()),
+    ipAddress: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    metadata: v.optional(v.any()),
+    timestamp: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_type", ["eventType"])
+    .index("by_timestamp", ["timestamp"])
+    .index("by_business_type", ["businessId", "eventType"]),
+    
+  // Basic moderation queue for business validation
+  businessModerationQueue: defineTable({
+    businessId: v.id("businesses"),
+    status: v.string(),
+    submittedBy: v.optional(v.string()),
+    assignedToAdmin: v.optional(v.string()),
+    priority: v.string(),
+    flags: v.array(v.string()),
+    adminNotes: v.optional(v.string()),
+    reviewStartedAt: v.optional(v.number()),
+    reviewCompletedAt: v.optional(v.number()),
+    createdAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
     .index("by_status", ["status"]),
 });

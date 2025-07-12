@@ -25,7 +25,7 @@ interface BusinessProfileProps {
     description: string;
     shortDescription: string;
     phone: string;
-    email: string;
+    email?: string;
     website?: string;
     address: string;
     city: string;

@@ -96,6 +96,11 @@ export default function CategoryPage() {
     );
   }
 
+  // Type guard to ensure category is not null
+  if (!category) {
+    return <Navigate to="/categories" replace />;
+  }
+
   return (
     <>
       <Header />
