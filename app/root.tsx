@@ -8,7 +8,6 @@ import {
 } from "react-router";
 
 import { ClerkProvider, useAuth } from "@clerk/react-router";
-import { rootAuthLoader } from "@clerk/react-router/ssr.server";
 import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import type { Route } from "./+types/root";
@@ -19,8 +18,9 @@ import { HydrateFallback } from "./components/hydrate-fallback";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
-export async function loader(args: Route.LoaderArgs) {
-  return rootAuthLoader(args);
+// Remove SSR loader for SPA mode
+export async function loader() {
+  return {};
 }
 export const links: Route.LinksFunction = () => [
   // DNS prefetch for external services
@@ -71,16 +71,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function PerformanceMonitor({ children }: { children: React.ReactNode }) {
-  const { metrics, navigationTiming } = usePerformanceMonitoring();
+  // Temporarily disabled for debugging
+  // const { metrics, navigationTiming } = usePerformanceMonitoring();
   
   return <>{children}</>;
 }
 
-export default function App({ loaderData }: Route.ComponentProps) {
+export default function App() {
   return (
     <ClerkProvider
       publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
-      loaderData={loaderData}
       signUpFallbackRedirectUrl="/"
       signInFallbackRedirectUrl="/"
     >

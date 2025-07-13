@@ -15,7 +15,7 @@ The goal is to:
 | Section Title                               | Purpose                                                       | Sync Status                                                       |          |
 | ------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------- | -------- |
 | 🔢                                          | **Component Visibility Matrix + Plan Logic**                  | Defines what is visible or hidden by plan tier (Free, Pro, Power) | ✅ Synced |
-| ✅ **Component Data Sourcing Audit (WIP)**   | Defines how each feature is powered (GMB, Convex, AI, Manual) | ✅ Synced                                                          |          |
+| ✅ **Component Data Sourcing Audit**         | Defines how each feature is powered (GMB, Convex, AI, Manual) | ✅ Synced                                                          |          |
 | 💡 **What You Get — Customer-Facing Table** | Defines the public-facing offer for each pricing tier         | ✅ Synced                                                          |          |
 
 ---
@@ -24,26 +24,28 @@ The goal is to:
 
 #### ✅ Additions
 
-- Free Lead Pass-Thru (Pro & Power tiers)
-- SEO Backlink logic clarified by tier
-- Monthly AI Blog Posts (Power tier)
-- Badge system clarified and enriched with trust-based metrics
-- VIP Support renamed to "Dedicated Concierge Access"
-- Homepage placement logic clarified: capped, rotating system
+- Updated pricing tier structure to match visual pricing grid
+- Adjusted language for “Leads from Your Listing” to better reflect actual experience
+- Clarified lead delivery methods for Pro (manual) and Power (auto-notified)
+- Added AI-enhanced listing formatting to Power
+- Added Homepage Featured Placement (clarified as rotating slot)
+- Refined language around Concierge support
 
 #### 🔄 Reworded
 
-- Clarified badge logic to include trust factors and data triggers
-- Clarified AI Summary, Review Sentiment, and tone/style control features
-- Hero banner removed from pricing table but retained in core layout
+- Adjusted feature names to exactly match the public-facing table:
+  - “Free Lead Pass-Thru” → “Leads from Your Listing”
+  - “VIP Support” → “Dedicated Concierge Access”
+- Reformatted public-facing language for consistency
+- Updated component visibility and sourcing tables to match
 
 #### ❌ Removed
 
-- Smart Offers (not strong enough value add)
-- Analytics Dashboard
-- Customer Journey Preview
-- Booking Calendar
-- Contact Form & Claim/Edit (from pricing grid only)
+- Hero banner image upgrade logic (not a value proposition anymore)
+- Contact form from pricing table (still exists on page)
+- Claim/edit listing from pricing table (still functional in logic, not marketed)
+- Analytics Dashboard, Customer Journey Preview, Booking Calendar (cut for simplicity)
+- “Smart Offers” (removed as a value prop)
 
 ---
 
@@ -61,8 +63,6 @@ The goal is to:
 ---
 
 ### 🔢 Component Visibility Matrix + Plan Logic
-
-This matrix has been expanded with the rendering logic by plan. Each feature includes a brief rule set for Free, Pro, and Power.
 
 | Component / Feature                 | Free Plan Logic                                    | Pro Plan Logic                                 | Power Plan Logic                                                  |
 | ----------------------------------- | -------------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
@@ -82,11 +82,11 @@ This matrix has been expanded with the rendering logic by plan. Each feature inc
 | VIP Badge / Account Manager Section | Hidden                                             | Hidden                                         | Show badge in header + support tab for concierge access           |
 | Website Link (SEO Backlink)         | Hidden                                             | Visible as dofollow link                       | Visible as dofollow link                                          |
 | Monthly Blog Post Content           | Hidden                                             | Hidden                                         | One article/month (AI-assisted), focused on local expertise       |
-| Free Lead Pass-Thru                 | Hidden                                             | Eligible to receive matched leads manually     | Eligible + auto-notified of new inbound leads                     |
+| Leads from Your Listing             | Hidden                                             | Manually matched when available                | Auto-matched + instant alerts                                     |
 
 ---
 
-### ✅ Component Data Sourcing Audit (WIP)
+### ✅ Component Data Sourcing Audit
 
 | Component / Feature                    | Primary Data Source      | Enrichment Required?      | Notes                                          |
 | -------------------------------------- | ------------------------ | ------------------------- | ---------------------------------------------- |
@@ -101,26 +101,26 @@ This matrix has been expanded with the rendering logic by plan. Each feature inc
 | Sticky CTA Bars                        | Logic-based UI           | ❌                         | Driven by `plan` flag                          |
 | Website Link (SEO Backlink)            | GMB + Manual input       | ❌                         | Visible in Pro+ tiers only                     |
 | Monthly Blog Post Content              | AI (OpenAI)              | ✅                         | Posted monthly, topics based on local insights |
-| Free Lead Pass-Thru                    | Internal Tracking System | ❌                         | Matched based on category/city + alert logic   |
+| Leads from Your Listing                | Internal Matching Engine | ✅ Eligibility + alerts    | Manual in Pro, auto in Power                   |
 
 ---
 
 ### 💡 What You Get — Customer-Facing Pricing Table
 
-| Feature                            | Free        | Pro           | Power                                      |
-| ---------------------------------- | ----------- | ------------- | ------------------------------------------ |
-| Public Business Listing            | ✅           | ✅             | ✅                                          |
-| Google Reviews                     | ✅           | ✅             | ✅                                          |
-| Tabs (Overview, Services, Reviews) | ✅           | ✅             | ✅                                          |
-| Similar Businesses Carousel        | ✅           | ✅             | ✅                                          |
-| Free Lead Pass-Thru                | ❌           | ✅ Eligible    | ✅ Auto-Matched + Alerts                    |
-| Verified Badge                     | ❌           | ✅             | ✅                                          |
-| Business Summary                   | Blurred     | Full view     | AI-enhanced + Style Options                |
-| Service Display                    | Bullet list | Service cards | Enhanced AI Cards with Pricing             |
-| SEO Backlink                       | ❌           | ✅             | ✅                                          |
-| Review Insights                    | ❌           | Basic         | AI Sentiment & Keyword Analysis            |
-| Badge System                       | Grayed out  | Standard      | All + Bonus Badges                         |
-| Category Boost                     | ❌           | ✅             | ✅ + Homepage Featured Placement (Rotating) |
-| VIP Support                        | ❌           | ❌             | ✅ Dedicated Concierge Access               |
-| Monthly Blog Posts                 | ❌           | ❌             | ✅ 1/mo AI-powered Blog Post                |
+| Feature                            | Free        | Pro                | Power                                           |
+| ---------------------------------- | ----------- | ------------------ | ----------------------------------------------- |
+| Public Business Listing            | ✅           | ✅                  | ✅                                               |
+| Google Reviews                     | ✅           | ✅                  | ✅                                               |
+| Tabs (Overview, Services, Reviews) | ✅           | ✅                  | ✅                                               |
+| Similar Businesses Carousel        | ✅           | ✅                  | ✅                                               |
+| Leads from Your Listing            | ❌           | ✅ Manually Matched | ✅ Auto-Matched + Alerts                         |
+| Verified Badge                     | ❌           | ✅                  | ✅                                               |
+| Business Summary                   | Blurred     | Full view          | AI-enhanced + Style Options                     |
+| Service Display                    | Bullet list | Service cards      | Enhanced AI Cards with Pricing                  |
+| SEO Backlink                       | ❌           | ✅                  | ✅                                               |
+| Review Insights                    | ❌           | Basic              | AI Sentiment & Keyword Analysis                 |
+| Badge System                       | Grayed out  | Standard           | All + Bonus Badges                              |
+| Category Boost                     | ❌           | ✅                  | ✅ + Homepage Featured Placement (Rotating Slot) |
+| Dedicated Concierge Access         | ❌           | ❌                  | ✅                                               |
+| Monthly Blog Posts                 | ❌           | ❌                  | ✅ 1/mo AI-powered Blog Post                     |
 

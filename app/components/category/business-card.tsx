@@ -29,27 +29,6 @@ interface BusinessCardProps {
 }
 
 export default function BusinessCard({ business, variant = "default" }: BusinessCardProps) {
-  const planBadgeVariant = (tier: string) => {
-    switch (tier) {
-      case "power":
-        return "default";
-      case "pro":
-        return "secondary";
-      default:
-        return "outline";
-    }
-  };
-
-  const planBadgeText = (tier: string) => {
-    switch (tier) {
-      case "power":
-        return "⚡ Power";
-      case "pro":
-        return "✨ Pro";
-      default:
-        return "";
-    }
-  };
 
   // Generate new URL format: /[category]/[city]/[businessName]
   const businessUrl = business.category 
@@ -79,19 +58,12 @@ export default function BusinessCard({ business, variant = "default" }: Business
                 {business.name}
               </Link>
             </CardTitle>
-            <div className="mt-1 flex items-center gap-3 text-sm">
-              {business.planTier !== "free" && (
-                <Badge variant={planBadgeVariant(business.planTier)} className="h-5">
-                  {planBadgeText(business.planTier)}
-                </Badge>
-              )}
-              {business.verified && (
-                <div className="flex items-center gap-1 text-green-600 dark:text-green-500">
-                  <Shield className="h-4 w-4" />
-                  <span className="text-xs">Verified</span>
-                </div>
-              )}
-            </div>
+            {business.verified && (
+              <div className="mt-1 flex items-center gap-1 text-green-600 dark:text-green-500">
+                <Shield className="h-4 w-4" />
+                <span className="text-xs">Verified</span>
+              </div>
+            )}
           </div>
         </div>
         <CardDescription className="mt-2 line-clamp-2">

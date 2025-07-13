@@ -11,32 +11,20 @@ import { api } from "../../convex/_generated/api";
 import { SlugGenerator } from "~/utils/slug-generator";
 import type { Route } from "./+types/[$category].[$city].[$businessName]";
 
-export function meta({ data }: Route.MetaArgs) {
-  if (!data?.business) {
-    return [{ title: "Business Not Found - AZ Business Services" }];
-  }
-
-  const { business } = data;
-  const title = `${business.name} - ${business.city}, AZ | AZ Business Services`;
-  const description = business.shortDescription || 
-    `Contact ${business.name} in ${business.city}, Arizona. ${business.category?.name || "Local service provider"} offering professional services. Read reviews and get a quote.`;
+export function meta({ params }: Route.MetaArgs) {
+  // Since the loader is disabled, we'll use a generic meta for now
+  const title = "Business Directory - AZ Business Services";
+  const description = "Discover local businesses in Arizona. Find professional services, read reviews, and connect with trusted providers.";
 
   return [
     { title },
     { name: "description", content: description },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
-    { property: "og:type", content: "local.business" },
-    { property: "og:url", content: `https://azbusiness.com/${data.params.category}/${data.params.city}/${data.params.businessName}` },
+    { property: "og:type", content: "website" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { name: "twitter:card", content: "summary_large_image" },
-    
-    // Local business structured data
-    { name: "geo.region", content: `US-AZ` },
-    { name: "geo.placename", content: business.city },
-    { name: "geo.position", content: business.coordinates ? `${business.coordinates.lat};${business.coordinates.lng}` : "" },
-    { name: "ICBM", content: business.coordinates ? `${business.coordinates.lat}, ${business.coordinates.lng}` : "" },
   ];
 }
 
@@ -130,9 +118,9 @@ export default function BusinessDetailPage() {
   
   // Reconstruct the full slug from URL parameters - do this before validation
   const fullSlug = category && city && businessName ? SlugGenerator.generateFullBusinessSlug(
-    businessName.replace(/-/g, ' '), // Convert back from slug
-    city.replace(/-/g, ' '),
-    category.replace(/-/g, ' ')
+    (businessName || '').replace(/-/g, ' '), // Convert back from slug
+    (city || '').replace(/-/g, ' '),
+    (category || '').replace(/-/g, ' ')
   ) : "";
 
   // Try to fetch business by the reconstructed slug - always call the hook
@@ -142,8 +130,8 @@ export default function BusinessDetailPage() {
   );
   
   // Get related businesses if we have the business data - always call the hook
-  const expectedCategorySlug = business ? SlugGenerator.generateCategorySlug(business.category?.name || '') : '';
-  const expectedCitySlug = business ? SlugGenerator.generateCitySlug(business.city) : '';
+  const expectedCategorySlug = business?.category?.name ? SlugGenerator.generateCategorySlug(business.category.name) : '';
+  const expectedCitySlug = business?.city ? SlugGenerator.generateCitySlug(business.city) : '';
   
   const relatedBusinesses = useQuery(
     api.businesses.getBusinesses, 

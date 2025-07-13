@@ -28,6 +28,20 @@ export const getCategoryBySlug = query({
   },
 });
 
+// Get all categories for admin (including inactive)
+export const getAllCategoriesForAdmin = query({
+  handler: async (ctx) => {
+    // TODO: Restore admin access check when admin module is available
+    
+    const categories = await ctx.db.query("categories").collect();
+    
+    // Sort by order
+    categories.sort((a, b) => a.order - b.order);
+    
+    return categories;
+  },
+});
+
 // Get categories with business count
 export const getCategoriesWithCount = query({
   handler: async (ctx) => {

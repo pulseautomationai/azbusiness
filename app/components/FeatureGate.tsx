@@ -9,7 +9,7 @@ import type { PlanTier } from "~/config/features";
 
 interface FeatureGateProps {
   featureId: string;
-  planTier: PlanTier;
+  planTier?: PlanTier;
   children: ReactNode;
   fallback?: ReactNode;
   showUpgrade?: boolean;

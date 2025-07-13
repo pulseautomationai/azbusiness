@@ -28,6 +28,9 @@ export default [
   route("business/:slug", "routes/business/$slug.tsx"),
   route("demo/business", "routes/demo.business.tsx"),
   route("add-business", "routes/add-business.tsx"),
+  route("add-business/create", "routes/add-business.create.tsx"),
+  route("claim-business", "routes/claim-business.tsx"),
+  route("claim-listing", "routes/claim-listing.tsx"),
   route("blog", "routes/blog.tsx"),
   route("blog/:slug", "routes/blog/$slug.tsx"),
   route("contact", "routes/contact.tsx"),
@@ -40,9 +43,23 @@ export default [
   route("robots.txt", "routes/robots.txt.ts"),
   route("test", "routes/test.ts"),
   
+  // Customer Dashboard
   layout("routes/dashboard/layout.tsx", [
     route("dashboard", "routes/dashboard/index.tsx"),
-    route("dashboard/chat", "routes/dashboard/chat.tsx"),
+    route("dashboard/claims", "routes/dashboard/claims.tsx"),
+    route("dashboard/documents", "routes/dashboard/documents.tsx"),
+    route("dashboard/media", "routes/dashboard/media.tsx"),
+    route("dashboard/billing", "routes/dashboard/billing.tsx"),
     route("dashboard/settings", "routes/dashboard/settings.tsx"),
+  ]),
+  
+  // Admin Dashboard
+  layout("routes/admin/layout.tsx", [
+    route("admin", "routes/admin/index.tsx"),
+    route("admin/moderation", "routes/admin/moderation.tsx"),
+    route("admin/customers", "routes/admin/customers.tsx"),
+    route("admin/businesses", "routes/admin/businesses.tsx"),
+    route("admin/businesses/edit/:businessId", "routes/admin/businesses/edit.$businessId.tsx"),
+    route("admin/categories", "routes/admin/categories.tsx"),
   ]),
 ] satisfies RouteConfig;

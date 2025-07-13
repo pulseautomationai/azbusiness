@@ -165,3 +165,27 @@
     @apply bg-background text-foreground;
     }
 }
+
+/* Clerk UserButton styling fixes */
+@layer components {
+  /* Ensure Clerk user button avatar is properly circular and sized */
+  .cl-userButtonTrigger,
+  .cl-userButtonTrigger .cl-avatarBox {
+    @apply !w-8 !h-8;
+  }
+  
+  .cl-userButtonTrigger .cl-avatarBox .cl-avatar,
+  .cl-userButtonTrigger .cl-avatarBox .cl-avatar img {
+    @apply !w-8 !h-8 !rounded-full;
+  }
+  
+  /* Override any max-width constraints */
+  .cl-userButtonTrigger .cl-avatarBox .cl-avatar {
+    @apply !max-w-none;
+  }
+  
+  /* Ensure consistent sizing in header context */
+  .cl-userButtonTrigger {
+    @apply !flex !items-center !justify-center;
+  }
+}

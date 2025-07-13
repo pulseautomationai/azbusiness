@@ -138,6 +138,15 @@ export const features: Record<string, Feature> = {
     upgradeMessage: "Upgrade to Power for premium badges",
   },
   
+  // Claiming Features
+  claimRequired: {
+    id: "claimRequired",
+    name: "Business Claiming Required",
+    description: "Must claim business to access this feature",
+    availableIn: [], // Special feature - requires claiming first
+    upgradeMessage: "Claim your business to unlock this feature",
+  },
+  
   // Other Features
   
   priorityPlacement: {
@@ -237,12 +246,70 @@ export const features: Record<string, Feature> = {
     availableIn: ["power"],
     upgradeMessage: "Upgrade to Power for social media analysis",
   },
+
+  // Dashboard Features
+  logoUpload: {
+    id: "logoUpload",
+    name: "Logo Upload",
+    description: "Upload custom business logo",
+    availableIn: ["free", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
+
+  imageGallery: {
+    id: "imageGallery",
+    name: "Image Gallery",
+    description: "Upload multiple business images",
+    availableIn: ["pro", "power"],
+    upgradeMessage: "Upgrade to Pro for image gallery",
+  },
+
+  leadTracking: {
+    id: "leadTracking",
+    name: "Lead Tracking",
+    description: "Track and manage customer leads",
+    availableIn: ["pro", "power"],
+    upgradeMessage: "Upgrade to Pro for lead tracking",
+  },
+
+  billingManagement: {
+    id: "billingManagement",
+    name: "Billing Management",
+    description: "Manage subscription and payment methods",
+    availableIn: ["pro", "power"],
+    upgradeMessage: "Available with paid plans",
+  },
 };
 
 // Helper function to check if a feature is available for a plan
 export function isFeatureAvailable(featureId: string, planTier: PlanTier): boolean {
   const feature = features[featureId];
   if (!feature) return false;
+  return feature.availableIn.includes(planTier);
+}
+
+// Helper function to check if a feature is available for a claimed business
+export function isFeatureAvailableForBusiness(
+  featureId: string, 
+  planTier: PlanTier, 
+  isClaimed: boolean = false
+): boolean {
+  const feature = features[featureId];
+  if (!feature) return false;
+  
+  // Some features require claiming regardless of plan
+  const claimRequiredFeatures = [
+    'editProfile',
+    'contactForm', 
+    'verifiedBadge',
+    'leadNotifications',
+    'basicAnalytics'
+  ];
+  
+  if (claimRequiredFeatures.includes(featureId) && !isClaimed) {
+    return false;
+  }
+  
   return feature.availableIn.includes(planTier);
 }
 

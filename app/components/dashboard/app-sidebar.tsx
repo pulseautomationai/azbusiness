@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
 
-const data = {
+const defaultData = {
   navMain: [
     {
       title: "Dashboard",
@@ -37,10 +37,13 @@ const data = {
 export function AppSidebar({
   variant,
   user,
+  sidebarData,
 }: {
   variant: "sidebar" | "floating" | "inset";
   user: any;
+  sidebarData?: typeof defaultData;
 }) {
+  const data = sidebarData || defaultData;
   return (
     <Sidebar collapsible="offcanvas" variant={variant}>
       <SidebarHeader>

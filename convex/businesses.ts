@@ -2,6 +2,14 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 
+// Get business by ID
+export const getBusinessById = query({
+  args: { businessId: v.id("businesses") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.businessId);
+  }
+});
+
 // Get all businesses with filters
 export const getBusinesses = query({
   args: {
@@ -404,6 +412,9 @@ export const getBusinessesForAdmin = query({
     planTier: v.optional(v.union(v.literal("free"), v.literal("pro"), v.literal("power"))),
     claimStatus: v.optional(v.union(v.literal("claimed"), v.literal("unclaimed"))),
     active: v.optional(v.boolean()),
+    city: v.optional(v.string()),
+    zipcode: v.optional(v.string()),
+    categoryId: v.optional(v.id("categories")),
   },
   handler: async (ctx, args) => {
     // TODO: Restore admin access check when admin module is available
@@ -427,6 +438,18 @@ export const getBusinessesForAdmin = query({
 
     if (args.active !== undefined) {
       businesses = businesses.filter(b => b.active === args.active);
+    }
+
+    if (args.city) {
+      businesses = businesses.filter(b => b.city.toLowerCase() === args.city!.toLowerCase());
+    }
+
+    if (args.zipcode) {
+      businesses = businesses.filter(b => b.zip === args.zipcode);
+    }
+
+    if (args.categoryId) {
+      businesses = businesses.filter(b => b.categoryId === args.categoryId);
     }
 
     if (args.search) {
@@ -475,11 +498,20 @@ export const updateBusinessStatus = mutation({
     reason: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // TODO: Restore admin access check when admin module is available
-    // const adminAccess = await ctx.runQuery(api.admin.checkAdminAccess, {});
-    // if (!adminAccess.hasAccess || !adminAccess.permissions.includes("business_management")) {
-    //   throw new Error("Admin access required");
-    // }
+    // Get current user for admin check
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .unique();
+
+    if (!user || user.role !== "admin") {
+      throw new Error("Admin access required");
+    }
 
     const business = await ctx.db.get(args.businessId);
     if (!business) {
@@ -509,11 +541,18 @@ export const updateBusinessStatus = mutation({
         // Add to moderation queue
         await ctx.db.insert("businessModerationQueue", {
           businessId: args.businessId,
+          type: "admin_flag",
           status: "flagged",
           priority: "high",
+          submittedBy: user._id,
+          submittedAt: Date.now(),
           flags: ["admin_flagged"],
-          adminNotes: args.reason,
-          createdAt: Date.now(),
+          adminNotes: [{
+            admin: "System",
+            note: args.reason || "Business flagged by admin",
+            timestamp: Date.now(),
+            action: "flagged"
+          }],
         });
         break;
     }
@@ -644,6 +683,72 @@ export const exportBusinessData = mutation({
       // In a real implementation, this would generate and return download URL
       data: businesses.slice(0, 100), // Limit response size
     };
+  },
+});
+
+/**
+ * Get unique cities from all businesses for admin filters
+ */
+export const getUniqueCities = query({
+  handler: async (ctx) => {
+    // TODO: Restore admin access check when admin module is available
+    
+    const businesses = await ctx.db.query("businesses").collect();
+    
+    // Get unique cities and sort them
+    const cities = [...new Set(businesses.map(b => b.city))].sort();
+    
+    return cities;
+  },
+});
+
+/**
+ * Get unique zipcodes from all businesses for admin filters
+ */
+export const getUniqueZipcodes = query({
+  handler: async (ctx) => {
+    // TODO: Restore admin access check when admin module is available
+    
+    const businesses = await ctx.db.query("businesses").collect();
+    
+    // Get unique zipcodes and sort them
+    const zipcodes = [...new Set(businesses.map(b => b.zip))].sort();
+    
+    return zipcodes;
+  },
+});
+
+/**
+ * Get businesses owned by the current user
+ */
+export const getUserBusinesses = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return [];
+    }
+
+    // Find businesses where ownerId matches the current user
+    const businesses = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("ownerId"), identity.subject))
+      .collect();
+
+    // Get category info for each business
+    const businessesWithCategory = await Promise.all(
+      businesses.map(async (business) => {
+        const category = await ctx.db.get(business.categoryId);
+        return {
+          ...business,
+          category: category || null,
+        };
+      })
+    );
+
+    // Sort by most recently updated
+    businessesWithCategory.sort((a, b) => b.updatedAt - a.updatedAt);
+
+    return businessesWithCategory;
   },
 });
 

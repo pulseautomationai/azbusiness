@@ -1,5 +1,6 @@
 import { Crown, X, Shield, Star, ArrowRight, Check } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
@@ -19,8 +20,8 @@ export function ClaimListingCTA({ business, className }: ClaimListingCTAProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  // Don't show if already claimed or not a free tier
-  if (business.claimed || business.planTier !== "free" || isDismissed) {
+  // Only show for unclaimed businesses (regardless of plan tier)
+  if (business.claimed || isDismissed) {
     return null;
   }
 
@@ -130,9 +131,12 @@ export function ClaimListingCTA({ business, className }: ClaimListingCTAProps) {
                 <Button 
                   size="lg" 
                   className="w-full bg-white text-blue-600 hover:bg-white/90 font-semibold"
+                  asChild
                 >
-                  <Crown className="h-4 w-4 mr-2" />
-                  Claim This Listing - Free
+                  <Link to={`/claim-business?businessId=${business._id}`}>
+                    <Crown className="h-4 w-4 mr-2" />
+                    Claim This Listing - Free
+                  </Link>
                 </Button>
                 <Button 
                   size="sm" 

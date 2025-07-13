@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as adminAnalytics from "../adminAnalytics.js";
+import type * as adminCategories from "../adminCategories.js";
 import type * as analytics from "../analytics.js";
 import type * as archived_schema_backup from "../archived_schema_backup.js";
 import type * as batchImport from "../batchImport.js";
@@ -15,8 +17,11 @@ import type * as businessContent from "../businessContent.js";
 import type * as businesses from "../businesses.js";
 import type * as categories from "../categories.js";
 import type * as cities from "../cities.js";
+import type * as emails from "../emails.js";
 import type * as http from "../http.js";
 import type * as leads from "../leads.js";
+import type * as makeAdmin from "../makeAdmin.js";
+import type * as moderation from "../moderation.js";
 import type * as rateLimit from "../rateLimit.js";
 import type * as schema_backup_complex from "../schema_backup_complex.js";
 import type * as seed from "../seed.js";
@@ -26,6 +31,7 @@ import type * as seo from "../seo.js";
 import type * as sitemaps from "../sitemaps.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
+import type * as verification from "../verification.js";
 
 import type {
   ApiFromModules,
@@ -42,6 +48,8 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  adminAnalytics: typeof adminAnalytics;
+  adminCategories: typeof adminCategories;
   analytics: typeof analytics;
   archived_schema_backup: typeof archived_schema_backup;
   batchImport: typeof batchImport;
@@ -49,8 +57,11 @@ declare const fullApi: ApiFromModules<{
   businesses: typeof businesses;
   categories: typeof categories;
   cities: typeof cities;
+  emails: typeof emails;
   http: typeof http;
   leads: typeof leads;
+  makeAdmin: typeof makeAdmin;
+  moderation: typeof moderation;
   rateLimit: typeof rateLimit;
   schema_backup_complex: typeof schema_backup_complex;
   seed: typeof seed;
@@ -60,6 +71,7 @@ declare const fullApi: ApiFromModules<{
   sitemaps: typeof sitemaps;
   subscriptions: typeof subscriptions;
   users: typeof users;
+  verification: typeof verification;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

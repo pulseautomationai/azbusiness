@@ -70,17 +70,32 @@ export async function loader(args: Route.LoaderArgs) {
 export default function CategoryPage() {
   const { category: categorySlug } = useParams();
   
-  // Fetch data client-side
+  // Exclude specific routes that should not be treated as categories
+  // These routes have their own route files and should not be handled by the category route
+  const excludedRoutes = ['claim-business', 'sign-in', 'sign-up', 'dashboard', 'admin', 'pricing', 'about', 'contact', 'terms', 'privacy'];
+  if (excludedRoutes.includes(categorySlug || '')) {
+    // Return empty div - let the actual route handle this
+    return <div />;
+  }
+  
+  // First check if this slug could be a valid category before making queries
   const category = useQuery(api.categories.getCategoryBySlug, { slug: categorySlug || "" });
-  const businesses = useQuery(api.businesses.getBusinesses, { categorySlug: categorySlug || "" });
-  const cities = useQuery(api.cities.getCitiesWithCount, {});
   
-  const isLoading = category === undefined || businesses === undefined || cities === undefined;
-  
-  // Redirect to categories page if category doesn't exist (once loaded)
-  if (!isLoading && !category) {
+  // If category query has resolved and there's no category, redirect immediately
+  if (category === null) {
     return <Navigate to="/categories" replace />;
   }
+  
+  // Only fetch additional data if we have a valid category or are still loading
+  const businesses = useQuery(api.businesses.getBusinesses, 
+    category !== null && category !== undefined ? { categorySlug: categorySlug || "" } : "skip"
+  );
+  const cities = useQuery(api.cities.getCitiesWithCount, 
+    category !== null && category !== undefined ? {} : "skip"
+  );
+  
+  const isLoading = category === undefined;
+  const hasValidData = category !== null && businesses !== undefined && cities !== undefined;
   
   if (isLoading) {
     return (
@@ -96,9 +111,20 @@ export default function CategoryPage() {
     );
   }
 
-  // Type guard to ensure category is not null
-  if (!category) {
-    return <Navigate to="/categories" replace />;
+  // At this point, category is either valid or null (not undefined)
+  // If null, we already redirected above
+  if (!hasValidData) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-background pt-24">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-lg text-muted-foreground">Loading businesses...</div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
   }
 
   return (

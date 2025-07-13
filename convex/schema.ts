@@ -131,6 +131,7 @@ export default defineSchema({
     .index("by_city", ["city"])
     .index("by_owner", ["ownerId"])
     .index("by_plan", ["planTier"])
+    .index("by_name", ["name"])
     .searchIndex("search_businesses", {
       searchField: "name",
       filterFields: ["city", "categoryId", "active"],
@@ -304,19 +305,102 @@ export default defineSchema({
     .index("by_timestamp", ["timestamp"])
     .index("by_business_type", ["businessId", "eventType"]),
     
-  // Basic moderation queue for business validation
+  // Enhanced moderation queue for business validation and claiming
   businessModerationQueue: defineTable({
     businessId: v.id("businesses"),
+    type: v.string(), // "claim_request", "content_review", etc.
     status: v.string(),
-    submittedBy: v.optional(v.string()),
-    assignedToAdmin: v.optional(v.string()),
     priority: v.string(),
+    submittedBy: v.id("users"),
+    assignedToAdmin: v.optional(v.id("users")),
+    submittedAt: v.number(),
+    reviewedAt: v.optional(v.number()),
+    reviewedBy: v.optional(v.id("users")),
+    claimData: v.optional(v.object({
+      verificationMethod: v.string(),
+      userRole: v.string(),
+      contactInfo: v.object({
+        phone: v.optional(v.string()),
+        email: v.optional(v.string()),
+        preferredContact: v.string()
+      }),
+      businessHours: v.optional(v.object({
+        timezone: v.string(),
+        availableHours: v.string(),
+        bestTimeToCall: v.string()
+      })),
+      verificationData: v.optional(v.any()),
+      agreesToTerms: v.boolean(),
+      fraudCheckData: v.optional(v.any())
+    })),
     flags: v.array(v.string()),
-    adminNotes: v.optional(v.string()),
-    reviewStartedAt: v.optional(v.number()),
-    reviewCompletedAt: v.optional(v.number()),
-    createdAt: v.number(),
+    adminNotes: v.array(v.object({
+      admin: v.string(),
+      note: v.string(),
+      timestamp: v.number(),
+      action: v.string(),
+      requestedInfo: v.optional(v.array(v.string()))
+    })),
   })
     .index("by_business", ["businessId"])
+    .index("by_status", ["status"])
+    .index("by_type", ["type"])
+    .index("by_priority", ["priority"])
+    .index("by_submitted_by", ["submittedBy"]),
+  
+  // Phone verification records
+  phoneVerifications: defineTable({
+    businessId: v.id("businesses"),
+    userId: v.id("users"),
+    phoneNumber: v.string(),
+    verificationCode: v.string(),
+    attempts: v.number(),
+    verified: v.boolean(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+    verifiedAt: v.optional(v.number()),
+    ipAddress: v.string(),
+    userAgent: v.string(),
+  })
+    .index("by_phone", ["phoneNumber"])
+    .index("by_business", ["businessId"])
+    .index("by_user", ["userId"]),
+  
+  // Email verification records
+  emailVerifications: defineTable({
+    businessId: v.id("businesses"),
+    userId: v.id("users"),
+    emailAddress: v.string(),
+    verificationToken: v.string(),
+    verified: v.boolean(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+    verifiedAt: v.optional(v.number()),
+    ipAddress: v.string(),
+    userAgent: v.string(),
+  })
+    .index("by_email", ["emailAddress"])
+    .index("by_token", ["verificationToken"])
+    .index("by_business", ["businessId"])
+    .index("by_user", ["userId"]),
+  
+  // Document verification records
+  verificationDocuments: defineTable({
+    businessId: v.id("businesses"),
+    userId: v.id("users"),
+    documentType: v.string(),
+    fileName: v.string(),
+    fileSize: v.number(),
+    fileType: v.string(),
+    fileUrl: v.string(),
+    description: v.optional(v.string()),
+    status: v.string(), // "pending_review", "approved", "rejected"
+    uploadedAt: v.number(),
+    reviewedAt: v.optional(v.number()),
+    reviewedBy: v.optional(v.id("users")),
+    reviewNotes: v.optional(v.string()),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_user", ["userId"])
     .index("by_status", ["status"]),
 });

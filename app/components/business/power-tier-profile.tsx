@@ -15,6 +15,7 @@ import { cn } from "~/lib/utils";
 import ContactForm from "./contact-form";
 import BusinessCard from "../category/business-card";
 import { InsightsTab } from "./tabs/InsightsTab";
+import { ClaimBanner } from "./claim-banner";
 
 interface BusinessProfileProps {
   business: {
@@ -35,8 +36,8 @@ interface BusinessProfileProps {
     coordinates?: { lat: number; lng: number };
     category?: { name: string; icon?: string; slug: string } | null;
     services: string[];
-    hours: Record<string, string>;
-    planTier: "free" | "pro" | "power";
+    hours?: Record<string, string> | { monday?: string; tuesday?: string; wednesday?: string; thursday?: string; friday?: string; saturday?: string; sunday?: string; } | null;
+    planTier: string;
     featured: boolean;
     priority: number;
     ownerId?: string;
@@ -333,6 +334,9 @@ export default function PowerTierProfile({
     <div className="min-h-screen bg-background pt-24">
       <div className="container mx-auto px-4 py-8">
         
+        {/* Claim Banner for Unclaimed Businesses */}
+        <ClaimBanner business={business} className="mb-8" />
+        
         {/* Hero Section */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row gap-6">
@@ -415,12 +419,14 @@ export default function PowerTierProfile({
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {Object.entries(business.hours).map(([day, hours]) => (
+                        {business.hours ? Object.entries(business.hours).map(([day, hours]) => (
                           <div key={day} className="flex justify-between">
                             <span className="capitalize font-medium">{day}</span>
                             <span className="text-muted-foreground">{hours || "Closed"}</span>
                           </div>
-                        ))}
+                        )) : (
+                          <div className="text-muted-foreground">Hours not available</div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -584,8 +590,13 @@ export default function PowerTierProfile({
                   }
                 </p>
               </div>
-              <Button>
-                {!business.claimed ? "Claim This Business" : "Upgrade to Pro"}
+              <Button asChild>
+                <Link to={!business.claimed 
+                  ? `/claim-business?businessId=${business._id}` 
+                  : "/pricing"
+                }>
+                  {!business.claimed ? "Claim This Business" : "Upgrade to Pro"}
+                </Link>
               </Button>
             </div>
           </div>

@@ -126,23 +126,30 @@ export default function AddBusinessPage() {
             {/* CTA */}
             <div className="text-center">
               {isSignedIn ? (
-                <Button size="lg" asChild>
-                  <Link to="/dashboard">
-                    Go to Dashboard
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                <div className="space-y-4">
+                  <Button size="lg" asChild>
+                    <Link to="/add-business/create">
+                      Add New Business
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    <Link to="/dashboard" className="text-primary hover:underline">
+                      Go to Dashboard
+                    </Link>
+                  </p>
+                </div>
               ) : (
                 <div className="space-y-4">
                   <Button size="lg" asChild>
-                    <Link to="/sign-up">
+                    <Link to="/sign-up?intent=add-business">
                       Get Started Free
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                   <p className="text-sm text-muted-foreground">
                     Already have an account?{" "}
-                    <Link to="/sign-in" className="text-primary hover:underline">
+                    <Link to="/sign-in?redirect=/add-business/create" className="text-primary hover:underline">
                       Sign in
                     </Link>
                   </p>

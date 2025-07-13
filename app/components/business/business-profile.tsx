@@ -14,6 +14,7 @@ import { cn } from "~/lib/utils";
 import ContactForm from "./contact-form";
 import ReviewSection from "./review-section";
 import BusinessCard from "../category/business-card";
+import { ClaimBanner } from "./claim-banner";
 
 interface BusinessProfileProps {
   business: {
@@ -34,8 +35,8 @@ interface BusinessProfileProps {
     coordinates?: { lat: number; lng: number };
     category?: { name: string; icon?: string; slug: string } | null;
     services: string[];
-    hours: Record<string, string>;
-    planTier: "free" | "pro" | "power";
+    hours?: Record<string, string> | null;
+    planTier: string;
     featured: boolean;
     priority: number;
     ownerId?: string;
@@ -83,6 +84,11 @@ export default function BusinessProfile({
 
   return (
     <div className="min-h-screen bg-background pt-24">
+      {/* Claim Banner for Unclaimed Businesses */}
+      <div className="container mx-auto px-6 py-4">
+        <ClaimBanner business={business} />
+      </div>
+      
       {/* Hero Section */}
       <section className="relative bg-muted/30">
         {business.heroImage && (
@@ -213,7 +219,7 @@ export default function BusinessProfile({
               
               {!business.claimed && !isOwner && (
                 <Button variant="ghost" size="sm" asChild>
-                  <Link to="/sign-up">
+                  <Link to={`/claim-business?businessId=${business._id}`}>
                     <Award className="mr-2 h-4 w-4" />
                     Claim this listing
                   </Link>
@@ -374,7 +380,7 @@ export default function BusinessProfile({
                 <CardContent>
                   <div className="space-y-2">
                     {daysOfWeek.map((day) => {
-                      const hours = business.hours[day];
+                      const hours = business.hours?.[day];
                       const isToday = day === today;
                       
                       return (
@@ -449,30 +455,6 @@ export default function BusinessProfile({
             </div>
           </div>
 
-          {/* Claim Listing Section */}
-          {!business.claimed && !isOwner && (
-            <div className="mt-12">
-              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-                <CardContent className="py-8 px-6 text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                    Is this your business?
-                  </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
-                    Claim your listing to update information and respond to reviews.
-                  </p>
-                  <Button 
-                    size="lg" 
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold"
-                    asChild
-                  >
-                    <Link to="/sign-up">
-                      Claim This Listing
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
 
           {/* Related Businesses */}
           {relatedBusinesses.length > 0 && (

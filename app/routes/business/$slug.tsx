@@ -10,15 +10,10 @@ import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../../convex/_generated/api";
 import type { Route } from "./+types/$slug";
 
-export function meta({ data }: Route.MetaArgs) {
-  if (!data?.business) {
-    return [{ title: "Business Not Found - AZ Business Services" }];
-  }
-
-  const { business } = data;
-  const title = `${business.name} - ${business.city}, AZ | AZ Business Services`;
-  const description = business.shortDescription || 
-    `Contact ${business.name} in ${business.city}, Arizona. ${business.category?.name || "Local service provider"} offering professional services. Read reviews and get a quote.`;
+export function meta({ params }: Route.MetaArgs) {
+  // Simplified meta without data dependency
+  const title = "Business Directory - AZ Business Services";
+  const description = "Discover local businesses in Arizona. Find professional services, read reviews, and connect with trusted providers.";
 
   return [
     { title },

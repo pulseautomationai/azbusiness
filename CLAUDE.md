@@ -2,9 +2,123 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Current Project Status: AZ Business Services Directory
+## Business Listing Directory — Complete System Overview
 
-**🚀 PRODUCTION READY** - A comprehensive business directory for Arizona service providers with advanced AI-powered features and admin management tools.
+This document outlines the current end-to-end system for the Arizona Business Directory, based on all recent conversations and plan revisions. This reflects the **finalized product direction**, including tech stack, business model, page structure, and plan-specific feature logic.
+
+---
+
+## 🏢 Business Concept
+
+An AI-powered local business directory platform for Arizona service businesses, with a free public listing and premium paid tiers. The platform offers:
+
+- Rich, claimable business listings with real SEO value
+- AI-enhanced insights and profile enrichment
+- Lead generation via the directory itself
+- Upgrade paths from Free → Pro → Power tiers
+
+The business model combines directory exposure, lead delivery, AI tools, and content creation into a tiered SaaS plan for local business owners.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React Router v7, TailwindCSS v4, shadcn/ui, Lucide icons, Recharts
+- **Backend:** Convex (reactive DB), Clerk (auth), Polar.sh (billing), OpenAI (AI content)
+- **Build/Deploy:** Vite, TypeScript, Vercel
+
+---
+
+## 💰 Pricing Model
+
+| Tier  | Price | Target Customer                      | Core Value                                             |
+| ----- | ----- | ------------------------------------ | ------------------------------------------------------ |
+| Free  | \$0   | Unclaimed or early-stage businesses  | Basic online visibility, no lead access                |
+| Pro   | \$29  | Growing service businesses           | Verified trust signals + lead eligibility              |
+| Power | \$97  | Established businesses with traction | Hands-free AI, blog content, lead delivery, visibility |
+
+---
+
+## 🔄 Summary of Structure & Sync Status
+
+| Section Title                               | Purpose                                           | Sync Status |
+| ------------------------------------------- | ------------------------------------------------- | ----------- |
+| 🔢 Component Visibility Matrix + Plan Logic | Defines visibility logic for each feature by tier | ✅ Synced    |
+| ✅ Component Data Sourcing Audit             | Shows how each UI feature gets its data           | ✅ Synced    |
+| 💡 What You Get — Customer Pricing Table    | Public-facing feature grid shown to users         | ✅ Synced    |
+
+---
+
+## 🧱 Business Listing Page Architecture
+
+```
+| Header (Business name, tags, rating)
+| Hero Banner (Static)
+| Tabs: Overview | Services | Reviews | Insights*
+| Sidebar: Contact, Map, Hours, Social Links, Badges
+| Sticky CTA (Claim Listing or Upgrade)
+| Footer: Similar Businesses
+```
+
+---
+
+## 🔢 Component Visibility Matrix + Plan Logic
+
+| Component / Feature              | Free                   | Pro                 | Power                                             |
+| -------------------------------- | ---------------------- | ------------------- | ------------------------------------------------- |
+| Business Summary                 | Blurred 1-line preview | Full text           | AI-enhanced + style options                       |
+| Service Display                  | Bullet list            | Service cards       | Enhanced cards w/ AI pricing blurbs               |
+| Review Insights                  | ❌                      | Basic               | AI sentiment & keyword analysis                   |
+| SEO Backlink                     | ❌                      | ✅                   | ✅                                                 |
+| Verified Badge                   | ❌                      | ✅                   | ✅                                                 |
+| Badge System                     | Grayed                 | Standard            | Full (all bonus logic)                            |
+| Category Boost                   | ❌                      | Category-level bump | Homepage placement (rotating) + top-category slot |
+| Leads from Your Listing          | ❌                      | Manually matched    | Auto-matched + Instant alerting                   |
+| Concierge Support Access         | ❌                      | ❌                   | ✅                                                 |
+| Monthly Blog Post (AI)           | ❌                      | ❌                   | ✅ 1x/mo AI blog for SEO                           |
+| Tabs, GMB Reviews, Map, Carousel | ✅                      | ✅                   | ✅                                                 |
+
+---
+
+## ✅ Component Data Sourcing Audit
+
+| Component          | Source                     | Enrichment | Notes                                              |
+| ------------------ | -------------------------- | ---------- | -------------------------------------------------- |
+| Business Summary   | GMB scraped + AI           | ✅          | Summarized with OpenAI                             |
+| Services Display   | GMB reviews + AI           | ✅          | Extracted services w/ NLP + display logic          |
+| Review Insights    | GMB reviews + AI           | ✅          | Sentiment, keywords, trending terms                |
+| Verified Badge     | Convex user table          | ❌          | Triggered on claim approval                        |
+| Category Boost     | Convex listing metadata    | ❌          | Weighted on Pro/Power logic                        |
+| Badge System       | GMB reviews + rules engine | ✅          | Rule-based badge eligibility                       |
+| Blog Post          | AI (OpenAI) + Convex       | ✅          | Monthly post auto-written for Power plan           |
+| Leads from Listing | Internal match logic       | ✅          | Manual (Pro) vs Auto (Power) routing to user inbox |
+
+---
+
+## 💡 What You Get — Customer-Facing Pricing Table
+
+| Feature                    | Free        | Pro              | Power                                           |
+| -------------------------- | ----------- | ---------------- | ----------------------------------------------- |
+| Public Business Listing    | ✅           | ✅                | ✅                                               |
+| Google Reviews             | ✅           | ✅                | ✅                                               |
+| Tabs (Overview, etc.)      | ✅           | ✅                | ✅                                               |
+| Similar Businesses         | ✅           | ✅                | ✅                                               |
+| Leads from Your Listing    | ❌           | Manually Matched | Auto-Matched + Instant Alerts                   |
+| Verified Badge             | ❌           | ✅                | ✅                                               |
+| Business Summary           | Blurred     | Full View        | AI-enhanced + Style Options                     |
+| Service Display            | Bullet List | Service Cards    | Enhanced Cards with Pricing                     |
+| SEO Backlink               | ❌           | ✅                | ✅                                               |
+| Review Insights            | ❌           | Basic            | AI Sentiment + Keyword Summary                  |
+| Badge System               | Grayed out  | Standard         | All Badges (Locally Loved, Fast Response, etc.) |
+| Category Boost             | ❌           | ✅                | ✅ + Homepage Featured (rotating)                |
+| Dedicated Concierge Access | ❌           | ❌                | ✅                                               |
+| Monthly Blog Post          | ❌           | ❌                | ✅ 1/mo AI-powered post                          |
+
+---
+
+Let me know if you’d like a PDF export of this or want to train an assistant from this `.md` file.
+
+
 
 ### Project Completion Status
 - **✅ Phase 1-2**: Foundations & Free Plan MVP (100% Complete)
@@ -277,3 +391,6 @@ When ready to restore full admin functionality:
 - **Rate Limiting**: Built-in protection against API abuse
 
 This represents a production-ready business directory platform with enterprise-grade features, comprehensive analytics, and scalable monetization model generating $1,500+/month equivalent value in integrated tools and services.
+
+
+

@@ -118,16 +118,8 @@ export const updateAIContent = mutation({
           neutral: v.number(),
           negative: v.number(),
         }),
-        keywords: v.array(v.object({
-          word: v.string(),
-          count: v.number(),
-          sentiment: v.string(),
-        })),
-        trends: v.array(v.object({
-          period: v.string(),
-          averageRating: v.number(),
-          reviewCount: v.number(),
-        })),
+        keywords: v.array(v.string()),
+        trends: v.array(v.string()),
         highlights: v.array(v.string()),
         improvements: v.array(v.string()),
       })),
@@ -140,18 +132,8 @@ export const updateAIContent = mutation({
         competitorAnalysis: v.optional(v.any()),
       })),
       journeyPreview: v.optional(v.object({
-        serpPreview: v.object({
-          title: v.string(),
-          description: v.string(),
-          url: v.string(),
-        }),
-        gmbPreview: v.object({
-          primaryImage: v.string(),
-          rating: v.number(),
-          reviewCount: v.number(),
-          priceLevel: v.optional(v.string()),
-          highlights: v.array(v.string()),
-        }),
+        serpPreview: v.optional(v.string()),
+        gmbPreview: v.optional(v.string()),
       })),
       aiEnrichment: v.optional(v.object({
         summaryGeneratedAt: v.optional(v.number()),

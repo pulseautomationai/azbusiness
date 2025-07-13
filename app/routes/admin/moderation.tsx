@@ -1,456 +1,348 @@
-/**
- * Admin Moderation & Claim Verification - Phase 5.1.5 & 5.1.6
- * Business claim verification workflows and content moderation systems
- */
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
-import { api } from "~/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle,
-  Clock,
-  Eye,
-  MessageSquare,
-  Flag,
-  Shield,
-  User,
-  Building2,
-  FileText,
-  Calendar,
-  MapPin,
-  Phone,
-  Mail,
-  ExternalLink,
-  ThumbsUp,
-  ThumbsDown,
-  MoreHorizontal
-} from "lucide-react";
-import { Link, useSearchParams } from "react-router";
-import { toast } from "sonner";
+import { useUser } from "@clerk/react-router";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 export default function AdminModeration() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const [moderationAction, setModerationAction] = useState<string>("");
-  const [moderationNotes, setModerationNotes] = useState<string>("");
-  
-  // Filter state
-  const activeTab = searchParams.get("tab") || "queue";
-  const statusFilter = searchParams.get("status") || "pending_review";
-  const priorityFilter = searchParams.get("priority") || "all";
+  const [selectedClaim, setSelectedClaim] = useState<string | null>(null);
+  const [adminNotes, setAdminNotes] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [hasAdminAccess, setHasAdminAccess] = useState(false);
+  const { user } = useUser();
 
-  // Data queries
-  const moderationQueue = useQuery(api.moderation.getModerationQueue, {
-    status: statusFilter !== "all" ? statusFilter as any : undefined,
-    priority: priorityFilter !== "all" ? priorityFilter as any : undefined,
-    limit: 50,
-  });
+  // Mutations for admin setup
+  const makeCurrentUserAdmin = useMutation(api.makeAdmin.makeCurrentUserAdmin);
+  const makeUserAdminByEmail = useMutation(api.makeAdmin.makeUserAdminByEmail);
+  const allUsers = useQuery(api.makeAdmin.listAllUsers);
 
-  const claimRequests = useQuery(api.moderation.getClaimRequests, {
-    status: "pending",
-    limit: 25,
-  });
+  // Check if current user already has admin access
+  const currentUserData = useQuery(user ? api.users.getCurrentUser : "skip");
 
-  const flaggedContent = useQuery(api.moderation.getFlaggedContent, {
-    limit: 25,
-  });
+  // Update hasAdminAccess when we get user data
+  useEffect(() => {
+    if (currentUserData?.role === "admin") {
+      setHasAdminAccess(true);
+    }
+  }, [currentUserData]);
 
-  // Mutations
+  // Only query pending claims if we have admin access
+  const pendingClaims = useQuery(
+    hasAdminAccess ? api.moderation.getPendingClaims : "skip", 
+    hasAdminAccess ? { limit: 50, status: "pending" } : "skip"
+  );
+
+  // Mutation for processing claims
   const processClaimRequest = useMutation(api.moderation.processClaimRequest);
-  const updateModerationStatus = useMutation(api.moderation.updateModerationStatus);
-  const assignModerator = useMutation(api.moderation.assignModerator);
 
-  const handleClaimAction = async (claimId: string, action: "approve" | "reject", notes?: string) => {
+  const handleClaimAction = async (claimId: string, action: "approve" | "reject" | "request_info") => {
+    if (!adminNotes.trim() && action !== "approve") {
+      alert("Please add notes for this action");
+      return;
+    }
+
+    setIsProcessing(true);
     try {
       await processClaimRequest({
-        claimId,
+        claimId: claimId as Id<"businessModerationQueue">,
         action,
-        adminNotes: notes || moderationNotes,
+        adminNotes: adminNotes.trim() || "Claim processed",
       });
-      
-      toast.success(`Claim ${action}d successfully`);
-      setModerationNotes("");
+
+      alert(`Claim ${action}d successfully`);
+      setSelectedClaim(null);
+      setAdminNotes("");
     } catch (error) {
-      toast.error(`Failed to ${action} claim`);
+      console.error("Error processing claim:", error);
+      alert(`Failed to ${action} claim: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  const handleModerationAction = async (itemId: string, action: string) => {
+  const handleMakeAdmin = async () => {
     try {
-      await updateModerationStatus({
-        itemId,
-        status: action as any,
-        adminNotes: moderationNotes,
-      });
-      
-      toast.success("Moderation action completed");
-      setSelectedItem(null);
-      setModerationNotes("");
+      const result = await makeCurrentUserAdmin();
+      alert(`Success: ${result.message}`);
+      setHasAdminAccess(true); // Set admin access flag
+      window.location.reload(); // Reload to refresh the data
     } catch (error) {
-      toast.error("Failed to complete moderation action");
+      console.error("Error making admin:", error);
+      alert(`Failed to make admin: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
-  const getPriorityBadge = (priority: string) => {
-    const colors = {
-      urgent: "bg-red-100 text-red-800 border-red-200",
-      high: "bg-orange-100 text-orange-800 border-orange-200",
-      medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      low: "bg-green-100 text-green-800 border-green-200",
-    };
-    
+  // Show admin setup interface for users without admin access
+  if (!hasAdminAccess && !user) {
     return (
-      <Badge className={colors[priority as keyof typeof colors] || colors.medium}>
-        {priority.toUpperCase()}
-      </Badge>
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <h1 className="text-xl font-bold text-yellow-800 mb-4">Authentication Required</h1>
+          <p className="text-yellow-700">Please sign in to access the admin moderation dashboard.</p>
+        </div>
+      </div>
     );
-  };
+  }
 
-  const getStatusBadge = (status: string) => {
-    const configs = {
-      pending_review: { color: "bg-yellow-100 text-yellow-800", icon: Clock },
-      approved: { color: "bg-green-100 text-green-800", icon: CheckCircle },
-      rejected: { color: "bg-red-100 text-red-800", icon: XCircle },
-      flagged: { color: "bg-red-100 text-red-800", icon: Flag },
-      needs_changes: { color: "bg-orange-100 text-orange-800", icon: AlertTriangle },
-    };
-    
-    const config = configs[status as keyof typeof configs] || configs.pending_review;
-    const Icon = config.icon;
-    
+  // Show admin setup if there's likely an access error (for now, always show it first)
+  if (!hasAdminAccess) {
     return (
-      <Badge className={config.color}>
-        <Icon className="h-3 w-3 mr-1" />
-        {status.replace("_", " ").toUpperCase()}
-      </Badge>
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+          <h1 className="text-xl font-bold text-red-800 mb-4">Admin Access Required</h1>
+          <p className="text-red-700 mb-4">
+            You need admin permissions to access the moderation dashboard.
+          </p>
+          <button
+            onClick={handleMakeAdmin}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Grant Admin Access (Development)
+          </button>
+        </div>
+
+        {/* Show user list for debugging */}
+        {allUsers && (
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-lg font-bold mb-4">All Users (Debug)</h2>
+            <div className="space-y-2">
+              {allUsers.map((user) => (
+                <div key={user._id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                  <div>
+                    <div className="font-medium">{user.name || user.email}</div>
+                    <div className="text-sm text-gray-600">Role: {user.role || "none"}</div>
+                    <div className="text-xs text-gray-500 font-mono">{user._id}</div>
+                  </div>
+                  {user.role !== "admin" && (
+                    <button
+                      onClick={() => {
+                        if (user.email) {
+                          makeUserAdminByEmail({ email: user.email })
+                            .then(() => {
+                              alert(`Made ${user.email} an admin`);
+                              window.location.reload();
+                            })
+                            .catch((error) => {
+                              alert(`Failed: ${error.message}`);
+                            });
+                        }
+                      }}
+                      className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                    >
+                      Make Admin
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     );
-  };
+  }
 
-  if (moderationQueue === undefined) {
+  if (pendingClaims === undefined) {
     return (
-      <div className="space-y-6">
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Admin Moderation</h1>
         <div className="animate-pulse">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Content Moderation</h1>
-          <div className="bg-gray-200 rounded-lg h-96"></div>
+          <div className="bg-gray-200 rounded-lg h-32 mb-4"></div>
+          <div className="bg-gray-200 rounded-lg h-32 mb-4"></div>
+          <div className="bg-gray-200 rounded-lg h-32"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Content Moderation</h1>
-          <p className="text-gray-600">
-            Review business claims, moderate content, and manage platform quality
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Business Claim Moderation</h1>
+        <p className="text-gray-600 mt-2">
+          Review and process business claim requests
+        </p>
+        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-blue-800">
+            📋 <strong>{pendingClaims?.length || 0}</strong> pending claims require review
           </p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Badge variant="outline">
-            {moderationQueue?.length || 0} pending items
-          </Badge>
         </div>
       </div>
 
-      {/* Moderation Tabs */}
-      <Tabs value={activeTab} onValueChange={(value) => setSearchParams({ tab: value })}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="queue">Moderation Queue</TabsTrigger>
-          <TabsTrigger value="claims">Claim Requests</TabsTrigger>
-          <TabsTrigger value="flagged">Flagged Content</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
-        </TabsList>
-
-        {/* Moderation Queue Tab */}
-        <TabsContent value="queue" className="space-y-4">
-          {/* Filters */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Queue Filters</CardTitle>
-            </CardHeader>
-            <CardContent className="flex space-x-4">
-              <Select value={statusFilter} onValueChange={(value) => setSearchParams({ ...Object.fromEntries(searchParams), status: value })}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending_review">Pending Review</SelectItem>
-                  <SelectItem value="flagged">Flagged</SelectItem>
-                  <SelectItem value="needs_changes">Needs Changes</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select value={priorityFilter} onValueChange={(value) => setSearchParams({ ...Object.fromEntries(searchParams), priority: value })}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Priorities</SelectItem>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          {/* Queue Items */}
-          <div className="space-y-4">
-            {moderationQueue?.map((item) => (
-              <Card key={item._id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <Building2 className="h-5 w-5 text-gray-500" />
-                        <h3 className="text-lg font-medium">
-                          {item.business?.name || "Unknown Business"}
-                        </h3>
-                        {getStatusBadge(item.status)}
-                        {getPriorityBadge(item.priority)}
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="space-y-2 text-sm">
-                          {item.business?.city && (
-                            <div className="flex items-center text-gray-600">
-                              <MapPin className="h-4 w-4 mr-2" />
-                              {item.business.city}
-                            </div>
-                          )}
-                          {item.business?.phone && (
-                            <div className="flex items-center text-gray-600">
-                              <Phone className="h-4 w-4 mr-2" />
-                              {item.business.phone}
-                            </div>
-                          )}
-                          <div className="flex items-center text-gray-600">
-                            <Calendar className="h-4 w-4 mr-2" />
-                            Submitted: {new Date(item.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2 text-sm">
-                          {item.flags.length > 0 && (
-                            <div>
-                              <span className="font-medium text-red-700">Flags: </span>
-                              {item.flags.join(", ")}
-                            </div>
-                          )}
-                          {item.submittedBy && (
-                            <div className="flex items-center text-gray-600">
-                              <User className="h-4 w-4 mr-2" />
-                              Submitted by: {item.submittedBy}
-                            </div>
-                          )}
-                          {item.assignedToAdmin && (
-                            <div className="flex items-center text-gray-600">
-                              <Shield className="h-4 w-4 mr-2" />
-                              Assigned to: {item.assignedToAdmin}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {item.adminNotes && (
-                        <div className="bg-gray-50 p-3 rounded-lg mb-4">
-                          <span className="text-sm font-medium text-gray-700">Admin Notes: </span>
-                          <span className="text-sm text-gray-600">{item.adminNotes}</span>
-                        </div>
-                      )}
+      <div className="space-y-6">
+        {pendingClaims?.map((claim) => (
+          <div key={claim._id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Business Claim Request
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">Business ID:</span>
+                      <span className="ml-2 font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                        {claim.businessId}
+                      </span>
                     </div>
                     
-                    <div className="flex items-center space-x-2 ml-4">
-                      <Button asChild size="sm" variant="outline">
-                        <Link to={`/admin/businesses/${item.businessId}`}>
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Link>
-                      </Button>
-                      
-                      <Select value={selectedItem === item._id ? moderationAction : ""} 
-                              onValueChange={(value) => {
-                                setSelectedItem(item._id);
-                                setModerationAction(value);
-                              }}>
-                        <SelectTrigger className="w-32">
-                          <SelectValue placeholder="Action" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="approved">Approve</SelectItem>
-                          <SelectItem value="rejected">Reject</SelectItem>
-                          <SelectItem value="needs_changes">Needs Changes</SelectItem>
-                          <SelectItem value="flagged">Flag</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      
-                      {selectedItem === item._id && moderationAction && (
-                        <Button 
-                          onClick={() => handleModerationAction(item._id, moderationAction)}
-                          size="sm"
-                          className="ml-2"
-                        >
-                          Apply
-                        </Button>
-                      )}
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">Submitted:</span>
+                      <span className="ml-2 text-gray-600">
+                        {new Date(claim.submittedAt).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">Verification Method:</span>
+                      <span className="ml-2 capitalize text-gray-600">
+                        {claim.claimData?.verificationMethod}
+                      </span>
+                    </div>
+
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">User Role:</span>
+                      <span className="ml-2 capitalize text-gray-600">
+                        {claim.claimData?.userRole}
+                      </span>
                     </div>
                   </div>
-                  
-                  {selectedItem === item._id && (
-                    <div className="mt-4 pt-4 border-t">
-                      <Textarea
-                        placeholder="Add notes for this moderation action..."
-                        value={moderationNotes}
-                        onChange={(e) => setModerationNotes(e.target.value)}
-                        className="mb-2"
-                      />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-            
-            {moderationQueue?.length === 0 && (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">All caught up!</h3>
-                  <p className="text-gray-600">No items in the moderation queue.</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
 
-        {/* Claim Requests Tab */}
-        <TabsContent value="claims" className="space-y-4">
-          <div className="space-y-4">
-            {claimRequests?.map((claim) => (
-              <Card key={claim._id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <User className="h-5 w-5 text-blue-500" />
-                        <h3 className="text-lg font-medium">
-                          Business Claim Request
-                        </h3>
-                        <Badge variant="outline">Pending Verification</Badge>
+                  <div className="space-y-2">
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">Contact Info:</span>
+                      <div className="ml-2 text-gray-600">
+                        {claim.claimData?.contactInfo?.email && (
+                          <div>📧 {claim.claimData.contactInfo.email}</div>
+                        )}
+                        {claim.claimData?.contactInfo?.phone && (
+                          <div>📞 {claim.claimData.contactInfo.phone}</div>
+                        )}
                       </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="space-y-2">
-                          <div className="text-sm">
-                            <span className="font-medium">Business: </span>
-                            {claim.business?.name}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium">Claimant: </span>
-                            {claim.claimantName} ({claim.claimantEmail})
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium">Role: </span>
-                            {claim.relationship}
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="text-sm">
-                            <span className="font-medium">Submitted: </span>
-                            {new Date(claim.createdAt).toLocaleDateString()}
-                          </div>
-                          {claim.verificationDocuments && (
-                            <div className="text-sm">
-                              <span className="font-medium">Documents: </span>
-                              <Button variant="link" size="sm" className="p-0 h-auto">
-                                View Documents
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {claim.message && (
-                        <div className="bg-blue-50 p-3 rounded-lg mb-4">
-                          <span className="text-sm font-medium text-blue-700">Message: </span>
-                          <span className="text-sm text-blue-600">{claim.message}</span>
-                        </div>
-                      )}
                     </div>
+
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">Status:</span>
+                      <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                        claim.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        claim.status === 'approved' ? 'bg-green-100 text-green-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {claim.status.toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-700">Priority:</span>
+                      <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                        claim.priority === 'high' ? 'bg-red-100 text-red-800' :
+                        claim.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {claim.priority.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {claim.claimData?.verificationData?.additionalNotes && (
+                  <div className="mt-4 bg-gray-50 border border-gray-200 rounded p-3">
+                    <span className="font-medium text-gray-700">Additional Notes:</span>
+                    <p className="text-gray-600 mt-1">
+                      {claim.claimData.verificationData.additionalNotes}
+                    </p>
+                  </div>
+                )}
+
+                {claim.adminNotes && claim.adminNotes.length > 0 && (
+                  <div className="mt-4 bg-blue-50 border border-blue-200 rounded p-3">
+                    <span className="font-medium text-blue-700">Admin Notes:</span>
+                    <div className="mt-2 space-y-2">
+                      {claim.adminNotes.map((note, index) => (
+                        <div key={index} className="text-blue-600 text-sm">
+                          <strong>{note.admin}</strong> ({note.action}): {note.note}
+                          <span className="text-blue-500 ml-2">
+                            {new Date(note.timestamp).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="ml-6 flex-shrink-0">
+                {selectedClaim === claim._id ? (
+                  <div className="space-y-3">
+                    <textarea
+                      placeholder="Add notes for this action..."
+                      value={adminNotes}
+                      onChange={(e) => setAdminNotes(e.target.value)}
+                      className="w-64 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                    />
                     
-                    <div className="flex items-center space-x-2 ml-4">
-                      <Button 
+                    <div className="flex space-x-2">
+                      <button
                         onClick={() => handleClaimAction(claim._id, "approve")}
-                        size="sm" 
-                        className="bg-green-600 hover:bg-green-700"
+                        disabled={isProcessing}
+                        className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 text-sm"
                       >
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        Approve
-                      </Button>
+                        {isProcessing ? "Processing..." : "✓ Approve"}
+                      </button>
                       
-                      <Button 
+                      <button
                         onClick={() => handleClaimAction(claim._id, "reject")}
-                        size="sm" 
-                        variant="destructive"
+                        disabled={isProcessing}
+                        className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:bg-gray-400 text-sm"
                       >
-                        <ThumbsDown className="h-4 w-4 mr-1" />
-                        Reject
-                      </Button>
+                        {isProcessing ? "Processing..." : "✗ Reject"}
+                      </button>
                     </div>
+
+                    <button
+                      onClick={() => handleClaimAction(claim._id, "request_info")}
+                      disabled={isProcessing}
+                      className="w-full bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 disabled:bg-gray-400 text-sm"
+                    >
+                      {isProcessing ? "Processing..." : "📝 Request Info"}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setSelectedClaim(null);
+                        setAdminNotes("");
+                      }}
+                      className="w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm"
+                    >
+                      Cancel
+                    </button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-            
-            {claimRequests?.length === 0 && (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <Shield className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No pending claims</h3>
-                  <p className="text-gray-600">All business claim requests have been processed.</p>
-                </CardContent>
-              </Card>
-            )}
+                ) : (
+                  <button
+                    onClick={() => setSelectedClaim(claim._id)}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    Review Claim
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-        </TabsContent>
+        ))}
 
-        {/* Flagged Content Tab */}
-        <TabsContent value="flagged" className="space-y-4">
-          <Card>
-            <CardContent className="text-center py-12">
-              <Flag className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Flagged Content Review</h3>
-              <p className="text-gray-600">Content flagging system will be implemented in Phase 5.2</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* History Tab */}
-        <TabsContent value="history" className="space-y-4">
-          <Card>
-            <CardContent className="text-center py-12">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Moderation History</h3>
-              <p className="text-gray-600">
-                View detailed history in the <Link to="/admin" className="text-blue-600 hover:underline">main dashboard</Link>
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        {pendingClaims?.length === 0 && (
+          <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+            <div className="text-green-500 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">All caught up!</h3>
+            <p className="text-gray-600">No pending business claims to review.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

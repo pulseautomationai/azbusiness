@@ -1,404 +1,341 @@
-/**
- * Admin Business Management - Phase 5.1.4
- * Bulk business operations and management interface
- */
+"use client";
 
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
-import { api } from "~/convex/_generated/api";
+import { api } from "convex/_generated/api";
+import type { Id } from "convex/_generated/dataModel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { Checkbox } from "~/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { 
-  Building2, 
-  Search, 
-  Filter,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Star,
-  MapPin,
-  Phone,
-  ExternalLink,
-  Download,
-  RefreshCw
-} from "lucide-react";
-import { Link, useSearchParams } from "react-router";
-import { toast } from "sonner";
-
-interface BusinessFilterOptions {
-  search: string;
-  planTier: string;
-  status: string;
-  city: string;
-  category: string;
-  claimStatus: string;
-}
+import { Badge } from "~/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff } from "lucide-react";
+import { toast } from "~/hooks/use-toast";
+import { Link } from "react-router";
+import { SlugGenerator } from "~/utils/slug-generator";
 
 export default function AdminBusinesses() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-  const [bulkAction, setBulkAction] = useState<string>("");
-  
-  // Filter state
-  const [filters, setFilters] = useState<BusinessFilterOptions>({
-    search: searchParams.get("search") || "",
-    planTier: searchParams.get("planTier") || "all",
-    status: searchParams.get("status") || "all",
-    city: searchParams.get("city") || "all",
-    category: searchParams.get("category") || "all",
-    claimStatus: searchParams.get("claimStatus") || "all",
-  });
+  const [search, setSearch] = useState("");
+  const [planFilter, setPlanFilter] = useState<"all" | "free" | "pro" | "power">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [cityFilter, setCityFilter] = useState<string>("all");
+  const [zipcodeFilter, setZipcodeFilter] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
-  // Data queries
+  // Get filter options
+  const categories = useQuery(api.categories.getAllCategoriesForAdmin);
+  const cities = useQuery(api.businesses.getUniqueCities);
+  const zipcodes = useQuery(api.businesses.getUniqueZipcodes);
+
+  // Get businesses for admin view
   const businesses = useQuery(api.businesses.getBusinessesForAdmin, {
-    limit: 50,
-    search: filters.search || undefined,
-    planTier: filters.planTier !== "all" ? filters.planTier as any : undefined,
-    claimStatus: filters.claimStatus !== "all" ? filters.claimStatus as any : undefined,
+    search: search || undefined,
+    planTier: planFilter === "all" ? undefined : planFilter,
+    active: statusFilter === "all" ? undefined : statusFilter === "active",
+    city: cityFilter === "all" ? undefined : cityFilter,
+    zipcode: zipcodeFilter === "all" ? undefined : zipcodeFilter,
+    categoryId: categoryFilter === "all" ? undefined : categoryFilter as Id<"categories">,
+    limit: 100,
   });
 
-  const cities = useQuery(api.cities.getActiveCities, {});
-  const categories = useQuery(api.categories.getActiveCategories, {});
-
-  // Mutations
   const updateBusinessStatus = useMutation(api.businesses.updateBusinessStatus);
-  const bulkUpdateBusinesses = useMutation(api.businesses.bulkUpdateBusinesses);
-  const exportBusinesses = useMutation(api.businesses.exportBusinessData);
+  const updateBusiness = useMutation(api.businesses.updateBusiness);
 
-  const handleFilterChange = (key: keyof BusinessFilterOptions, value: string) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
-    
-    // Update URL params
-    const params = new URLSearchParams();
-    Object.entries(newFilters).forEach(([k, v]) => {
-      if (v && v !== "all") params.set(k, v);
-    });
-    setSearchParams(params);
-  };
-
-  const handleSelectBusiness = (businessId: string, selected: boolean) => {
-    if (selected) {
-      setSelectedBusinesses([...selectedBusinesses, businessId]);
-    } else {
-      setSelectedBusinesses(selectedBusinesses.filter(id => id !== businessId));
-    }
-  };
-
-  const handleSelectAll = (selected: boolean) => {
-    if (selected && businesses) {
-      setSelectedBusinesses(businesses.map(b => b._id));
-    } else {
-      setSelectedBusinesses([]);
-    }
-  };
-
-  const handleBulkAction = async () => {
-    if (!bulkAction || selectedBusinesses.length === 0) {
-      toast.error("Please select businesses and an action");
-      return;
-    }
-
+  const handleStatusToggle = async (businessId: Id<"businesses">, currentStatus: boolean) => {
     try {
-      await bulkUpdateBusinesses({
-        businessIds: selectedBusinesses,
-        action: bulkAction as any,
-        reason: `Bulk ${bulkAction} via admin dashboard`,
+      await updateBusinessStatus({
+        businessId,
+        action: currentStatus ? "deactivate" : "activate",
       });
-      
-      toast.success(`Successfully applied ${bulkAction} to ${selectedBusinesses.length} businesses`);
-      setSelectedBusinesses([]);
-      setBulkAction("");
+      toast({
+        title: currentStatus ? "Business deactivated" : "Business activated",
+        description: "Business status updated successfully",
+      });
     } catch (error) {
-      toast.error("Failed to apply bulk action");
+      toast({
+        title: "Error",
+        description: "Failed to update business status",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleExport = async () => {
+  const handleFeatureToggle = async (businessId: Id<"businesses">, currentFeatured: boolean) => {
     try {
-      const result = await exportBusinesses({
-        filters: filters,
-        selectedIds: selectedBusinesses.length > 0 ? selectedBusinesses : undefined,
+      await updateBusinessStatus({
+        businessId,
+        action: currentFeatured ? "unfeature" : "feature",
       });
-      
-      if (result.success) {
-        toast.success("Export completed! Download will begin shortly.");
-        // In a real app, trigger download here
-      }
+      toast({
+        title: currentFeatured ? "Business unfeatured" : "Business featured",
+        description: "Featured status updated successfully",
+      });
     } catch (error) {
-      toast.error("Export failed");
+      toast({
+        title: "Error",
+        description: "Failed to update featured status",
+        variant: "destructive",
+      });
     }
   };
 
-  const getStatusBadge = (business: any) => {
-    if (!business.active) {
-      return <Badge variant="destructive">Inactive</Badge>;
+  const handlePlanChange = async (businessId: Id<"businesses">, newPlan: string) => {
+    try {
+      await updateBusiness({
+        businessId,
+        updates: {
+          planTier: newPlan,
+        },
+      });
+      toast({
+        title: "Plan updated",
+        description: `Business plan changed to ${newPlan}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update plan",
+        variant: "destructive",
+      });
     }
-    if (business.claimedByUserId) {
-      return <Badge variant="default">Claimed</Badge>;
-    }
-    return <Badge variant="secondary">Unclaimed</Badge>;
   };
 
-  const getPlanBadge = (planTier: string) => {
-    const colors = {
-      free: "bg-gray-100 text-gray-800",
-      pro: "bg-blue-100 text-blue-800", 
-      power: "bg-purple-100 text-purple-800",
-    };
-    
+  const getPlanBadgeColor = (planTier: string) => {
+    switch (planTier) {
+      case "power":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case "pro":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "free":
+        return "bg-gray-100 text-gray-800 border-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  if (!businesses) {
     return (
-      <Badge className={colors[planTier as keyof typeof colors] || colors.free}>
-        {planTier.toUpperCase()}
-      </Badge>
-    );
-  };
-
-  if (businesses === undefined) {
-    return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Business Management</h1>
-          <div className="bg-gray-200 rounded-lg h-96"></div>
+      <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
+        <div className="flex items-center justify-center h-full">
+          <p className="text-muted-foreground">Loading businesses...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex justify-between items-center">
+    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Business Management</h1>
-          <p className="text-gray-600">
-            Manage and moderate business listings across the platform
+          <h1 className="text-2xl font-semibold">Business Management</h1>
+          <p className="text-muted-foreground">
+            Manage all business listings in the directory
           </p>
         </div>
-        <div className="flex space-x-2">
-          <Button onClick={handleExport} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-          <Button onClick={() => window.location.reload()} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline">{businesses.length} businesses</Badge>
         </div>
       </div>
 
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters & Search
-          </CardTitle>
+          <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="lg:col-span-2">
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+            <div>
+              <label className="text-sm font-medium mb-2 block">Search</label>
               <Input
-                placeholder="Search businesses..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange("search", e.target.value)}
+                placeholder="Search by name, city, or phone..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="w-full"
               />
             </div>
-            
-            <Select value={filters.planTier} onValueChange={(value) => handleFilterChange("planTier", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Plan Tier" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Plans</SelectItem>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="pro">Pro</SelectItem>
-                <SelectItem value="power">Power</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={filters.claimStatus} onValueChange={(value) => handleFilterChange("claimStatus", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Claim Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="claimed">Claimed</SelectItem>
-                <SelectItem value="unclaimed">Unclaimed</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={filters.city} onValueChange={(value) => handleFilterChange("city", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="City" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Cities</SelectItem>
-                {cities?.map((city) => (
-                  <SelectItem key={city._id} value={city.slug}>
-                    {city.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories?.map((category) => (
-                  <SelectItem key={category._id} value={category.slug}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Plan Tier</label>
+              <Select value={planFilter} onValueChange={(value: any) => setPlanFilter(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Plans</SelectItem>
+                  <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="pro">Pro</SelectItem>
+                  <SelectItem value="power">Power</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Status</label>
+              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">City</label>
+              <Select value={cityFilter} onValueChange={setCityFilter}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Cities</SelectItem>
+                  {cities?.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Zipcode</label>
+              <Select value={zipcodeFilter} onValueChange={setZipcodeFilter}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Zipcodes</SelectItem>
+                  {zipcodes?.map((zipcode) => (
+                    <SelectItem key={zipcode} value={zipcode}>
+                      {zipcode}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Category</label>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories?.map((category) => (
+                    <SelectItem key={category._id} value={category._id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Bulk Actions */}
-      {selectedBusinesses.length > 0 && (
-        <Card className="border-blue-200 bg-blue-50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium">
-                  {selectedBusinesses.length} businesses selected
-                </span>
-                <Select value={bulkAction} onValueChange={setBulkAction}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select action..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="activate">Activate</SelectItem>
-                    <SelectItem value="deactivate">Deactivate</SelectItem>
-                    <SelectItem value="approve">Approve</SelectItem>
-                    <SelectItem value="flag">Flag for Review</SelectItem>
-                    <SelectItem value="feature">Feature</SelectItem>
-                    <SelectItem value="unfeature">Remove Feature</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-x-2">
-                <Button onClick={handleBulkAction} disabled={!bulkAction}>
-                  Apply Action
-                </Button>
-                <Button onClick={() => setSelectedBusinesses([])} variant="outline">
-                  Clear Selection
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Business List */}
+      {/* Business Table */}
       <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>
-              Businesses ({businesses.length})
-            </CardTitle>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                checked={selectedBusinesses.length === businesses.length}
-                onCheckedChange={handleSelectAll}
-              />
-              <span className="text-sm text-gray-600">Select All</span>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Business</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Plan</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Featured</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {businesses.map((business: any) => (
+                <TableRow key={business._id}>
+                  <TableCell>
+                    <div>
+                      <p className="font-medium">{business.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {business.city}, {business.state}
+                      </p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {business.category?.name || "Uncategorized"}
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={business.planTier}
+                      onValueChange={(value) => handlePlanChange(business._id, value)}
+                    >
+                      <SelectTrigger className="w-24">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="free">Free</SelectItem>
+                        <SelectItem value="pro">Pro</SelectItem>
+                        <SelectItem value="power">Power</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleStatusToggle(business._id, business.active)}
+                      className={business.active ? "text-green-600" : "text-red-600"}
+                    >
+                      {business.active ? (
+                        <CheckCircle className="h-4 w-4" />
+                      ) : (
+                        <XCircle className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleFeatureToggle(business._id, business.featured)}
+                      className={business.featured ? "text-yellow-600" : "text-gray-400"}
+                    >
+                      {business.featured ? (
+                        <Star className="h-4 w-4 fill-current" />
+                      ) : (
+                        <StarOff className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={(() => {
+                          // Use urlPath if available, otherwise generate URL using SlugGenerator
+                          if (business.urlPath) {
+                            return business.urlPath;
+                          }
+                          const categorySlug = SlugGenerator.generateCategorySlug(business.category?.name || 'uncategorized');
+                          const citySlug = SlugGenerator.generateCitySlug(business.city);
+                          const businessSlug = SlugGenerator.generateBusinessNameSlug(business.name);
+                          return `/${categorySlug}/${citySlug}/${businessSlug}`;
+                        })()}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/admin/businesses/edit/${business._id}`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {businesses.length === 0 && (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">No businesses found</p>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {businesses.map((business) => (
-              <div key={business._id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50">
-                <Checkbox
-                  checked={selectedBusinesses.includes(business._id)}
-                  onCheckedChange={(checked) => handleSelectBusiness(business._id, checked as boolean)}
-                />
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-lg font-medium text-gray-900 truncate">
-                      {business.name}
-                    </h3>
-                    {getStatusBadge(business)}
-                    {getPlanBadge(business.planTier)}
-                    {business.featured && (
-                      <Badge className="bg-yellow-100 text-yellow-800">
-                        <Star className="h-3 w-3 mr-1" />
-                        Featured
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {business.city}
-                    </div>
-                    {business.phone && (
-                      <div className="flex items-center">
-                        <Phone className="h-4 w-4 mr-1" />
-                        {business.phone}
-                      </div>
-                    )}
-                    <div className="flex items-center">
-                      <Building2 className="h-4 w-4 mr-1" />
-                      {business.category?.name || "Uncategorized"}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-2 text-xs text-gray-500">
-                    Created: {new Date(business.createdAt).toLocaleDateString()} • 
-                    Updated: {new Date(business.updatedAt).toLocaleDateString()}
-                    {business.claimedByUserId && (
-                      <> • Claimed by: {business.claimedByUserId}</>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Button asChild size="sm" variant="outline">
-                    <Link to={`/admin/businesses/${business._id}`}>
-                      <Eye className="h-4 w-4 mr-1" />
-                      View
-                    </Link>
-                  </Button>
-                  
-                  <Button asChild size="sm" variant="outline">
-                    <Link to={`/${business.category?.slug}/${business.city}/${business.slug}`} target="_blank">
-                      <ExternalLink className="h-4 w-4 mr-1" />
-                      Live
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            ))}
-            
-            {businesses.length === 0 && (
-              <div className="text-center py-12">
-                <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No businesses found</h3>
-                <p className="text-gray-600">
-                  Try adjusting your filters or search criteria.
-                </p>
-              </div>
-            )}
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

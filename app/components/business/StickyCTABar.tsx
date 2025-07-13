@@ -67,7 +67,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
             >
               Not Now
             </Button>
-            <Link to="/claim-business">
+            <Link to={`/claim-business?businessId=${business._id}`}>
               <Button 
                 size="sm" 
                 className="bg-white text-blue-600 hover:bg-gray-100 font-semibold"

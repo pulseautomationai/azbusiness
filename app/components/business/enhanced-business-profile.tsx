@@ -28,6 +28,7 @@ import { InsightsTab } from "./tabs/InsightsTab";
 import ContactForm from "./contact-form";
 import { DisabledContactForm } from "./disabled-contact-form";
 import { ClaimListingCTA } from "./claim-listing-cta";
+import { ClaimBanner } from "./claim-banner";
 import BusinessCard from "../category/business-card";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
@@ -84,7 +85,10 @@ function EnhancedBusinessProfile({
   const [activeTab, setActiveTab] = useState("overview");
   const [showContactForm, setShowContactForm] = useState(false);
   
-  const { canAccess } = usePlanFeatures({ planTier: business.planTier });
+  const { canAccess } = usePlanFeatures({ 
+    planTier: business.planTier,
+    isClaimed: business.claimed 
+  });
   
   // Get business content for enhanced features
   const businessContent = useQuery(api.businessContent.getBusinessContent, {
@@ -325,6 +329,15 @@ function EnhancedBusinessProfile({
           </div>
         </div>
       </section>
+
+      {/* Claim Banner for Unclaimed Businesses */}
+      {!business.claimed && (
+        <section className="py-4">
+          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+            <ClaimBanner business={business} />
+          </div>
+        </section>
+      )}
 
       {/* Enhanced Main Content with Tabs */}
       <section className="py-8">

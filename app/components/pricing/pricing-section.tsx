@@ -188,7 +188,7 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       asChild 
                       className="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold"
                     >
-                      <Link to="/claim-listing">Claim Your Free Listing</Link>
+                      <Link to="/claim-business">Claim Your Free Listing</Link>
                     </Button>
                   </div>
 
@@ -364,15 +364,15 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Core Presence</h4>
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
-                          <Building className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>Public Business Listing</span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <Star className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>Google Reviews</span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <Building className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>Tabs (Overview, Services, Reviews)</span>
                         </li>
                       </ul>
@@ -383,14 +383,14 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Lead Generation</h4>
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
-                          <Building className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Similar Businesses Carousel
                             <span className="block text-xs text-gray-500 mt-0.5">Priority placement</span>
                           </span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <MessageCircle className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <MessageCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Leads from Your Listing
                             <span className="block text-xs text-gray-500 mt-0.5">Auto-Matched + Alerts</span>
@@ -404,25 +404,25 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Branding & Trust</h4>
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
-                          <Star className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>Verified Badge</span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <Lightbulb className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Lightbulb className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Business Summary
                             <span className="block text-xs text-gray-500 mt-0.5">AI-enhanced + Style Options</span>
                           </span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <Tag className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Tag className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Service Display
                             <span className="block text-xs text-gray-500 mt-0.5">Enhanced AI Cards with Pricing</span>
                           </span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <Star className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Badge System
                             <span className="block text-xs text-gray-500 mt-0.5">All + Bonus Badges</span>
@@ -436,18 +436,18 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">SEO & Analytics</h4>
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
-                          <Globe className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Globe className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>SEO Backlink</span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <BarChart3 className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <BarChart3 className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Review Insights
                             <span className="block text-xs text-gray-500 mt-0.5">AI Sentiment & Keyword Analysis</span>
                           </span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <TrendingUp className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <TrendingUp className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Category Boost
                             <span className="block text-xs text-gray-500 mt-0.5">+ Homepage Featured Placement</span>
@@ -461,14 +461,14 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Premium Services</h4>
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
-                          <Phone className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Phone className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             VIP Support
                             <span className="block text-xs text-gray-500 mt-0.5">Dedicated Concierge Access</span>
                           </span>
                         </li>
                         <li className="flex gap-2 items-start">
-                          <Lightbulb className="w-5 h-5 text-[#D9B07A] flex-shrink-0" />
+                          <Lightbulb className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span>
                             Monthly Blog Posts
                             <span className="block text-sm text-gray-600 mt-0.5">1/mo AI-powered Blog Post</span>
