@@ -97,22 +97,50 @@ export default function SearchWidget() {
   };
 
   return (
-    <Card className="p-6 shadow-lg bg-cloud-white border-clay-beige hover:shadow-xl transition-shadow duration-300">
-      <div className="space-y-4">
+    <div className="relative bg-agave-cream">
+      {/* Subtle desert background texture */}
+      <div className="absolute inset-0 overflow-hidden opacity-3">
+        <svg
+          className="absolute top-4 left-8 w-24 h-16 text-prickly-pear-pink"
+          viewBox="0 0 100 60"
+          fill="currentColor"
+        >
+          {/* Soft wave/sand dune pattern */}
+          <path d="M0 40 Q25 20 50 35 T100 30 L100 60 L0 60 Z" />
+        </svg>
+        <svg
+          className="absolute top-8 right-12 w-20 h-12 text-cholla-green"
+          viewBox="0 0 80 48"
+          fill="currentColor"
+        >
+          {/* Gentle rolling hills */}
+          <path d="M0 35 Q20 25 40 30 Q60 35 80 25 L80 48 L0 48 Z" />
+        </svg>
+        <svg
+          className="absolute bottom-6 left-1/4 w-16 h-10 text-desert-sky-blue"
+          viewBox="0 0 64 40"
+          fill="currentColor"
+        >
+          {/* Soft abstract shape */}
+          <ellipse cx="32" cy="20" rx="28" ry="12" />
+        </svg>
+      </div>
+
+      <div className="relative space-y-6">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-desert-night mb-2">
+          <h2 className="text-xl font-semibold text-ironwood-charcoal mb-2">
             Find Trusted Service Providers
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-ironwood-charcoal/70">
             Get matched with verified professionals in your area
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 md:flex-row">
+        <div className="flex flex-col gap-4 md:flex-row max-w-3xl mx-auto">
           {/* Service Input */}
           <div className="relative flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-agave-green" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cholla-green" />
               <Input
                 type="text"
                 placeholder="What service do you need?"
@@ -124,7 +152,7 @@ export default function SearchWidget() {
                 onFocus={() => setShowServiceSuggestions(service.length > 0)}
                 onBlur={() => setTimeout(() => setShowServiceSuggestions(false), 200)}
                 onKeyPress={handleKeyPress}
-                className="pl-10 pr-4 py-3 text-base"
+                className="pl-10 pr-4 py-3 text-base bg-white border-desert-sky-blue focus:ring-2 focus:ring-ocotillo-red focus:border-ocotillo-red rounded-lg focus-ring-enhanced"
               />
             </div>
             
@@ -147,7 +175,7 @@ export default function SearchWidget() {
           {/* Zipcode Input */}
           <div className="relative md:w-48">
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-agave-green" />
+              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cholla-green" />
               <Input
                 type="text"
                 placeholder="ZIP Code"
@@ -160,7 +188,7 @@ export default function SearchWidget() {
                 onFocus={() => setShowZipcodeSuggestions(zipcode.length > 0)}
                 onBlur={() => setTimeout(() => setShowZipcodeSuggestions(false), 200)}
                 onKeyPress={handleKeyPress}
-                className={`pl-10 pr-4 py-3 text-base ${
+                className={`pl-10 pr-4 py-3 text-base bg-white border-desert-sky-blue focus:ring-2 focus:ring-ocotillo-red focus:border-ocotillo-red rounded-lg focus-ring-enhanced ${
                   zipcode && !validateZipcode(zipcode) ? 'border-red-300' : ''
                 }`}
                 maxLength={5}
@@ -187,8 +215,8 @@ export default function SearchWidget() {
           <Button 
             onClick={handleSearch} 
             size="lg"
-            className="md:w-auto px-8 py-3"
-            disabled={!service.trim() || (zipcode && !validateZipcode(zipcode))}
+            className="md:w-auto px-8 py-3 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md rounded-full animate-glow-hover animate-button-press"
+            disabled={!service.trim() || (zipcode.length > 0 && !validateZipcode(zipcode))}
           >
             Find Providers
           </Button>
@@ -201,22 +229,41 @@ export default function SearchWidget() {
           </p>
         )}
 
-        {/* Popular Services */}
-        <div className="flex flex-wrap justify-center gap-2 pt-2">
-          <span className="text-sm text-muted-foreground">Popular:</span>
-          {POPULAR_SERVICES.slice(0, 5).map((popularService) => (
-            <Button
-              key={popularService}
-              variant="link"
-              size="sm"
-              className="h-auto p-0 text-sm"
-              onClick={() => handleServiceSelect(popularService)}
-            >
-              {popularService}
-            </Button>
-          ))}
+        {/* Popular Service + City Combinations */}
+        <div className="flex flex-wrap justify-center items-center gap-3 pt-6 max-w-4xl mx-auto popular-links-mobile">
+          <span className="text-sm font-medium text-ironwood-charcoal/80 mr-2">Popular:</span>
+          <a 
+            href="/search?service=HVAC&zipcode=85001"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+          >
+            HVAC in Phoenix
+          </a>
+          <a 
+            href="/search?service=Plumbing&zipcode=85201"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+          >
+            Plumbing in Mesa
+          </a>
+          <a 
+            href="/search?service=Electricians&zipcode=85224"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+          >
+            Electricians in Chandler
+          </a>
+          <a 
+            href="/search?service=Roofing&zipcode=85254"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+          >
+            Roofing in Scottsdale
+          </a>
+          <a 
+            href="/search?service=Landscaping&zipcode=85281"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+          >
+            Landscaping in Tempe
+          </a>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

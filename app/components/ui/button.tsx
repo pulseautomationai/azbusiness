@@ -10,16 +10,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-saguaro-teal text-primary-foreground shadow-xs hover:bg-mesa-terracotta hover:shadow-sm transition-all duration-200",
+          "bg-ocotillo-red text-primary-foreground shadow-xs hover:bg-ocotillo-red/90 hover:shadow-sm transition-all duration-200",
         destructive:
-          "bg-mesa-terracotta text-white shadow-xs hover:bg-mesa-terracotta/90 focus-visible:ring-mesa-terracotta/20 dark:focus-visible:ring-mesa-terracotta/40",
+          "bg-ocotillo-red text-white shadow-xs hover:bg-ocotillo-red/90 focus-visible:ring-ocotillo-red/20 dark:focus-visible:ring-ocotillo-red/40",
         outline:
-          "border border-desert-night bg-background shadow-xs hover:bg-clay-beige hover:text-desert-night dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border border-ironwood-charcoal bg-background shadow-xs hover:bg-prickly-pear-pink hover:text-ironwood-charcoal dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-clay-beige text-desert-night shadow-xs hover:bg-clay-beige/80",
+          "bg-prickly-pear-pink text-ironwood-charcoal shadow-xs hover:bg-prickly-pear-pink/80",
         ghost:
-          "hover:bg-clay-beige hover:text-desert-night dark:hover:bg-accent/50",
-        link: "text-saguaro-teal underline-offset-4 hover:underline hover:text-mesa-terracotta",
+          "hover:bg-prickly-pear-pink hover:text-ironwood-charcoal dark:hover:bg-accent/50",
+        link: "text-ocotillo-red underline-offset-4 hover:underline hover:text-desert-sky-blue",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

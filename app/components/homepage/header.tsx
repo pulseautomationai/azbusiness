@@ -1,6 +1,6 @@
 "use client";
 import { UserButton, useUser } from "@clerk/react-router";
-import { Building2, Menu, X, Plus } from "lucide-react";
+import { Building2, Menu, X, Plus, List } from "lucide-react";
 import React, { useCallback } from "react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
@@ -41,7 +41,7 @@ export const Header = () => {
           className={cn(
             "mx-auto mt-2 max-w-7xl px-6 transition-all duration-300 lg:px-12",
             isScrolled &&
-              "bg-background/80 max-w-6xl rounded-2xl border backdrop-blur-lg lg:px-8"
+              "bg-agave-cream/90 max-w-6xl rounded-2xl border border-prickly-pear-pink/30 backdrop-blur-lg lg:px-8"
           )}
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -49,22 +49,22 @@ export const Header = () => {
               <Link
                 to="/"
                 aria-label="home"
-                className="flex items-center space-x-3 font-bold text-xl"
+                className="flex items-center space-x-1 font-bold text-xl"
                 prefetch="viewport"
               >
                 <img 
-                  src="/azbusiness1.png" 
+                  src="/logo.png" 
                   alt="AZ Business Services"
-                  className="h-10 w-10 rounded-lg object-cover"
+                  className="h-20 w-20 rounded-lg object-cover hover:scale-105 transition-transform duration-300 animate-pulse-slow"
                   onError={(e) => {
                     // Fallback to a simple icon if image fails to load
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
                   }}
                 />
-                <Building2 className="h-10 w-10 text-primary hidden" />
-                <span className="hidden sm:inline">AZ Business Services</span>
-                <span className="sm:hidden">AZ Business</span>
+                <Building2 className="h-20 w-20 text-primary hidden" />
+                <span className="hidden sm:inline">Az Business Services</span>
+                <span className="sm:hidden">Az Business</span>
               </Link>
 
               <button
@@ -84,7 +84,7 @@ export const Header = () => {
                     <Link
                       to={item.href}
                       onClick={() => handleNavClick(item.href)}
-                      className="text-muted-foreground hover:text-saguaro-teal block duration-150 transition-colors"
+                      className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
                       prefetch="viewport"
                     >
                       <span>{item.name}</span>
@@ -102,7 +102,7 @@ export const Header = () => {
                       <Link
                         to={item.href}
                         onClick={() => handleNavClick(item.href)}
-                        className="text-muted-foreground hover:text-saguaro-teal block duration-150 transition-colors w-full text-left"
+                        className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
                         prefetch="viewport"
                       >
                         <span>{item.name}</span>
@@ -114,12 +114,13 @@ export const Header = () => {
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                 {isSignedIn ? (
                   <div className="flex items-center gap-3">
-                    <Button asChild size="sm" variant="outline">
+                    <Button asChild size="sm" variant="outline" className="border-ironwood-charcoal/20 hover:bg-agave-cream/50 hover:border-ironwood-charcoal/40">
                       <Link to="/dashboard" prefetch="viewport">
+                        <List className="mr-1.5 h-4 w-4" />
                         <span>My Listings</span>
                       </Link>
                     </Button>
-                    <Button asChild size="sm">
+                    <Button asChild size="sm" className="bg-ocotillo-red text-white hover:bg-ocotillo-red/90">
                       <Link to="/add-business" prefetch="viewport">
                         <Plus className="mr-1 h-4 w-4" />
                         <span>Add Business</span>
@@ -141,6 +142,7 @@ export const Header = () => {
                     <Button
                       asChild
                       size="sm"
+                      className="bg-ocotillo-red text-white hover:bg-ocotillo-red/90"
                     >
                       <Link to="/add-business" prefetch="viewport">
                         <Plus className="mr-1 h-4 w-4" />

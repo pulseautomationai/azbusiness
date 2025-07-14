@@ -10,17 +10,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-saguaro-teal text-primary-foreground [a&]:hover:bg-mesa-terracotta",
+          "border-transparent bg-ocotillo-red text-primary-foreground [a&]:hover:bg-ocotillo-red/90",
         secondary:
-          "border-transparent bg-clay-beige text-desert-night [a&]:hover:bg-clay-beige/80",
+          "border-transparent bg-prickly-pear-pink text-ironwood-charcoal [a&]:hover:bg-prickly-pear-pink/80",
         destructive:
-          "border-transparent bg-mesa-terracotta text-white [a&]:hover:bg-mesa-terracotta/90 focus-visible:ring-mesa-terracotta/20 dark:focus-visible:ring-mesa-terracotta/40",
+          "border-transparent bg-ocotillo-red text-white [a&]:hover:bg-ocotillo-red/90 focus-visible:ring-ocotillo-red/20 dark:focus-visible:ring-ocotillo-red/40",
         outline:
-          "text-desert-night border-clay-beige [a&]:hover:bg-clay-beige [a&]:hover:text-desert-night",
+          "text-ironwood-charcoal border-prickly-pear-pink [a&]:hover:bg-prickly-pear-pink [a&]:hover:text-ironwood-charcoal",
         success:
-          "border-transparent bg-agave-green text-white [a&]:hover:bg-agave-green/90",
+          "border-transparent bg-cholla-green text-white [a&]:hover:bg-cholla-green/90",
         warning:
-          "border-transparent bg-sun-gold text-desert-night [a&]:hover:bg-sun-gold/90",
+          "border-transparent bg-desert-sky-blue text-ironwood-charcoal [a&]:hover:bg-desert-sky-blue/90",
       },
     },
     defaultVariants: {

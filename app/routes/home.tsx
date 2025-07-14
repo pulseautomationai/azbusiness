@@ -11,6 +11,7 @@ import { SEOGenerator } from "~/utils/seo";
 import { generateMetaTags } from "~/components/seo/seo-meta";
 import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/home";
+import FAQSection from "~/components/ui/faq-section";
 
 export function meta({}: Route.MetaArgs) {
   const seo = SEOGenerator.generateHomepageSEO();
@@ -107,6 +108,9 @@ export default function Home() {
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="Featured Businesses">
         <FeaturedBusinesses />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="FAQ Section">
+        <FAQSection className="bg-desert-sky-blue/10" />
       </ComponentErrorBoundary>
       <Footer />
     </>

@@ -44,7 +44,14 @@
     --radius-md: 10px;
     --radius-lg: 12px;
     --radius-xl: 16px;
-    /* Desert Color Utilities */
+    /* Desert Bloom Custom Colors */
+    --color-agave-cream: var(--color-agave-cream);
+    --color-prickly-pear-pink: var(--color-prickly-pear-pink);
+    --color-cholla-green: var(--color-cholla-green);
+    --color-ocotillo-red: var(--color-ocotillo-red);
+    --color-desert-sky-blue: var(--color-desert-sky-blue);
+    --color-ironwood-charcoal: var(--color-ironwood-charcoal);
+    /* Legacy color mappings */
     --color-sandstone: var(--color-sandstone);
     --color-clay-beige: var(--color-clay-beige);
     --color-agave-green: var(--color-agave-green);
@@ -56,39 +63,39 @@
 }
 
 :root {
-    /* Desert Theme Colors */
-    --background: #F4EFEA; /* Sandstone - Main background */
-    --foreground: #2F2F2F; /* Desert Night - Text */
-    --card: #FFFFFF; /* Cloud White - Cards */
-    --card-foreground: #2F2F2F; /* Desert Night - Card text */
-    --popover: #FFFFFF; /* Cloud White - Popovers */
-    --popover-foreground: #2F2F2F; /* Desert Night - Popover text */
-    --primary: #4F6F64; /* Saguaro Teal - Primary buttons/links */
-    --primary-foreground: #FFFFFF; /* Cloud White - Primary text */
-    --secondary: #E4D8CA; /* Clay Beige - Secondary elements */
-    --secondary-foreground: #2F2F2F; /* Desert Night - Secondary text */
-    --muted: #E4D8CA; /* Clay Beige - Muted backgrounds */
+    /* Desert Bloom Theme Colors */
+    --background: #FDF8F3; /* Agave Cream - Main background */
+    --foreground: #2B2A28; /* Ironwood Charcoal - Text */
+    --card: #FDF8F3; /* Agave Cream - Cards */
+    --card-foreground: #2B2A28; /* Ironwood Charcoal - Card text */
+    --popover: #FDF8F3; /* Agave Cream - Popovers */
+    --popover-foreground: #2B2A28; /* Ironwood Charcoal - Popover text */
+    --primary: #E36450; /* Ocotillo Red - Primary buttons/links */
+    --primary-foreground: #FFFFFF; /* White - Primary text */
+    --secondary: #DAB6AA; /* Prickly Pear Pink - Secondary elements */
+    --secondary-foreground: #2B2A28; /* Ironwood Charcoal - Secondary text */
+    --muted: #DAB6AA; /* Prickly Pear Pink - Muted backgrounds */
     --muted-foreground: #666666; /* Muted text */
-    --accent: #4F6F64; /* Saguaro Teal - Accents */
-    --accent-foreground: #FFFFFF; /* Cloud White - Accent text */
-    --destructive: #D88C6D; /* Mesa Terracotta - Destructive actions */
-    --destructive-foreground: #FFFFFF; /* Cloud White - Destructive text */
-    --border: #E4D8CA; /* Clay Beige - Borders */
-    --input: #F4EFEA; /* Sandstone - Input backgrounds */
-    --ring: #4F6F64; /* Saguaro Teal - Focus rings */
-    --chart-1: #4F6F64; /* Saguaro Teal */
-    --chart-2: #A7B6A5; /* Agave Green */
-    --chart-3: #D88C6D; /* Mesa Terracotta */
-    --chart-4: #F5C174; /* Sun Gold */
-    --chart-5: #E4D8CA; /* Clay Beige */
-    --sidebar: #E4D8CA; /* Clay Beige - Sidebar background */
-    --sidebar-foreground: #2F2F2F; /* Desert Night - Sidebar text */
-    --sidebar-primary: #4F6F64; /* Saguaro Teal - Sidebar primary */
-    --sidebar-primary-foreground: #FFFFFF; /* Cloud White - Sidebar primary text */
-    --sidebar-accent: #F4EFEA; /* Sandstone - Sidebar accent */
-    --sidebar-accent-foreground: #2F2F2F; /* Desert Night - Sidebar accent text */
-    --sidebar-border: #E4D8CA; /* Clay Beige - Sidebar border */
-    --sidebar-ring: #4F6F64; /* Saguaro Teal - Sidebar focus */
+    --accent: #E36450; /* Ocotillo Red - Accents */
+    --accent-foreground: #FFFFFF; /* White - Accent text */
+    --destructive: #E36450; /* Ocotillo Red - Destructive actions */
+    --destructive-foreground: #FFFFFF; /* White - Destructive text */
+    --border: #DAB6AA; /* Prickly Pear Pink - Borders */
+    --input: #FDF8F3; /* Agave Cream - Input backgrounds */
+    --ring: #E36450; /* Ocotillo Red - Focus rings */
+    --chart-1: #E36450; /* Ocotillo Red */
+    --chart-2: #799C8D; /* Cholla Green */
+    --chart-3: #DAB6AA; /* Prickly Pear Pink */
+    --chart-4: #A3C6D2; /* Desert Sky Blue */
+    --chart-5: #DAB6AA; /* Prickly Pear Pink */
+    --sidebar: #DAB6AA; /* Prickly Pear Pink - Sidebar background */
+    --sidebar-foreground: #2B2A28; /* Ironwood Charcoal - Sidebar text */
+    --sidebar-primary: #E36450; /* Ocotillo Red - Sidebar primary */
+    --sidebar-primary-foreground: #FFFFFF; /* White - Sidebar primary text */
+    --sidebar-accent: #FDF8F3; /* Agave Cream - Sidebar accent */
+    --sidebar-accent-foreground: #2B2A28; /* Ironwood Charcoal - Sidebar accent text */
+    --sidebar-border: #DAB6AA; /* Prickly Pear Pink - Sidebar border */
+    --sidebar-ring: #E36450; /* Ocotillo Red - Sidebar focus */
     /* Desert Theme Fonts */
     --font-heading: "Playfair Display", "Cormorant Garamond", Georgia, serif;
     --font-body: "Inter", "DM Sans", "Work Sans", system-ui, sans-serif;
@@ -97,25 +104,32 @@
     --font-serif: var(--font-heading);
     /* Desert Theme Design Tokens */
     --radius: 10px;
-    /* Warm, soft shadows inspired by desert lighting */
-    --shadow-2xs: 0px 1px 2px rgba(47, 47, 47, 0.08);
-    --shadow-xs: 0px 1px 3px rgba(47, 47, 47, 0.12);
-    --shadow-sm: 0px 2px 4px rgba(47, 47, 47, 0.12);
-    --shadow: 0px 2px 6px rgba(47, 47, 47, 0.12);
-    --shadow-md: 0px 4px 8px rgba(47, 47, 47, 0.12);
-    --shadow-lg: 0px 8px 16px rgba(47, 47, 47, 0.12);
-    --shadow-xl: 0px 12px 24px rgba(47, 47, 47, 0.12);
-    --shadow-2xl: 0px 16px 32px rgba(47, 47, 47, 0.12);
+    /* Warm, soft shadows inspired by desert bloom lighting */
+    --shadow-2xs: 0px 1px 2px rgba(43, 42, 40, 0.08);
+    --shadow-xs: 0px 1px 3px rgba(43, 42, 40, 0.12);
+    --shadow-sm: 0px 2px 4px rgba(43, 42, 40, 0.12);
+    --shadow: 0px 2px 6px rgba(43, 42, 40, 0.12);
+    --shadow-md: 0px 4px 8px rgba(43, 42, 40, 0.12);
+    --shadow-lg: 0px 8px 16px rgba(43, 42, 40, 0.12);
+    --shadow-xl: 0px 12px 24px rgba(43, 42, 40, 0.12);
+    --shadow-2xl: 0px 16px 32px rgba(43, 42, 40, 0.12);
     
-    /* Desert-specific color utilities */
-    --color-sandstone: #F4EFEA;
-    --color-clay-beige: #E4D8CA;
-    --color-agave-green: #A7B6A5;
-    --color-saguaro-teal: #4F6F64;
-    --color-mesa-terracotta: #D88C6D;
-    --color-desert-night: #2F2F2F;
-    --color-sun-gold: #F5C174;
-    --color-cloud-white: #FFFFFF;
+    /* Desert Bloom specific color utilities */
+    --color-agave-cream: #FDF8F3;
+    --color-prickly-pear-pink: #DAB6AA;
+    --color-cholla-green: #799C8D;
+    --color-ocotillo-red: #E36450;
+    --color-desert-sky-blue: #A3C6D2;
+    --color-ironwood-charcoal: #2B2A28;
+    /* Legacy color mappings for existing class names */
+    --color-sandstone: #FDF8F3; /* Now Agave Cream */
+    --color-clay-beige: #DAB6AA; /* Now Prickly Pear Pink */
+    --color-agave-green: #799C8D; /* Now Cholla Green */
+    --color-saguaro-teal: #E36450; /* Now Ocotillo Red */
+    --color-mesa-terracotta: #DAB6AA; /* Now Prickly Pear Pink */
+    --color-desert-night: #2B2A28; /* Now Ironwood Charcoal */
+    --color-sun-gold: #A3C6D2; /* Now Desert Sky Blue */
+    --color-cloud-white: #FDF8F3; /* Now Agave Cream */
 }
 
 @layer base {
@@ -146,15 +160,122 @@
     }
 }
 
+@layer utilities {
+    /* Custom animations for branding */
+    .animate-pulse-slow {
+        animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    .animate-glow-hover {
+        transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+    
+    .animate-glow-hover:hover {
+        box-shadow: 0 0 20px rgba(227, 100, 80, 0.4);
+        transform: translateY(-1px);
+    }
+    
+    .animate-button-press:active {
+        transform: translateY(1px);
+    }
+    
+    /* Enhanced card hover effects */
+    .card-hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .card-hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* Subtle gradient backgrounds for badges */
+    .badge-free-bg {
+        background: linear-gradient(135deg, #E1ECFF 0%, #D1E2FF 100%);
+        border-color: #B8D0FF;
+    }
+    
+    .badge-premium-bg {
+        background: linear-gradient(135deg, #E1F5EB 0%, #D4F1E0 100%);
+    }
+    
+    /* Responsive badge positioning */
+    @media (max-width: 640px) {
+        .card-badges-mobile {
+            gap: 0.375rem; /* Tighter gap on mobile */
+        }
+    }
+    
+    /* Enhanced popular links hover effects */
+    .popular-link-pill {
+        transform: translateY(0);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .popular-link-pill:hover {
+        transform: translateY(-1px);
+    }
+    
+    /* Subtle background texture opacity */
+    .opacity-3 {
+        opacity: 0.03;
+    }
+    
+    /* Enhanced button spacing and responsiveness */
+    @media (max-width: 768px) {
+        .hero-search-spacing {
+            padding-top: 1.5rem;
+            padding-bottom: 1rem;
+        }
+        
+        .popular-links-mobile {
+            gap: 0.5rem;
+            padding-top: 1rem;
+        }
+    }
+    
+    /* Focus states for accessibility */
+    .focus-ring-enhanced:focus {
+        outline: 2px solid #E36450;
+        outline-offset: 2px;
+    }
+    
+    /* Featured business card enhancements */
+    .business-card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .business-card-hover:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Power badge glow effect */
+    .power-badge-glow {
+        box-shadow: 0 0 0 1px rgba(227, 100, 80, 0.1), 
+                    0 2px 4px rgba(227, 100, 80, 0.1),
+                    0 0 8px rgba(227, 100, 80, 0.15);
+    }
+}
+
+@keyframes pulse-slow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
 .dark {
-    --sidebar: #2F2F2F; /* Desert Night - Dark sidebar */
-    --sidebar-foreground: #F4EFEA; /* Sandstone - Dark sidebar text */
-    --sidebar-primary: #4F6F64; /* Saguaro Teal - Dark sidebar primary */
-    --sidebar-primary-foreground: #FFFFFF; /* Cloud White - Dark sidebar primary text */
-    --sidebar-accent: #3A3A3A; /* Darker Desert Night - Dark sidebar accent */
-    --sidebar-accent-foreground: #F4EFEA; /* Sandstone - Dark sidebar accent text */
+    --sidebar: #2B2A28; /* Ironwood Charcoal - Dark sidebar */
+    --sidebar-foreground: #FDF8F3; /* Agave Cream - Dark sidebar text */
+    --sidebar-primary: #E36450; /* Ocotillo Red - Dark sidebar primary */
+    --sidebar-primary-foreground: #FFFFFF; /* White - Dark sidebar primary text */
+    --sidebar-accent: #3A3A3A; /* Darker Ironwood Charcoal - Dark sidebar accent */
+    --sidebar-accent-foreground: #FDF8F3; /* Agave Cream - Dark sidebar accent text */
     --sidebar-border: #404040; /* Darker border for dark mode */
-    --sidebar-ring: #4F6F64; /* Saguaro Teal - Dark sidebar focus */
+    --sidebar-ring: #E36450; /* Ocotillo Red - Dark sidebar focus */
 }
 
 @layer base {

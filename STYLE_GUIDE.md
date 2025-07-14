@@ -17,27 +17,25 @@
 
 ---
 
-## 🎨 Color System
+## 🎨 Desert Bloom Color System
 
-Our desert-inspired color palette reflects the natural beauty of Arizona while maintaining professional standards and accessibility compliance.
+Our new "Desert Bloom" color palette captures the vibrant essence of Arizona's desert landscape in full bloom, reflecting warmth, growth, and natural beauty while maintaining professional standards and accessibility compliance.
 
 ### Primary Colors
 
 | Color Name | Hex Code | RGB | Usage |
 |------------|----------|-----|-------|
-| **Saguaro Teal** | `#4F6F64` | `79, 111, 100` | Primary buttons, links, navigation, brand accents |
-| **Mesa Terracotta** | `#D88C6D` | `216, 140, 109` | Hover states, badges, call-to-action accents |
-| **Desert Night** | `#2F2F2F` | `47, 47, 47` | Primary text, headers, footer background |
-| **Cloud White** | `#FFFFFF` | `255, 255, 255` | Card backgrounds, content areas, button text |
+| **Ocotillo Red** | `#E36450` | `227, 100, 80` | Primary buttons, CTAs, links, brand accents |
+| **Prickly Pear Pink** | `#DAB6AA` | `218, 182, 170` | Secondary buttons, card borders, soft accents |
+| **Ironwood Charcoal** | `#2B2A28` | `43, 42, 40` | Primary text, headers, navigation text |
+| **Agave Cream** | `#FDF8F3` | `253, 248, 243` | Main backgrounds, card areas, content fills |
 
 ### Secondary Colors
 
 | Color Name | Hex Code | RGB | Usage |
 |------------|----------|-----|-------|
-| **Sandstone** | `#F4EFEA` | `244, 239, 234` | Main background, section fills, neutral base |
-| **Clay Beige** | `#E4D8CA` | `228, 216, 202` | Card borders, separators, muted backgrounds |
-| **Agave Green** | `#A7B6A5` | `167, 182, 165` | Icon accents, success states, secondary elements |
-| **Sun Gold** | `#F5C174` | `245, 193, 116` | Star ratings, highlights, warm accents |
+| **Desert Sky Blue** | `#A3C6D2` | `163, 198, 210` | Link hovers, icon accents, subtle highlights |
+| **Cholla Green** | `#799C8D` | `121, 156, 141` | Success states, secondary icons, tag elements |
 
 ### Color Usage Guidelines
 
@@ -47,12 +45,12 @@ Our desert-inspired color palette reflects the natural beauty of Arizona while m
 - Minimum contrast ratio of 3:1 for large text and UI elements
 
 #### Primary Action Colors
-- **Saguaro Teal**: Primary buttons, active states, important links
-- **Mesa Terracotta**: Hover states, destructive actions, alerts
+- **Ocotillo Red**: Primary buttons, active states, important links, CTAs
+- **Prickly Pear Pink**: Hover states, secondary buttons, soft accents
 
 #### Supporting Colors
-- **Agave Green**: Icons, success indicators, secondary actions
-- **Sun Gold**: Ratings, highlights, positive feedback
+- **Cholla Green**: Icons, success indicators, secondary actions
+- **Desert Sky Blue**: Link hovers, ratings, highlights, subtle feedback
 
 ---
 
@@ -138,81 +136,81 @@ Our typography combines modern readability with elegant serif headlines, reflect
 ### Buttons
 
 #### Primary Button
-- **Background**: Saguaro Teal (`#4F6F64`)
-- **Text**: Cloud White (`#FFFFFF`)
-- **Hover**: Mesa Terracotta (`#D88C6D`)
+- **Background**: Ocotillo Red (`#E36450`)
+- **Text**: White (`#FFFFFF`)
+- **Hover**: Ocotillo Red 90% opacity (`#E36450/90`)
 - **Border Radius**: 8px
 - **Padding**: 12px 24px
 - **Font**: Inter Medium, 14px
 
 #### Secondary Button
-- **Background**: Transparent
-- **Text**: Desert Night (`#2F2F2F`)
-- **Border**: 1px solid Desert Night
-- **Hover**: Clay Beige (`#E4D8CA`) background
+- **Background**: Prickly Pear Pink (`#DAB6AA`)
+- **Text**: Ironwood Charcoal (`#2B2A28`)
+- **Border**: 1px solid Prickly Pear Pink
+- **Hover**: Prickly Pear Pink 80% opacity
 - **Border Radius**: 8px
 
 #### Link Button
-- **Text**: Saguaro Teal (`#4F6F64`)
-- **Hover**: Mesa Terracotta (`#D88C6D`)
+- **Text**: Ocotillo Red (`#E36450`)
+- **Hover**: Desert Sky Blue (`#A3C6D2`)
 - **Underline**: 1px offset
 - **Font**: Inter Medium
 
 ### Cards
 
 #### Standard Card
-- **Background**: Cloud White (`#FFFFFF`)
-- **Border**: 1px solid Clay Beige (`#E4D8CA`)
+- **Background**: Agave Cream (`#FDF8F3`)
+- **Border**: 1px solid Prickly Pear Pink (`#DAB6AA`)
 - **Border Radius**: 12px
-- **Shadow**: 0px 4px 8px rgba(47, 47, 47, 0.12)
+- **Shadow**: 0px 4px 8px rgba(43, 42, 40, 0.12)
 - **Padding**: 24px
-- **Hover**: Enhanced shadow (0px 8px 16px rgba(47, 47, 47, 0.12))
+- **Hover**: Enhanced shadow (0px 8px 16px rgba(43, 42, 40, 0.12))
 
 #### Business Card
-- **Background**: Cloud White (`#FFFFFF`)
-- **Border**: 1px solid Clay Beige (`#E4D8CA`)
+- **Background**: Agave Cream (`#FDF8F3`)
+- **Border**: 1px solid Prickly Pear Pink (`#DAB6AA`)
 - **Border Radius**: 12px
-- **Shadow**: 0px 2px 6px rgba(47, 47, 47, 0.12)
+- **Shadow**: 0px 2px 6px rgba(43, 42, 40, 0.12)
 - **Hover**: Lift effect with increased shadow
 
 ### Form Elements
 
 #### Input Fields
-- **Background**: Sandstone (`#F4EFEA`)
-- **Border**: 1px solid Clay Beige (`#E4D8CA`)
-- **Focus**: Saguaro Teal (`#4F6F64`) border, 3px ring
+- **Background**: Agave Cream (`#FDF8F3`)
+- **Border**: 1px solid Prickly Pear Pink (`#DAB6AA`)
+- **Focus**: Ocotillo Red (`#E36450`) border, 3px ring
 - **Border Radius**: 8px
 - **Padding**: 12px 16px
 - **Font**: Inter Regular, 14px
 
 #### Dropdowns
-- **Background**: Cloud White (`#FFFFFF`)
-- **Border**: 1px solid Clay Beige (`#E4D8CA`)
-- **Selected**: Saguaro Teal (`#4F6F64`) background
-- **Hover**: Clay Beige (`#E4D8CA`) background
+- **Background**: Agave Cream (`#FDF8F3`)
+- **Border**: 1px solid Prickly Pear Pink (`#DAB6AA`)
+- **Selected**: Ocotillo Red (`#E36450`) background
+- **Hover**: Prickly Pear Pink (`#DAB6AA`) background
 
 ### Badges
 
 #### Plan Tier Badges
-- **Free**: Outlined with Desert Night (`#2F2F2F`)
-- **Pro**: Clay Beige (`#E4D8CA`) background, Desert Night text
-- **Power**: Saguaro Teal (`#4F6F64`) background, Cloud White text
-- **Success**: Agave Green (`#A7B6A5`) background, Cloud White text
-- **Warning**: Sun Gold (`#F5C174`) background, Desert Night text
+- **Free**: Outlined with Ironwood Charcoal (`#2B2A28`)
+- **Pro**: Prickly Pear Pink (`#DAB6AA`) background, Ironwood Charcoal text
+- **Power**: Ocotillo Red (`#E36450`) background, White text
+- **Success**: Cholla Green (`#799C8D`) background, White text
+- **Warning**: Desert Sky Blue (`#A3C6D2`) background, Ironwood Charcoal text
 
 ### Icons
 
 #### Style Guidelines
-- **Color**: Agave Green (`#A7B6A5`) for accents
+- **Color**: Cholla Green (`#799C8D`) for accents
 - **Size**: 16px (small), 20px (medium), 24px (large)
 - **Stroke Width**: 1.5px for consistency
 - **Library**: Lucide React (primary), Phosphor (alternative)
 
 #### Specific Icon Colors
-- **Star Ratings**: Sun Gold (`#F5C174`)
-- **Location**: Agave Green (`#A7B6A5`)
-- **Phone**: Agave Green (`#A7B6A5`)
-- **Navigation**: Desert Night (`#2F2F2F`)
+- **Star Ratings**: Desert Sky Blue (`#A3C6D2`)
+- **Location**: Cholla Green (`#799C8D`)
+- **Phone**: Cholla Green (`#799C8D`)
+- **Navigation**: Ironwood Charcoal (`#2B2A28`)
 
 ---
 
@@ -223,23 +221,23 @@ Our typography combines modern readability with elegant serif headlines, reflect
 #### Topographic Lines
 - **Usage**: Subtle background patterns in hero sections
 - **Opacity**: 5% maximum
-- **Colors**: Mesa Terracotta, Agave Green, Saguaro Teal
+- **Colors**: Prickly Pear Pink, Cholla Green, Ocotillo Red
 - **Pattern**: Organic, flowing lines resembling Arizona topography
 
 #### Wave Patterns
 - **Usage**: Section separators, hero backgrounds
-- **Color**: Clay Beige with 30% opacity
+- **Color**: Prickly Pear Pink with 30% opacity
 - **Style**: Smooth, organic curves
 
 ### Shadows & Depth
 
 #### Shadow System
-- **2XS**: 0px 1px 2px rgba(47, 47, 47, 0.08)
-- **XS**: 0px 1px 3px rgba(47, 47, 47, 0.12)
-- **SM**: 0px 2px 4px rgba(47, 47, 47, 0.12)
-- **MD**: 0px 4px 8px rgba(47, 47, 47, 0.12)
-- **LG**: 0px 8px 16px rgba(47, 47, 47, 0.12)
-- **XL**: 0px 12px 24px rgba(47, 47, 47, 0.12)
+- **2XS**: 0px 1px 2px rgba(43, 42, 40, 0.08)
+- **XS**: 0px 1px 3px rgba(43, 42, 40, 0.12)
+- **SM**: 0px 2px 4px rgba(43, 42, 40, 0.12)
+- **MD**: 0px 4px 8px rgba(43, 42, 40, 0.12)
+- **LG**: 0px 8px 16px rgba(43, 42, 40, 0.12)
+- **XL**: 0px 12px 24px rgba(43, 42, 40, 0.12)
 
 #### Elevation Guidelines
 - **Level 1**: Cards, buttons (SM shadow)
@@ -324,24 +322,22 @@ Our typography combines modern readability with elegant serif headlines, reflect
 ### CSS Custom Properties
 ```css
 :root {
-  /* Desert Theme Colors */
-  --color-saguaro-teal: #4F6F64;
-  --color-mesa-terracotta: #D88C6D;
-  --color-desert-night: #2F2F2F;
-  --color-cloud-white: #FFFFFF;
-  --color-sandstone: #F4EFEA;
-  --color-clay-beige: #E4D8CA;
-  --color-agave-green: #A7B6A5;
-  --color-sun-gold: #F5C174;
+  /* Desert Bloom Theme Colors */
+  --color-ocotillo-red: #E36450;
+  --color-prickly-pear-pink: #DAB6AA;
+  --color-ironwood-charcoal: #2B2A28;
+  --color-agave-cream: #FDF8F3;
+  --color-desert-sky-blue: #A3C6D2;
+  --color-cholla-green: #799C8D;
   
   /* Typography */
   --font-heading: "Playfair Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
   
   /* Shadows */
-  --shadow-sm: 0px 2px 4px rgba(47, 47, 47, 0.12);
-  --shadow-md: 0px 4px 8px rgba(47, 47, 47, 0.12);
-  --shadow-lg: 0px 8px 16px rgba(47, 47, 47, 0.12);
+  --shadow-sm: 0px 2px 4px rgba(43, 42, 40, 0.12);
+  --shadow-md: 0px 4px 8px rgba(43, 42, 40, 0.12);
+  --shadow-lg: 0px 8px 16px rgba(43, 42, 40, 0.12);
 }
 ```
 
@@ -349,24 +345,24 @@ Our typography combines modern readability with elegant serif headlines, reflect
 ```css
 /* Primary Button */
 .btn-primary {
-  @apply bg-saguaro-teal text-cloud-white hover:bg-mesa-terracotta;
+  @apply bg-ocotillo-red text-white hover:bg-ocotillo-red/90;
   @apply px-6 py-3 rounded-lg font-medium transition-colors;
 }
 
 /* Card */
 .card {
-  @apply bg-cloud-white border border-clay-beige rounded-xl;
+  @apply bg-agave-cream border border-prickly-pear-pink rounded-xl;
   @apply p-6 shadow-md hover:shadow-lg transition-shadow;
 }
 
 /* Heading */
 .heading {
-  @apply font-serif font-medium text-desert-night;
+  @apply font-serif font-medium text-ironwood-charcoal;
 }
 ```
 
 ### Accessibility Features
-- **Focus Indicators**: 3px ring in Saguaro Teal
+- **Focus Indicators**: 3px ring in Ocotillo Red
 - **Color Contrast**: All combinations meet WCAG AA standards
 - **Alt Text**: Descriptive alternative text for all images
 - **Keyboard Navigation**: Full keyboard accessibility
@@ -377,42 +373,45 @@ Our typography combines modern readability with elegant serif headlines, reflect
 ## 📋 Brand Application Examples
 
 ### Business Cards
-- **Header**: Saguaro Teal background with Cloud White text
-- **Body**: Sandstone background with business details
-- **Accent**: Mesa Terracotta badge for plan tier
+- **Header**: Ocotillo Red background with White text
+- **Body**: Agave Cream background with business details
+- **Accent**: Prickly Pear Pink badge for plan tier
 - **CTA**: Primary button styling
 
 ### Navigation
-- **Background**: Cloud White with subtle Clay Beige border
-- **Links**: Desert Night text with Saguaro Teal hover
-- **Active State**: Saguaro Teal with Sun Gold underline
+- **Background**: Agave Cream with subtle Prickly Pear Pink border
+- **Links**: Ironwood Charcoal text with Ocotillo Red hover
+- **Active State**: Ocotillo Red with Desert Sky Blue underline
 - **Mobile**: Hamburger menu with smooth transitions
 
 ### Footer
-- **Background**: Desert Night with proper contrast
-- **Headers**: Sun Gold for section titles
-- **Links**: Clay Beige with Sun Gold hover
-- **Copyright**: Clay Beige muted text
+- **Background**: Ironwood Charcoal with proper contrast
+- **Headers**: Desert Sky Blue for section titles
+- **Links**: Prickly Pear Pink with Desert Sky Blue hover
+- **Copyright**: Prickly Pear Pink muted text
 
 ---
 
 ## 🚀 Usage Guidelines
 
 ### Do's
-✅ Use the desert color palette consistently across all touchpoints
+✅ Use the Desert Bloom color palette consistently across all touchpoints
 ✅ Maintain proper contrast ratios for accessibility
 ✅ Apply typography hierarchy consistently
 ✅ Use subtle animations and transitions
 ✅ Reference Arizona culture respectfully and authentically
 ✅ Keep content concise and action-oriented
+✅ Leverage the warm, welcoming nature of the new palette
+✅ Create visual hierarchy with Ocotillo Red for primary actions
 
 ### Don'ts
-❌ Don't use colors outside the approved palette
+❌ Don't use colors outside the approved Desert Bloom palette
 ❌ Don't compromise accessibility for aesthetic preferences
 ❌ Don't mix font families within the same content block
 ❌ Don't use overly literal desert imagery (cacti, cowboy themes)
 ❌ Don't sacrifice functionality for visual appeal
 ❌ Don't use animations that may cause motion sensitivity issues
+❌ Don't overuse the bright Ocotillo Red - reserve for key CTAs
 
 ---
 
@@ -437,7 +436,7 @@ Our typography combines modern readability with elegant serif headlines, reflect
 
 ---
 
-*This style guide serves as the definitive reference for AZ Business Services brand implementation. For questions or clarifications, refer to the design system documentation or contact the design team.*
+*This style guide serves as the definitive reference for AZ Business Services brand implementation using the new Desert Bloom color system. For questions or clarifications, refer to the design system documentation or contact the design team.*
 
 **Last Updated**: January 2025
-**Version**: 1.0
+**Version**: 2.0 - Desert Bloom Edition

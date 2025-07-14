@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import FAQSection from "~/components/ui/faq-section";
 
 interface PricingSectionProps {
   isSignedIn: boolean;
@@ -93,15 +94,15 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
 
 
       {/* Pricing Cards Section */}
-      <section className="py-16" style={{ backgroundColor: '#F4EFEA' }}>
+      <section className="py-16" style={{ backgroundColor: '#FDF8F3' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl lg:text-5xl font-medium mb-4" style={{ color: '#2F2F2F' }}>
-              Powerful features for <span style={{ color: '#4F6F64' }}>Arizona businesses</span>
+            <h2 className="font-serif text-4xl lg:text-5xl font-medium mb-4" style={{ color: '#2B2A28' }}>
+              Built for <span style={{ color: '#E36450' }}>Arizona Businesses</span> — No Bidding, No Spam, Just Results
             </h2>
-            <p className="text-lg mb-8" style={{ color: '#2F2F2F' }}>
-              Choose a plan that's right for your business
+            <p className="text-lg mb-8" style={{ color: '#2B2A28' }}>
+              Claim your listing, stand out from competitors, and get leads straight to your inbox.
             </p>
             
             {/* Monthly/Yearly Toggle */}
@@ -148,13 +149,13 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                 <div>
                   <div className="text-center mb-6">
                     <h3 className="text-xl font-semibold text-gray-900">
-                      Free
+                      Start Here: Free Local Listing
                     </h3>
                     <span className="inline-block mt-1 mb-2 text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
                       Start here
                     </span>
                     <p className="text-sm text-gray-600 font-medium mb-4">
-                      Best for new or unclaimed businesses building local presence
+                      Perfect for new or unclaimed listings who want to build visibility
                     </p>
                   </div>
                   
@@ -200,7 +201,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
                           <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Public Business Listing</span>
+                          <span>
+                            Public Business Listing
+                            <span className="block text-xs text-gray-500 mt-0.5">Show up in local search results</span>
+                          </span>
                         </li>
                         <li className="flex gap-2 items-start">
                           <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -208,7 +212,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                         </li>
                         <li className="flex gap-2 items-start">
                           <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Tabs (Overview, Services, Reviews)</span>
+                          <span>
+                            Tabs (Overview, Services, Reviews)
+                            <span className="block text-xs text-gray-500 mt-0.5">Showcase services, reviews, and more in one place</span>
+                          </span>
                         </li>
                       </ul>
                     </div>
@@ -307,13 +314,13 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                 <div>
                   <div className="text-center mb-6">
                     <h3 className="text-xl font-semibold text-gray-900">
-                      Power
+                      Get Leads on Autopilot
                     </h3>
                     <span className="inline-block mt-1 mb-2 text-xs font-medium px-2 py-0.5 rounded-full bg-[#D9B07A]/10 text-[#D9B07A]">
                       Best for growth
                     </span>
                     <p className="text-sm text-gray-600 font-medium mb-4">
-                      Built for established businesses ready to scale with automation and AI-driven tools
+                      For established businesses who want premium placement, AI-powered tools, and concierge-level support
                     </p>
                   </div>
                   
@@ -336,7 +343,7 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       </li>
                       <li className="flex gap-2">
                         <Lightbulb className="w-5 h-5 text-[#D9B07A] mt-0.5 flex-shrink-0" />
-                        <span>1 SEO blog post written for you every month</span>
+                        <span>1 SEO blog post written for you every month<br/><span className="text-xs text-gray-500">We write SEO-optimized content for you</span></span>
                       </li>
                       <li className="flex gap-2">
                         <Star className="w-5 h-5 text-[#D9B07A] mt-0.5 flex-shrink-0" />
@@ -344,7 +351,7 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       </li>
                       <li className="flex gap-2">
                         <Lightbulb className="w-5 h-5 text-[#D9B07A] mt-0.5 flex-shrink-0" />
-                        <span>AI-enhanced listings with advanced style and formatting</span>
+                        <span>AI-enhanced listings with advanced style and formatting<br/><span className="text-xs text-gray-500">Stand out with automatically polished formatting</span></span>
                       </li>
                       <li className="flex gap-2">
                         <Phone className="w-5 h-5 text-[#D9B07A] mt-0.5 flex-shrink-0" />
@@ -365,7 +372,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
                           <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Public Business Listing</span>
+                          <span>
+                            Public Business Listing
+                            <span className="block text-xs text-gray-500 mt-0.5">Show up in local search results</span>
+                          </span>
                         </li>
                         <li className="flex gap-2 items-start">
                           <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -373,7 +383,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                         </li>
                         <li className="flex gap-2 items-start">
                           <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Tabs (Overview, Services, Reviews)</span>
+                          <span>
+                            Tabs (Overview, Services, Reviews)
+                            <span className="block text-xs text-gray-500 mt-0.5">Showcase services, reviews, and more in one place</span>
+                          </span>
                         </li>
                       </ul>
                     </div>
@@ -405,7 +418,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
                           <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Verified Badge</span>
+                          <span>
+                            Verified Badge
+                            <span className="block text-xs text-gray-500 mt-0.5">Prove you're a trusted provider</span>
+                          </span>
                         </li>
                         <li className="flex gap-2 items-start">
                           <Lightbulb className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -496,13 +512,13 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                 <div>
                   <div className="text-center mb-6">
                     <h3 className="text-xl font-semibold text-gray-900">
-                      Pro
+                      Stand Out: Build Trust & Credibility
                     </h3>
                     <span className="inline-block mt-1 mb-2 text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">
                       Most popular
                     </span>
                     <p className="text-sm text-gray-600 font-medium mb-4">
-                      Great for growing businesses ready to build trust and stand out from competitors
+                      Designed for growing businesses that want more visibility and reputation tools
                     </p>
                   </div>
                   
@@ -546,7 +562,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
                           <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Public Business Listing</span>
+                          <span>
+                            Public Business Listing
+                            <span className="block text-xs text-gray-500 mt-0.5">Show up in local search results</span>
+                          </span>
                         </li>
                         <li className="flex gap-2 items-start">
                           <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -554,7 +573,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                         </li>
                         <li className="flex gap-2 items-start">
                           <Building className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Tabs (Overview, Services, Reviews)</span>
+                          <span>
+                            Tabs (Overview, Services, Reviews)
+                            <span className="block text-xs text-gray-500 mt-0.5">Showcase services, reviews, and more in one place</span>
+                          </span>
                         </li>
                       </ul>
                     </div>
@@ -583,7 +605,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                       <ul className="text-sm leading-5 text-gray-800 space-y-2">
                         <li className="flex gap-2 items-start">
                           <Star className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Verified Badge</span>
+                          <span>
+                            Verified Badge
+                            <span className="block text-xs text-gray-500 mt-0.5">Prove you're a trusted provider</span>
+                          </span>
                         </li>
                         <li className="flex gap-2 items-start">
                           <Lightbulb className="w-5 h-5 text-green-500 flex-shrink-0" />
@@ -626,7 +651,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                         </li>
                         <li className="flex gap-2 items-start">
                           <TrendingUp className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span>Category Boost</span>
+                          <span>
+                            Category Boost
+                            <span className="block text-xs text-gray-500 mt-0.5">Get featured at the top of your category</span>
+                          </span>
                         </li>
                       </ul>
                     </div>
@@ -663,32 +691,7 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16">
-        <div className="mx-auto max-w-4xl px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-          </div>
-
-          <div className="space-y-8">
-            <div className="prose prose-lg dark:prose-invert mx-auto">
-              <h3>Can I change plans anytime?</h3>
-              <p>Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing adjustments.</p>
-
-              <h3>What happens if I cancel?</h3>
-              <p>You can cancel anytime. Your listing will remain active until the end of your billing period, then automatically switch to the Free plan.</p>
-
-              <h3>Do you offer custom enterprise plans?</h3>
-              <p>Yes! For large businesses or franchise operations, we offer custom solutions. Contact us to discuss your specific needs.</p>
-
-              <h3>How does the Google Review Booster work?</h3>
-              <p>Our Power plan includes automated email campaigns to encourage satisfied customers to leave Google reviews, helping improve your online reputation.</p>
-
-              <h3>What's included in the monthly blog posts?</h3>
-              <p>We create 2 SEO-optimized blog posts per month about your services, local topics, and industry expertise to boost your search rankings.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <FAQSection className="bg-background" />
 
       {/* Contact CTA */}
       <section className="py-16 bg-muted/30">

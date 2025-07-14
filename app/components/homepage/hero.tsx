@@ -4,67 +4,66 @@ import SearchWidget from "./search-widget";
 export default function HeroSection() {
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-sandstone via-clay-beige/20 to-background pt-32 pb-16">
-      {/* Desert wave pattern background */}
-      <div className="absolute inset-0 -z-10">
+    <section className="relative bg-agave-cream pt-32 pb-16 overflow-hidden">
+      {/* Subtle Desert Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
         <svg
-          className="absolute bottom-0 left-0 right-0 text-clay-beige/30"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1440 320"
+          className="absolute top-10 left-10 w-32 h-32 text-ironwood-charcoal"
+          viewBox="0 0 100 100"
+          fill="currentColor"
         >
-          <path
-            fill="currentColor"
-            fillOpacity="1"
-            d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,197.3C960,213,1056,203,1152,181.3C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          ></path>
+          {/* Saguaro Cactus Silhouette */}
+          <path d="M45 90 L45 35 Q45 30 50 30 Q55 30 55 35 L55 50 L70 50 Q75 50 75 45 Q75 40 70 40 L70 20 Q70 15 65 15 Q60 15 60 20 L60 40 L55 40 L55 35 L55 90 M30 90 L30 65 Q30 60 35 60 Q40 60 40 65 L40 90 M45 35 L30 35 Q25 35 25 30 Q25 25 30 25 L45 25" />
         </svg>
-        {/* Subtle topographic lines */}
-        <div className="absolute inset-0 opacity-5">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
-            <defs>
-              <pattern id="topographic" patternUnits="userSpaceOnUse" width="100" height="100">
-                <path d="M0,50 Q25,25 50,50 T100,50" stroke="currentColor" strokeWidth="0.5" fill="none" className="text-mesa-terracotta"/>
-                <path d="M0,25 Q25,0 50,25 T100,25" stroke="currentColor" strokeWidth="0.3" fill="none" className="text-agave-green"/>
-                <path d="M0,75 Q25,50 50,75 T100,75" stroke="currentColor" strokeWidth="0.3" fill="none" className="text-saguaro-teal"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#topographic)"/>
-          </svg>
-        </div>
+        
+        <svg
+          className="absolute top-20 right-20 w-24 h-24 text-prickly-pear-pink"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+        >
+          {/* Mountain Range Silhouette */}
+          <path d="M0 80 L20 40 L35 55 L50 25 L65 45 L80 30 L100 50 L100 80 Z" />
+        </svg>
+
+        <svg
+          className="absolute bottom-10 left-1/4 w-20 h-20 text-cholla-green"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+        >
+          {/* Agave Plant Silhouette */}
+          <path d="M50 50 L30 30 Q25 25 30 20 Q35 25 50 40 L70 30 Q75 25 70 20 Q65 25 50 40 L60 70 Q65 75 60 80 Q55 75 50 60 L40 70 Q35 75 40 80 Q45 75 50 60 Z" />
+        </svg>
+
+        <svg
+          className="absolute bottom-20 right-1/3 w-16 h-16 text-desert-sky-blue"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+        >
+          {/* Sun Rays */}
+          <circle cx="50" cy="50" r="8" />
+          <path d="M50 10 L50 25 M50 75 L50 90 M10 50 L25 50 M75 50 L90 50 M21.5 21.5 L32.5 32.5 M67.5 32.5 L78.5 21.5 M21.5 78.5 L32.5 67.5 M67.5 67.5 L78.5 78.5" strokeWidth="3" stroke="currentColor" fill="none" />
+        </svg>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      {/* Gradient Overlay for Depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-agave-cream via-transparent to-agave-cream/50"></div>
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl text-desert-night">
-            Find Trusted <span className="text-saguaro-teal">Service</span> Pros Across Arizona
+          <h1 className="font-serif text-4xl md:text-5xl font-medium text-ironwood-charcoal mb-6 relative">
+            Arizona's Most Trusted <span className="text-ocotillo-red">Local Pros</span> — All in One Place
+            {/* Subtle text shadow for depth */}
+            <div className="absolute inset-0 font-serif text-4xl md:text-5xl font-medium text-ocotillo-red/5 translate-x-1 translate-y-1 -z-10">
+              Arizona's Most Trusted Local Pros — All in One Place
+            </div>
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground">
-            Verified & Reviewed local service providers ready to help with your home and business needs
+          <p className="text-lg text-ironwood-charcoal/80 mb-12 relative z-10">
+            Verified, reviewed, and ready to help — connect instantly with top-rated service providers near you.
           </p>
 
-          {/* Search Widget */}
-          <div className="mt-10">
+          {/* Integrated Search Widget */}
+          <div className="mt-8 relative z-10">
             <SearchWidget />
-          </div>
-
-          {/* Quick Links */}
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <span className="text-sm text-muted-foreground">Popular:</span>
-            <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/hvac-services">HVAC Services</a>
-            </Button>
-            <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/plumbing">Plumbing</a>
-            </Button>
-            <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/electrical">Electrical</a>
-            </Button>
-            <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/city/phoenix">Phoenix</a>
-            </Button>
-            <Button variant="link" size="sm" asChild className="h-auto p-0">
-              <a href="/city/mesa">Mesa</a>
-            </Button>
           </div>
         </div>
       </div>
