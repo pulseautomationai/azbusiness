@@ -32,8 +32,8 @@ export default function ContactPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background pt-24">
-        <section className="py-16">
+      <div className="min-h-screen bg-background pt-32">
+        <section className="py-20">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <div className="text-center mb-12">
               <h1 className="text-4xl font-bold tracking-tight mb-4">

@@ -75,7 +75,7 @@ export default function CitiesPage() {
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-background pt-24">
+        <div className="min-h-screen bg-background pt-32">
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
@@ -91,8 +91,8 @@ export default function CitiesPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background pt-24">
-        <section className="py-12">
+      <div className="min-h-screen bg-background pt-32">
+        <section className="py-16">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center mb-12">
               <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">

@@ -57,9 +57,9 @@ export default function CityPageContent({
   };
 
   return (
-    <div className="min-h-screen bg-background pt-24">
+    <div className="min-h-screen bg-background pt-32">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-muted/50 to-background py-12">
+      <section className="bg-gradient-to-b from-muted/50 to-background py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Main Content */}

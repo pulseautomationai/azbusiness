@@ -49,8 +49,8 @@ export default function CategoriesPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background pt-24">
-        <section className="py-12">
+      <div className="min-h-screen bg-background pt-32">
+        <section className="py-16">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center mb-12">
               <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">

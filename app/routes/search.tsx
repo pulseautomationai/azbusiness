@@ -73,7 +73,7 @@ export default function SearchPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background pt-24">
+      <div className="min-h-screen bg-background pt-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 py-8">
           
           {/* Search Header */}

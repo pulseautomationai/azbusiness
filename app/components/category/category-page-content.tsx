@@ -116,9 +116,9 @@ export default function CategoryPageContent({
     .slice(0, 10);
 
   return (
-    <div className="min-h-screen bg-background pt-24">
+    <div className="min-h-screen bg-background pt-32">
       {/* Hero Section */}
-      <section className="bg-muted/30 py-12">
+      <section className="bg-muted/30 py-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-4">
             {category.icon && <span className="text-4xl">{category.icon}</span>}

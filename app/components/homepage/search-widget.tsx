@@ -127,14 +127,6 @@ export default function SearchWidget() {
       </div>
 
       <div className="relative space-y-6">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-ironwood-charcoal mb-2">
-            Find Trusted Service Providers
-          </h2>
-          <p className="text-sm text-ironwood-charcoal/70">
-            Get matched with verified professionals in your area
-          </p>
-        </div>
 
         <div className="flex flex-col gap-4 md:flex-row max-w-3xl mx-auto">
           {/* Service Input */}
@@ -233,31 +225,31 @@ export default function SearchWidget() {
         <div className="flex flex-wrap justify-center items-center gap-3 pt-6 max-w-4xl mx-auto popular-links-mobile">
           <span className="text-sm font-medium text-ironwood-charcoal/80 mr-2">Popular:</span>
           <a 
-            href="/search?service=HVAC&zipcode=85001"
+            href="/hvac-services/phoenix"
             className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
           >
             HVAC in Phoenix
           </a>
           <a 
-            href="/search?service=Plumbing&zipcode=85201"
+            href="/plumbing/mesa"
             className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
           >
             Plumbing in Mesa
           </a>
           <a 
-            href="/search?service=Electricians&zipcode=85224"
+            href="/electrical/chandler"
             className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
           >
             Electricians in Chandler
           </a>
           <a 
-            href="/search?service=Roofing&zipcode=85254"
+            href="/roofing-gutters/scottsdale"
             className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
           >
             Roofing in Scottsdale
           </a>
           <a 
-            href="/search?service=Landscaping&zipcode=85281"
+            href="/landscaping/tempe"
             className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
           >
             Landscaping in Tempe

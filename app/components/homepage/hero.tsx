@@ -4,7 +4,7 @@ import SearchWidget from "./search-widget";
 export default function HeroSection() {
 
   return (
-    <section className="relative bg-agave-cream pt-32 pb-16 overflow-hidden">
+    <section className="relative bg-agave-cream pt-44 pb-20 overflow-hidden">
       {/* Subtle Desert Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <svg
@@ -50,10 +50,10 @@ export default function HeroSection() {
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="font-serif text-4xl md:text-5xl font-medium text-ironwood-charcoal mb-6 relative">
+          <h1 className="font-serif text-5xl md:text-6xl lg:text-6xl font-medium text-ironwood-charcoal mb-6 relative">
             Arizona's Most Trusted <span className="text-ocotillo-red">Local Pros</span> — All in One Place
             {/* Subtle text shadow for depth */}
-            <div className="absolute inset-0 font-serif text-4xl md:text-5xl font-medium text-ocotillo-red/5 translate-x-1 translate-y-1 -z-10">
+            <div className="absolute inset-0 font-serif text-5xl md:text-6xl lg:text-6xl font-medium text-ocotillo-red/5 translate-x-1 translate-y-1 -z-10">
               Arizona's Most Trusted Local Pros — All in One Place
             </div>
           </h1>

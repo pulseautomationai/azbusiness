@@ -97,7 +97,7 @@ export default function BlogPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background pt-24">
+      <div className="min-h-screen bg-background pt-32">
         <section className="py-16">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <div className="text-center mb-12">

@@ -24,8 +24,8 @@ export default function PrivacyPage() {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-background pt-24">
-        <section className="py-16">
+      <div className="min-h-screen bg-background pt-32">
+        <section className="py-20">
           <div className="mx-auto max-w-4xl px-6 lg:px-8">
             <h1 className="text-4xl font-bold tracking-tight mb-8">Privacy Policy</h1>
             

@@ -98,10 +98,10 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl lg:text-5xl font-medium mb-4" style={{ color: '#2B2A28' }}>
-              Built for <span style={{ color: '#E36450' }}>Arizona Businesses</span> — No Bidding, No Spam, Just Results
-            </h2>
-            <p className="text-lg mb-8" style={{ color: '#2B2A28' }}>
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-medium text-ironwood-charcoal mb-6">
+              Built for <span className="text-ocotillo-red">Arizona Businesses</span> — No Bidding, No Spam, Just Results
+            </h1>
+            <p className="text-lg lg:text-xl text-ironwood-charcoal/80 mb-12 max-w-3xl mx-auto leading-relaxed">
               Claim your listing, stand out from competitors, and get leads straight to your inbox.
             </p>
             

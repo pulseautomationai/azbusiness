@@ -43,7 +43,7 @@ export default function BusinessCard({ business, variant = "default" }: Business
     )}>
       {/* Featured ribbon */}
       {business.featured && (
-        <div className="absolute right-0 top-0 bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+        <div className="absolute right-0 top-0 bg-cholla-green px-3 py-1 text-xs font-semibold text-white">
           Featured
         </div>
       )}

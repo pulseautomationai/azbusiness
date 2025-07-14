@@ -21,6 +21,9 @@ export default [
   // New URL structure: /[category]/[city]/[businessName]
   route(":category/:city/:businessName", "routes/[$category].[$city].[$businessName].tsx"),
   
+  // Category/City combination pages: /[category]/[city]
+  route(":category/:city", "routes/[$category].[$city].tsx"),
+  
   // Category routes at root level (must come after more specific routes)
   route(":category", "routes/$category.tsx"),
   
@@ -36,6 +39,7 @@ export default [
   route("blog/:slug", "routes/blog/$slug.tsx"),
   route("contact", "routes/contact.tsx"),
   route("about", "routes/about.tsx"),
+  route("how-it-works", "routes/how-it-works.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
   

@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 const menuItems = [
-  { name: "Blog", href: "/blog" },
+  // { name: "Blog", href: "/blog" }, // Temporarily hidden until blog section is developed
   { name: "Pricing", href: "/pricing" },
 ];
 
@@ -60,7 +60,7 @@ export const Header = () => {
         <div
           className="mx-auto mt-2 max-w-7xl px-6 lg:px-12 bg-agave-cream/90 rounded-2xl border border-prickly-pear-pink/30 backdrop-blur-lg"
         >
-          <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
+          <div className="relative flex flex-wrap items-center justify-between gap-6 py-0.5 lg:gap-0 lg:py-1">
             <div className="flex w-full justify-between lg:w-auto">
               <Link
                 to="/"
