@@ -29,6 +29,7 @@ export default [
   route("demo/business", "routes/demo.business.tsx"),
   route("add-business", "routes/add-business.tsx"),
   route("add-business/create", "routes/add-business.create.tsx"),
+  route("search", "routes/search.tsx"),
   route("claim-business", "routes/claim-business.tsx"),
   route("claim-listing", "routes/claim-listing.tsx"),
   route("blog", "routes/blog.tsx"),

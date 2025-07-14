@@ -752,3 +752,222 @@ export const getUserBusinesses = query({
   },
 });
 
+/**
+ * Search businesses by service and zipcode with proximity sorting
+ */
+export const searchBusinessesByZipcode = query({
+  args: {
+    service: v.string(),
+    zipcode: v.optional(v.string()),
+    radius: v.optional(v.number()), // in miles, default 25
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const radius = args.radius || 25;
+    const limit = args.limit || 20;
+
+    // Get all active businesses
+    let businesses = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("active"), true))
+      .collect();
+
+    // Filter by service (search in name, description, and services)
+    const serviceQuery = args.service.toLowerCase();
+    businesses = businesses.filter(business => 
+      business.name.toLowerCase().includes(serviceQuery) ||
+      business.description?.toLowerCase().includes(serviceQuery) ||
+      business.shortDescription?.toLowerCase().includes(serviceQuery) ||
+      business.services?.some(service => service.toLowerCase().includes(serviceQuery))
+    );
+
+    // Add category info and calculate distance if zipcode provided
+    const businessesWithDetails = await Promise.all(
+      businesses.map(async (business) => {
+        const category = await ctx.db.get(business.categoryId);
+        
+        let distance = 0;
+        if (args.zipcode) {
+          // Get zipcode coordinates
+          const zipcodeCoords = getZipcodeCoordinates(args.zipcode);
+          if (zipcodeCoords && business.coordinates) {
+            distance = calculateDistance(
+              zipcodeCoords.lat, 
+              zipcodeCoords.lng, 
+              business.coordinates.lat, 
+              business.coordinates.lng
+            );
+          } else if (zipcodeCoords) {
+            // If business doesn't have coordinates, estimate based on city
+            // This is a fallback - in production you'd geocode the address
+            const cityCoords = getCityCoordinates(business.city);
+            if (cityCoords) {
+              distance = calculateDistance(
+                zipcodeCoords.lat, 
+                zipcodeCoords.lng, 
+                cityCoords.lat, 
+                cityCoords.lng
+              );
+            }
+          }
+        }
+
+        return {
+          ...business,
+          category: category || null,
+          distance,
+        };
+      })
+    );
+
+    // Filter by radius if zipcode provided
+    let filteredBusinesses = businessesWithDetails;
+    if (args.zipcode) {
+      filteredBusinesses = businessesWithDetails.filter(business => 
+        business.distance <= radius
+      );
+    }
+
+    // Sort by: 1) Plan tier (power > pro > free), 2) Distance, 3) Rating
+    filteredBusinesses.sort((a, b) => {
+      // Plan tier priority
+      const planPriority: Record<string, number> = { power: 3, pro: 2, free: 1 };
+      const aPriority = planPriority[a.planTier] || 0;
+      const bPriority = planPriority[b.planTier] || 0;
+      if (bPriority !== aPriority) {
+        return bPriority - aPriority;
+      }
+      
+      // Distance (if zipcode provided)
+      if (args.zipcode && a.distance !== b.distance) {
+        return a.distance - b.distance;
+      }
+      
+      // Rating
+      return b.rating - a.rating;
+    });
+
+    // Apply limit
+    return filteredBusinesses.slice(0, limit);
+  },
+});
+
+// Helper function to get coordinates for Arizona zipcodes
+function getZipcodeCoordinates(zipcode: string): { lat: number; lng: number } | null {
+  // Simplified mapping of some Arizona zipcodes to coordinates
+  // In production, this would use a proper geocoding service
+  const zipcodeMap: Record<string, { lat: number; lng: number }> = {
+    "85001": { lat: 33.4484, lng: -112.0740 }, // Phoenix
+    "85003": { lat: 33.4734, lng: -112.0879 },
+    "85004": { lat: 33.4500, lng: -112.0667 },
+    "85006": { lat: 33.4173, lng: -112.0278 },
+    "85007": { lat: 33.3939, lng: -112.0717 },
+    "85008": { lat: 33.4756, lng: -112.0440 },
+    "85009": { lat: 33.4147, lng: -112.1058 },
+    "85013": { lat: 33.5128, lng: -112.0847 },
+    "85014": { lat: 33.5053, lng: -112.0364 },
+    "85015": { lat: 33.5206, lng: -112.0031 },
+    "85016": { lat: 33.5031, lng: -111.9678 },
+    "85017": { lat: 33.4539, lng: -112.1158 },
+    "85018": { lat: 33.4781, lng: -111.9831 },
+    "85019": { lat: 33.5306, lng: -112.1367 },
+    "85020": { lat: 33.4414, lng: -111.9681 },
+    "85021": { lat: 33.5642, lng: -112.0881 },
+    "85022": { lat: 33.6114, lng: -112.0278 },
+    "85023": { lat: 33.4653, lng: -112.1431 },
+    "85024": { lat: 33.6331, lng: -111.9931 },
+    "85026": { lat: 33.6181, lng: -112.0631 },
+    "85027": { lat: 33.6328, lng: -112.1431 },
+    "85028": { lat: 33.3506, lng: -111.9581 },
+    "85029": { lat: 33.5781, lng: -112.1331 },
+    "85032": { lat: 33.3781, lng: -111.9331 },
+    "85033": { lat: 33.3531, lng: -112.0131 },
+    "85034": { lat: 33.3531, lng: -112.0531 },
+    "85035": { lat: 33.3831, lng: -112.0931 },
+    "85037": { lat: 33.3631, lng: -112.1531 },
+    "85040": { lat: 33.4031, lng: -111.9131 },
+    "85041": { lat: 33.3331, lng: -111.9731 },
+    "85042": { lat: 33.3131, lng: -111.9331 },
+    "85043": { lat: 33.3231, lng: -112.0131 },
+    "85044": { lat: 33.3431, lng: -111.8831 },
+    "85045": { lat: 33.2931, lng: -111.9131 },
+    "85048": { lat: 33.2631, lng: -111.8631 },
+    "85050": { lat: 33.2831, lng: -111.7831 },
+    "85051": { lat: 33.5281, lng: -112.2631 },
+    "85053": { lat: 33.6781, lng: -112.2031 },
+    "85054": { lat: 33.6681, lng: -112.1631 },
+    "85083": { lat: 33.5881, lng: -112.2231 },
+    // Mesa
+    "85201": { lat: 33.4152, lng: -111.8315 },
+    "85202": { lat: 33.4019, lng: -111.8181 },
+    "85203": { lat: 33.4147, lng: -111.8448 },
+    "85204": { lat: 33.4314, lng: -111.8448 },
+    "85205": { lat: 33.3897, lng: -111.8581 },
+    "85206": { lat: 33.3681, lng: -111.8448 },
+    "85207": { lat: 33.4481, lng: -111.8248 },
+    "85208": { lat: 33.4681, lng: -111.8648 },
+    "85209": { lat: 33.3281, lng: -111.8148 },
+    "85210": { lat: 33.3081, lng: -111.8448 },
+    "85212": { lat: 33.2881, lng: -111.8048 },
+    "85213": { lat: 33.2681, lng: -111.8248 },
+    // Tucson area
+    "85701": { lat: 32.2217, lng: -110.9265 },
+    "85705": { lat: 32.2581, lng: -110.9681 },
+    "85710": { lat: 32.1681, lng: -110.8781 },
+    "85715": { lat: 32.1981, lng: -110.8181 },
+    "85719": { lat: 32.2981, lng: -110.9381 },
+    "85741": { lat: 32.3681, lng: -111.0081 },
+    "85748": { lat: 32.1181, lng: -110.8381 },
+    // Flagstaff
+    "86001": { lat: 35.1983, lng: -111.6513 },
+    "86004": { lat: 35.2181, lng: -111.6713 },
+    // Add more as needed...
+  };
+
+  return zipcodeMap[zipcode] || null;
+}
+
+// Helper function to get coordinates for major Arizona cities
+function getCityCoordinates(cityName: string): { lat: number; lng: number } | null {
+  const cityMap: Record<string, { lat: number; lng: number }> = {
+    "phoenix": { lat: 33.4484, lng: -112.0740 },
+    "tucson": { lat: 32.2217, lng: -110.9265 },
+    "mesa": { lat: 33.4152, lng: -111.8315 },
+    "chandler": { lat: 33.3062, lng: -111.8413 },
+    "scottsdale": { lat: 33.4942, lng: -111.9261 },
+    "glendale": { lat: 33.5387, lng: -112.1860 },
+    "gilbert": { lat: 33.3528, lng: -111.7890 },
+    "tempe": { lat: 33.4255, lng: -111.9400 },
+    "peoria": { lat: 33.5806, lng: -112.2374 },
+    "surprise": { lat: 33.6292, lng: -112.3679 },
+    "yuma": { lat: 32.6927, lng: -114.6277 },
+    "avondale": { lat: 33.4356, lng: -112.3496 },
+    "flagstaff": { lat: 35.1983, lng: -111.6513 },
+    "goodyear": { lat: 33.4355, lng: -112.3576 },
+    "buckeye": { lat: 33.3703, lng: -112.5838 },
+    "lake havasu city": { lat: 34.4839, lng: -114.3226 },
+    "casa grande": { lat: 32.8795, lng: -111.7574 },
+    "sierra vista": { lat: 31.5455, lng: -110.3032 },
+    "maricopa": { lat: 33.0581, lng: -112.0476 },
+    "oro valley": { lat: 32.3909, lng: -110.9665 },
+    "prescott": { lat: 34.5400, lng: -112.4685 },
+    "bullhead city": { lat: 35.1478, lng: -114.5683 },
+    "prescott valley": { lat: 34.6100, lng: -112.3157 },
+    "apache junction": { lat: 33.4151, lng: -111.5495 }
+  };
+
+  return cityMap[cityName.toLowerCase()] || null;
+}
+
+// Helper function to calculate distance between two coordinates
+function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+

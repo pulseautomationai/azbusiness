@@ -20,6 +20,7 @@ interface BusinessCardProps {
     verified: boolean;
     featured: boolean;
     services: string[];
+    distance?: number; // Distance in miles (for search results)
     category?: {
       name: string;
       icon: string;
