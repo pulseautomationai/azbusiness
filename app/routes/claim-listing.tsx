@@ -1,20 +1,21 @@
-import { redirect } from "react-router";
-import type { Route } from "./+types/claim-listing";
-
-export async function loader({ request }: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const businessId = url.searchParams.get("businessId");
-  
-  // Redirect to the correct claim-business route with all parameters
-  const redirectUrl = businessId 
-    ? `/claim-business?businessId=${businessId}`
-    : "/claim-business";
-    
-  throw redirect(redirectUrl);
-}
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 
 export default function ClaimListing() {
-  // This component should never render because of the loader redirect
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  
+  useEffect(() => {
+    const businessId = searchParams.get("businessId");
+    
+    // Client-side redirect to the correct claim-business route with all parameters
+    const redirectUrl = businessId 
+      ? `/claim-business?businessId=${businessId}`
+      : "/claim-business";
+      
+    navigate(redirectUrl, { replace: true });
+  }, [navigate, searchParams]);
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <p>Redirecting to claim business page...</p>
