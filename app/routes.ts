@@ -41,7 +41,9 @@ export default [
   route("about", "routes/about.tsx"),
   route("how-it-works", "routes/how-it-works.tsx"),
   route("privacy", "routes/privacy.tsx"),
+  route("privacy-policy", "routes/privacy-policy.tsx"),
   route("terms", "routes/terms.tsx"),
+  route("terms-of-service", "routes/terms-of-service.tsx"),
   
   // SEO routes
   route("sitemap.xml", "routes/sitemap.xml.ts"),

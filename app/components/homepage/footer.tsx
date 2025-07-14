@@ -36,8 +36,8 @@ const footerLinks = {
     links: [
       { name: "About Us", href: "/about" },
       { name: "Blog", href: "/blog" },
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
+      { name: "Privacy Policy", href: "/privacy-policy" },
+      { name: "Terms of Service", href: "/terms-of-service" },
     ],
   },
 };
