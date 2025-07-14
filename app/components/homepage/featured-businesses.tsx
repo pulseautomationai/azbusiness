@@ -124,8 +124,8 @@ export default function FeaturedBusinesses() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {visibleBusinesses.map((business) => (
               <div key={business._id} className="relative overflow-hidden bg-white border border-prickly-pear-pink rounded-xl shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-300 card-hover-lift">
-                {/* Plan Badge - Top Left with Proper Padding */}
-                <div className="absolute top-4 left-4 z-10">
+                {/* Plan Badge - Top Right */}
+                <div className="absolute top-4 right-4 z-10">
                   <Badge 
                     className={cn(
                       "text-xs font-semibold shadow-sm",
@@ -138,26 +138,31 @@ export default function FeaturedBusinesses() {
                   </Badge>
                 </div>
                 
-                <div className="p-6 pt-14">
-                  {/* Category Icon */}
-                  {business.category && business.category.icon && (
-                    <div className="mb-3">
-                      <span className="text-2xl opacity-60">{business.category.icon}</span>
+                <div className="p-6 pr-20">
+                  {/* Icon + Business Name Header */}
+                  <div className="flex items-start gap-3 mb-3">
+                    {/* Category Icon - Left */}
+                    {business.category && business.category.icon && (
+                      <div className="flex-shrink-0">
+                        <span className="text-2xl opacity-60">{business.category.icon}</span>
+                      </div>
+                    )}
+                    
+                    {/* Business Name - Next to Icon */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-ironwood-charcoal mb-1 leading-tight">
+                        <Link 
+                          to={business.category 
+                            ? SlugGenerator.generateURLPath(business.name, business.city, business.category.name)
+                            : `/business/${business.slug}`}
+                          className="hover:text-ocotillo-red transition-colors block"
+                          title={business.name}
+                        >
+                          <span className="line-clamp-2">{business.name}</span>
+                        </Link>
+                      </h3>
                     </div>
-                  )}
-                  
-                  {/* Business Name - Allow Two Lines */}
-                  <h3 className="text-lg font-semibold text-ironwood-charcoal mb-1 leading-tight">
-                    <Link 
-                      to={business.category 
-                        ? SlugGenerator.generateURLPath(business.name, business.city, business.category.name)
-                        : `/business/${business.slug}`}
-                      className="hover:text-ocotillo-red transition-colors block"
-                      title={business.name}
-                    >
-                      <span className="line-clamp-2">{business.name}</span>
-                    </Link>
-                  </h3>
+                  </div>
                   
                   <p className="text-sm text-ironwood-charcoal/70 line-clamp-2 mb-4">
                     {business.shortDescription}

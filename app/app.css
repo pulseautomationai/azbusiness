@@ -204,7 +204,7 @@
         .pricing-plan-badges {
             flex-direction: column !important;
             align-items: flex-end !important;
-            gap: 0.375rem !important;
+            gap: 0.25rem !important;
         }
     }
     
@@ -215,6 +215,17 @@
             align-items: center !important;
             justify-content: flex-end !important;
             gap: 0.5rem !important;
+        }
+    }
+    
+    /* Ensure cards have proper top padding when badges are absolute */
+    .pricing-card-content {
+        padding-top: 3rem; /* Account for absolute badges */
+    }
+    
+    @media (max-width: 640px) {
+        .pricing-card-content {
+            padding-top: 2.5rem; /* Slightly less on mobile */
         }
     }
     

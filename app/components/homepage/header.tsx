@@ -1,35 +1,55 @@
 "use client";
 import { UserButton, useUser } from "@clerk/react-router";
-import { Building2, Menu, X, Plus, List } from "lucide-react";
-import React, { useCallback } from "react";
+import { Building2, Menu, X, Plus, List, ChevronDown } from "lucide-react";
+import React, { useCallback, useState } from "react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 const menuItems = [
-  { name: "Home", href: "/" },
-  { name: "Browse by Category", href: "/categories" },
-  { name: "Browse by City", href: "/cities" },
   { name: "Blog", href: "/blog" },
   { name: "Pricing", href: "/pricing" },
+];
+
+const browseItems = [
+  { name: "Browse by Category", href: "/categories" },
+  { name: "Browse by City", href: "/cities" },
 ];
 
 export const Header = () => {
   const { isSignedIn } = useUser();
   const [menuState, setMenuState] = React.useState(false);
-  const [isScrolled, setIsScrolled] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [browseDropdownOpen, setBrowseDropdownOpen] = useState(false);
+  // Removed scroll effect - header stays consistent
 
   const handleNavClick = useCallback((href: string) => {
     setMenuState(false);
+    setBrowseDropdownOpen(false);
   }, []);
+
+  const handleBrowseToggle = useCallback(() => {
+    setBrowseDropdownOpen(!browseDropdownOpen);
+  }, [browseDropdownOpen]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setBrowseDropdownOpen(false);
+    }
+  }, []);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (browseDropdownOpen && !(event.target as Element).closest('.browse-dropdown')) {
+        setBrowseDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [browseDropdownOpen]);
 
   return (
     <header>
@@ -38,11 +58,7 @@ export const Header = () => {
         className="fixed z-99 w-full px-2"
       >
         <div
-          className={cn(
-            "mx-auto mt-2 max-w-7xl px-6 transition-all duration-300 lg:px-12",
-            isScrolled &&
-              "bg-agave-cream/90 max-w-6xl rounded-2xl border border-prickly-pear-pink/30 backdrop-blur-lg lg:px-8"
-          )}
+          className="mx-auto mt-2 max-w-7xl px-6 lg:px-12 bg-agave-cream/90 rounded-2xl border border-prickly-pear-pink/30 backdrop-blur-lg"
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
             <div className="flex w-full justify-between lg:w-auto">
@@ -79,6 +95,64 @@ export const Header = () => {
 
             <div className="absolute inset-0 m-auto hidden size-fit lg:block">
               <ul className="flex gap-8 text-sm">
+                {/* Browse Dropdown */}
+                <li className="relative browse-dropdown">
+                  <button
+                    onClick={handleBrowseToggle}
+                    onKeyDown={handleKeyDown}
+                    className="text-ironwood-charcoal hover:text-desert-sky-blue duration-150 transition-colors flex items-center gap-1"
+                    aria-expanded={browseDropdownOpen}
+                    aria-haspopup="true"
+                  >
+                    <span>Browse</span>
+                    <ChevronDown className={cn(
+                      "h-4 w-4 transition-transform duration-200",
+                      browseDropdownOpen && "rotate-180"
+                    )} />
+                  </button>
+                  {browseDropdownOpen && (
+                    <ul className="absolute top-full left-0 mt-2 w-48 bg-white border border-prickly-pear-pink/20 rounded-lg shadow-lg py-2 z-50">
+                      {browseItems.map((item, index) => (
+                        <li key={index}>
+                          <Link
+                            to={item.href}
+                            onClick={() => handleNavClick(item.href)}
+                            className="block px-4 py-2 text-sm text-ironwood-charcoal hover:bg-agave-cream hover:text-desert-sky-blue transition-colors"
+                            prefetch="viewport"
+                          >
+                            {item.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+                
+                {/* How It Works */}
+                <li>
+                  <Link
+                    to="/how-it-works"
+                    onClick={() => handleNavClick("/how-it-works")}
+                    className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
+                    prefetch="viewport"
+                  >
+                    <span>How It Works</span>
+                  </Link>
+                </li>
+                
+                {/* About */}
+                <li>
+                  <Link
+                    to="/about"
+                    onClick={() => handleNavClick("/about")}
+                    className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
+                    prefetch="viewport"
+                  >
+                    <span>About</span>
+                  </Link>
+                </li>
+                
+                {/* Existing menu items */}
                 {menuItems.map((item, index) => (
                   <li key={index}>
                     <Link
@@ -97,6 +171,50 @@ export const Header = () => {
             <div className="bg-background in-data-[state=active]:block lg:in-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
               <div className="lg:hidden">
                 <ul className="space-y-6 text-base">
+                  {/* Browse Section - Mobile */}
+                  <li>
+                    <div className="text-ironwood-charcoal font-medium mb-3">Browse</div>
+                    <ul className="space-y-3 ml-4">
+                      {browseItems.map((item, index) => (
+                        <li key={index}>
+                          <Link
+                            to={item.href}
+                            onClick={() => handleNavClick(item.href)}
+                            className="text-ironwood-charcoal/80 hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
+                            prefetch="viewport"
+                          >
+                            <span>{item.name}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  
+                  {/* How It Works */}
+                  <li>
+                    <Link
+                      to="/how-it-works"
+                      onClick={() => handleNavClick("/how-it-works")}
+                      className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
+                      prefetch="viewport"
+                    >
+                      <span>How It Works</span>
+                    </Link>
+                  </li>
+                  
+                  {/* About */}
+                  <li>
+                    <Link
+                      to="/about"
+                      onClick={() => handleNavClick("/about")}
+                      className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
+                      prefetch="viewport"
+                    >
+                      <span>About</span>
+                    </Link>
+                  </li>
+                  
+                  {/* Existing menu items */}
                   {menuItems.map((item, index) => (
                     <li key={index}>
                       <Link

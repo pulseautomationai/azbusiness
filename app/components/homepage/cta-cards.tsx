@@ -13,9 +13,9 @@ export default function CTACards() {
             {/* Left Accent Bar */}
             <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-prickly-pear-pink to-prickly-pear-pink/80"></div>
             
-            <div className="p-4 sm:p-6 lg:p-8">
-              {/* Badge - Mobile Optimized Positioning */}
-              <div className="mb-4 flex justify-end">
+            <div className="p-4 sm:p-6 lg:p-8 relative">
+              {/* Badge - Absolute Positioning */}
+              <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-ironwood-charcoal badge-free-bg shadow-sm"
                       style={{ borderColor: '#B8D0FF' }}>
                   <Badge className="h-3.5 w-3.5" />
@@ -25,14 +25,14 @@ export default function CTACards() {
 
               {/* Compact Icon + Title + Price Group */}
               <div className="mb-5">
-                <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+                <div className="flex items-start gap-3">
                   {/* Icon */}
-                  <div className="flex-shrink-0 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-prickly-pear-pink/15 border border-prickly-pear-pink/30">
-                    <Store className="h-5 w-5 sm:h-6 sm:w-6 text-ironwood-charcoal" />
+                  <div className="flex-shrink-0 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-prickly-pear-pink/10 border border-prickly-pear-pink/20">
+                    <Store className="h-5 w-5 sm:h-6 sm:w-6 text-prickly-pear-pink" />
                   </div>
                   
                   {/* Title Block */}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ironwood-charcoal leading-tight">
                       Get Listed Free — Forever
                     </h3>
@@ -84,13 +84,9 @@ export default function CTACards() {
             {/* Left Accent Bar */}
             <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-ocotillo-red to-ocotillo-red/80"></div>
             
-            <div className="p-4 sm:p-6 lg:p-8">
-              {/* Premium Card Badges - Responsive Layout */}
-              <div className="mb-4 flex gap-1.5 items-end justify-end pricing-plan-badges">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-ironwood-charcoal border border-green-200 badge-premium-bg shadow-sm">
-                  <Zap className="h-3.5 w-3.5" />
-                  Premium
-                </span>
+            <div className="p-4 sm:p-6 lg:p-8 relative">
+              {/* Recommended Badge Only */}
+              <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-ocotillo-red shadow-md">
                   <Crown className="h-3 w-3" />
                   RECOMMENDED
@@ -99,14 +95,14 @@ export default function CTACards() {
 
               {/* Compact Icon + Title + Price Group */}
               <div className="mb-5">
-                <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
+                <div className="flex items-start gap-3">
                   {/* Icon */}
                   <div className="flex-shrink-0 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-ocotillo-red/10 border border-ocotillo-red/20">
                     <Rocket className="h-5 w-5 sm:h-6 sm:w-6 text-ocotillo-red" />
                   </div>
                   
                   {/* Title Block */}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-ironwood-charcoal leading-tight">
                       Grow Your Business Faster
                     </h3>
