@@ -199,10 +199,57 @@
         background: linear-gradient(135deg, #E1F5EB 0%, #D4F1E0 100%);
     }
     
-    /* Responsive badge positioning */
+    /* Pricing plan badges - mobile vertical stacking ONLY */
+    @media (max-width: 480px) {
+        .pricing-plan-badges {
+            flex-direction: column !important;
+            align-items: flex-end !important;
+            gap: 0.375rem !important;
+        }
+    }
+    
+    /* Pricing plan badges - desktop horizontal layout */
+    @media (min-width: 481px) {
+        .pricing-plan-badges {
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 0.5rem !important;
+        }
+    }
+    
+    /* Responsive badge positioning and mobile card optimizations */
     @media (max-width: 640px) {
-        .card-badges-mobile {
-            gap: 0.375rem; /* Tighter gap on mobile */
+        /* REMOVED card-badges-mobile to prevent affecting featured business cards */
+        
+        /* Mobile-specific card content optimizations */
+        .cta-card-mobile {
+            padding: 1rem;
+        }
+        
+        .cta-card-mobile h3 {
+            font-size: 1.125rem;
+            line-height: 1.375;
+        }
+        
+        .cta-card-mobile .icon-container {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+    }
+    
+    /* Ensure consistent spacing on very small screens */
+    @media (max-width: 375px) {
+        .cta-card-mobile {
+            padding: 0.875rem;
+        }
+        
+        .cta-card-mobile h3 {
+            font-size: 1rem;
+        }
+        
+        .cta-card-mobile .feature-list {
+            font-size: 0.75rem;
         }
     }
     
