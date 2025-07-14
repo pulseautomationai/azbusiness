@@ -53,7 +53,7 @@ export const Header = () => {
                 prefetch="viewport"
               >
                 <img 
-                  src="/logo.png" 
+                  src="/logo.png?v=2024" 
                   alt="AZ Business Services"
                   className="h-20 w-20 rounded-lg object-cover hover:scale-105 transition-transform duration-300 animate-pulse-slow"
                   onError={(e) => {
