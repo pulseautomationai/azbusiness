@@ -24,7 +24,7 @@ export default function CTACards() {
               </div>
 
               {/* Compact Icon + Title + Price Group */}
-              <div className="mb-5 mt-8 sm:mt-10">
+              <div className="mb-5">
                 <div className="flex items-start gap-3">
                   {/* Icon */}
                   <div className="flex-shrink-0 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-prickly-pear-pink/10 border border-prickly-pear-pink/20">
@@ -94,7 +94,7 @@ export default function CTACards() {
               </div>
 
               {/* Compact Icon + Title + Price Group */}
-              <div className="mb-5 mt-8 sm:mt-10">
+              <div className="mb-5">
                 <div className="flex items-start gap-3">
                   {/* Icon */}
                   <div className="flex-shrink-0 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-ocotillo-red/10 border border-ocotillo-red/20">
