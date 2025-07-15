@@ -45,7 +45,6 @@ Everything in Pro PLUS:
 - 🏠 **Homepage Feature** (rotating placement)
 - 🖼️ **Image gallery** upload
 - 🎨 **Enhanced Service cards (that you can edit)** 
-- 📝 **Monthly blog post** AI-written ($100+ value)
 - 🎯 **AI review analysis** - sentiment & keywords
 - ✅ Google reviews display (unlimited)
 
@@ -64,7 +63,6 @@ Everything in Pro PLUS:
 - **Start receiving unlimited leads immediately** - Direct revenue generation vs no leads
 - **Maximum visibility with homepage featuring** - Prime placement vs category-only
 - **Professional image gallery builds trust** - Visual credibility vs no images
-- **AI-powered blog content for SEO** - Monthly content creation vs no content
 - **Review insights for continuous improvement** - AI analysis vs basic review display
 - **Display all Google reviews** - Complete social proof vs limited to 10
 - **ROI**: Lead generation alone can pay for itself with 1-2 customers per month
@@ -84,10 +82,9 @@ Everything in Pro PLUS:
 - Lead Generation System: ~$300/mo value (vs lead services)
 - Homepage Featuring: ~$200/mo value (premium placement)
 - Image Gallery: ~$50/mo value (professional presentation)
-- Monthly Blog Post: ~$150/mo value (content creation)
 - AI Review Analysis: ~$100/mo value (sentiment analysis)
 - Unlimited Review Display: ~$50/mo value (complete social proof)
-- **Total Value: $1,125/month for $97** (11x value)
+- **Total Value: $975/month for $97** (10x value)
 
 ## **Best Choice By Business Type**
 
@@ -137,7 +134,6 @@ Everything in Pro PLUS:
 |---------|------|-----|-------|
 | Featured Category Listing | ❌ | ✅ | ✅ |
 | Homepage Feature | ❌ | ❌ | ✅ Rotating placement |
-| Monthly Blog Post | ❌ | ❌ | ✅ AI-written |
 | AI Review Analysis | ❌ | ❌ | ✅ Sentiment & keywords |
 
 ### **Lead Generation**
@@ -216,7 +212,7 @@ Everything in Pro PLUS:
 
 ### **Value Proposition Strength**
 - **Pro tier**: 9x value ($275 value for $29)
-- **Power tier**: 11x value ($1,125 value for $97)
+- **Power tier**: 10x value ($975 value for $97)
 - **Clear ROI**: Each tier pays for itself with minimal customer acquisition
 
 This pricing structure creates a clear upgrade path focused on credibility building (Pro) and lead generation (Power), with each tier providing distinct value propositions that encourage natural progression through the tiers while delivering exceptional value at every level.
