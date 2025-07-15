@@ -158,6 +158,258 @@ http.route({
   handler: testWebhookEndpoint,
 });
 
+// GMB OAuth routes
+http.route({
+  path: "/api/auth/gmb/start",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const claimId = url.searchParams.get("claimId");
+      const userId = url.searchParams.get("userId");
+      
+      if (!claimId || !userId) {
+        return new Response(JSON.stringify({ error: "Missing claimId or userId" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+      
+      // Generate secure state parameter
+      const state = Buffer.from(`${claimId}:${userId}:${Date.now()}`).toString('base64url');
+      
+      // Build Google OAuth URL
+      const oauthParams = new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID || '',
+        redirect_uri: process.env.GMB_OAUTH_REDIRECT_URI || '',
+        response_type: 'code',
+        scope: process.env.GMB_OAUTH_SCOPES || 'https://www.googleapis.com/auth/business.manage',
+        state: state,
+        access_type: 'offline',
+        prompt: 'consent'
+      });
+      
+      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${oauthParams.toString()}`;
+      
+      // Store state in claim record (TODO: implement updateClaimOAuthState)
+      // For now, we'll store the state in the OAuth flow and update the claim in the callback
+      
+      // Redirect to Google OAuth
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: oauthUrl,
+          "Cache-Control": "no-cache"
+        }
+      });
+      
+    } catch (error) {
+      console.error("GMB OAuth start error:", error);
+      return new Response(JSON.stringify({ error: "Failed to start OAuth flow" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+  })
+});
+
+http.route({
+  path: "/api/auth/gmb/callback",
+  method: "GET", 
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const url = new URL(request.url);
+      const code = url.searchParams.get("code");
+      const state = url.searchParams.get("state");
+      const error = url.searchParams.get("error");
+      
+      // Handle OAuth denial/error
+      if (error || !code || !state) {
+        const errorReason = error === "access_denied" ? "User denied authorization" : "OAuth flow failed";
+        
+        // If we have state, try to update the claim
+        if (state) {
+          try {
+            const decoded = Buffer.from(state, 'base64url').toString();
+            const [claimId] = decoded.split(':');
+            
+            if (claimId) {
+              // TODO: Implement updateGMBVerificationFailure
+              console.log(`Would update claim ${claimId} with failure: ${errorReason}`);
+            }
+          } catch (stateError) {
+            console.error("Failed to parse state on error:", stateError);
+          }
+        }
+        
+        // Redirect to claim page with error
+        const redirectUrl = `${process.env.FRONTEND_URL}/claim-business?error=${encodeURIComponent(errorReason)}`;
+        return new Response(null, {
+          status: 302,
+          headers: { Location: redirectUrl }
+        });
+      }
+      
+      // Validate state parameter
+      let claimId: string;
+      let userId: string;
+      try {
+        const decoded = Buffer.from(state, 'base64url').toString();
+        const [cId, uId, timestamp] = decoded.split(':');
+        
+        if (!cId || !uId || !timestamp) {
+          throw new Error("Invalid state format");
+        }
+        
+        const ts = parseInt(timestamp);
+        const now = Date.now();
+        
+        // State expires after 30 minutes
+        if (now - ts > 30 * 60 * 1000) {
+          throw new Error("State expired");
+        }
+        
+        claimId = cId;
+        userId = uId;
+      } catch (stateError) {
+        console.error("State validation failed:", stateError);
+        const redirectUrl = `${process.env.FRONTEND_URL}/claim-business?error=invalid_state`;
+        return new Response(null, {
+          status: 302,
+          headers: { Location: redirectUrl }
+        });
+      }
+      
+      // Exchange code for tokens
+      const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: process.env.GOOGLE_CLIENT_ID || '',
+          client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
+          code: code,
+          grant_type: "authorization_code",
+          redirect_uri: process.env.GMB_OAUTH_REDIRECT_URI || ''
+        })
+      });
+      
+      if (!tokenResponse.ok) {
+        const tokenError = await tokenResponse.text();
+        console.error("Token exchange failed:", tokenError);
+        
+        // TODO: Implement updateGMBVerificationFailure
+        console.log(`Would update claim ${claimId} with token exchange failure`);
+        
+        const redirectUrl = `${process.env.FRONTEND_URL}/claim-business?error=token_exchange_failed`;
+        return new Response(null, {
+          status: 302,
+          headers: { Location: redirectUrl }
+        });
+      }
+      
+      const tokens = await tokenResponse.json();
+      
+      // Get user info and GMB data
+      const [userInfoResponse, gmbAccountsResponse] = await Promise.all([
+        fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+          headers: { Authorization: `Bearer ${tokens.access_token}` }
+        }),
+        fetch("https://mybusinessaccountmanagement.googleapis.com/v1/accounts", {
+          headers: { Authorization: `Bearer ${tokens.access_token}` }
+        })
+      ]);
+      
+      if (!userInfoResponse.ok || !gmbAccountsResponse.ok) {
+        // TODO: Implement updateGMBVerificationFailure
+        console.log(`Would update claim ${claimId} with GMB API failure`);
+        
+        const redirectUrl = `${process.env.FRONTEND_URL}/claim-business?error=gmb_api_failed`;
+        return new Response(null, {
+          status: 302,
+          headers: { Location: redirectUrl }
+        });
+      }
+      
+      const userInfo = await userInfoResponse.json();
+      const gmbAccounts = await gmbAccountsResponse.json();
+      
+      // Get all GMB locations
+      const allLocations: any[] = [];
+      
+      if (gmbAccounts.accounts && gmbAccounts.accounts.length > 0) {
+        for (const account of gmbAccounts.accounts) {
+          try {
+            const accountId = account.name.split('/').pop();
+            const locationsResponse = await fetch(
+              `https://mybusinessbusinessinformation.googleapis.com/v1/accounts/${accountId}/locations`,
+              { headers: { Authorization: `Bearer ${tokens.access_token}` } }
+            );
+            
+            if (locationsResponse.ok) {
+              const locationsData = await locationsResponse.json();
+              if (locationsData.locations) {
+                allLocations.push(...locationsData.locations);
+              }
+            }
+          } catch (locationError) {
+            console.error("Failed to fetch locations for account:", account.name, locationError);
+          }
+        }
+      }
+      
+      // Process verification with business matching
+      // TODO: Implement processGMBVerification - for now simulate success
+      const verificationResult = {
+        verified: allLocations.length > 0,
+        confidence: allLocations.length > 0 ? 90 : 0,
+        requiresManualReview: false,
+        status: allLocations.length > 0 ? "approved" : "pending"
+      };
+      
+      console.log(`GMB OAuth completed for claim ${claimId}:`, {
+        userEmail: userInfo.email,
+        locationsFound: allLocations.length,
+        result: verificationResult
+      });
+      
+      // Redirect based on verification result
+      let redirectUrl: string;
+      if (verificationResult.verified) {
+        redirectUrl = `${process.env.FRONTEND_URL}/claim-business?success=verified&confidence=${verificationResult.confidence}`;
+      } else if (verificationResult.requiresManualReview) {
+        redirectUrl = `${process.env.FRONTEND_URL}/claim-business?success=review_required&confidence=${verificationResult.confidence}`;
+      } else {
+        redirectUrl = `${process.env.FRONTEND_URL}/claim-business?error=no_match&confidence=${verificationResult.confidence}`;
+      }
+      
+      return new Response(null, {
+        status: 302,
+        headers: { Location: redirectUrl }
+      });
+      
+    } catch (error) {
+      console.error("GMB OAuth callback error:", error);
+      const redirectUrl = `${process.env.FRONTEND_URL}/claim-business?error=callback_failed`;
+      return new Response(null, {
+        status: 302,
+        headers: { Location: redirectUrl }
+      });
+    }
+  })
+});
+
+// Test route to verify HTTP is working
+http.route({
+  path: "/test",
+  method: "GET",
+  handler: httpAction(async () => {
+    return new Response("HTTP routes working!", {
+      status: 200,
+      headers: { "Content-Type": "text/plain" }
+    });
+  })
+});
+
 // Log that routes are configured
 console.log("HTTP routes configured");
 

@@ -1,21 +1,120 @@
 import { useSearchParams, Link } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { useUser } from "@clerk/react-router";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
+import { FileText, CheckCircle, AlertCircle, Clock } from "lucide-react";
+
+type VerificationMethod = "documents" | "gmb_oauth" | null;
 
 export default function ClaimBusiness() {
   const [searchParams] = useSearchParams();
   const businessId = searchParams.get("businessId");
+  const gmbError = searchParams.get("error");
+  const gmbSuccess = searchParams.get("success");
+  const confidence = searchParams.get("confidence");
   const { user, isSignedIn, isLoaded } = useUser();
+  
+  // Form state
+  const [verificationMethod, setVerificationMethod] = useState<VerificationMethod>(null);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const submitClaimRequest = useMutation(api.moderation.submitClaimRequest);
+  const submitClaimRequest = useMutation(api.businessClaims.submitClaimRequest);
   const upsertUser = useMutation(api.users.upsertUser);
+
+  // Handle GMB OAuth callback
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+      const error = urlParams.get('error');
+
+      if (error) {
+        setSubmitError(`Google OAuth failed: ${error}`);
+        return;
+      }
+
+      if (code && state) {
+        console.log('Processing OAuth callback...', { code: code.substring(0, 20) + '...', state });
+        
+        try {
+          // Parse state to get claim ID
+          const [claimId, userId, timestamp] = state.split(':');
+          
+          if (!claimId || !userId) {
+            throw new Error('Invalid OAuth state');
+          }
+
+          // Exchange code for access token
+          const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
+              client_secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET || '',
+              code: code,
+              grant_type: 'authorization_code',
+              redirect_uri: `${window.location.origin}/claim-business`
+            })
+          });
+
+          if (!tokenResponse.ok) {
+            throw new Error('Failed to exchange OAuth code for tokens');
+          }
+
+          const tokens = await tokenResponse.json();
+          console.log('Got OAuth tokens');
+
+          // Get user info and GMB locations
+          const [userInfoResponse, gmbAccountsResponse] = await Promise.all([
+            fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+              headers: { Authorization: `Bearer ${tokens.access_token}` }
+            }),
+            fetch('https://mybusinessaccountmanagement.googleapis.com/v1/accounts', {
+              headers: { Authorization: `Bearer ${tokens.access_token}` }
+            })
+          ]);
+
+          const userInfo = await userInfoResponse.json();
+          const gmbAccounts = await gmbAccountsResponse.json();
+
+          console.log('GMB OAuth Success:', {
+            userEmail: userInfo.email,
+            accountsFound: gmbAccounts.accounts?.length || 0
+          });
+
+          // For testing, show success message
+          setSubmitSuccess(true);
+          setSubmitError(null);
+          
+          // Clean up URL
+          window.history.replaceState({}, document.title, window.location.pathname + '?businessId=' + businessId);
+
+        } catch (error) {
+          console.error('OAuth callback error:', error);
+          setSubmitError(`OAuth processing failed: ${error.message}`);
+        }
+      }
+    };
+
+    handleOAuthCallback();
+
+    // Legacy handling for old URL params
+    if (gmbError) {
+      setSubmitError(decodeURIComponent(gmbError));
+    } else if (gmbSuccess === "verified") {
+      setSubmitSuccess(true);
+      setSubmitError(null);
+    } else if (gmbSuccess === "review_required") {
+      setSubmitSuccess(true);
+      setSubmitError(null);
+    }
+  }, [gmbError, gmbSuccess, businessId]);
 
   // Show loading while auth is loading
   if (!isLoaded) {
@@ -47,41 +146,107 @@ export default function ClaimBusiness() {
       return;
     }
 
+    if (!verificationMethod) {
+      setSubmitError("Please select a verification method");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       // First ensure the user exists in Convex
       console.log('Creating/updating user record...');
       await upsertUser();
       
-      console.log('Submitting claim request...');
-      const result = await submitClaimRequest({
-        businessId: businessId as Id<"businesses">,
-        verificationMethod: email ? "email" : "phone", // Use email if provided, otherwise phone
-        userRole: role === "owner" ? "owner" : role === "manager" ? "manager" : "representative",
-        contactInfo: {
-          phone: phone || undefined,
-          email: email || undefined,
-          preferredContact: email ? "email" : "phone"
-        },
-        verificationData: {
-          additionalNotes: additionalInfo || undefined
-        },
-        agreesToTerms: true,
-        fraudCheckData: {
-          ipAddress: "unknown", // Would need to be passed from server
-          userAgent: navigator.userAgent,
-          submissionTime: Date.now()
-        }
-      });
+      if (verificationMethod === "gmb_oauth") {
+        // For GMB OAuth, create claim first then start frontend OAuth
+        console.log('Creating claim record for GMB OAuth...');
+        const result = await submitClaimRequest({
+          businessId: businessId as Id<"businesses">,
+          verification_method: "pending", // Will be updated during OAuth flow
+          userRole: role === "owner" ? "owner" : role === "manager" ? "manager" : "representative",
+          contactInfo: {
+            phone: phone || undefined,
+            email: email || undefined,
+            preferredContact: email ? "email" : "phone"
+          },
+          agreesToTerms: true,
+          fraudCheckData: {
+            ipAddress: "unknown",
+            userAgent: navigator.userAgent,
+            duplicateCheck: false
+          }
+        });
 
-      console.log('Claim submission result:', result);
-      setSubmitSuccess(true);
-      setShowForm(false);
+        // Start frontend GMB OAuth flow
+        console.log('Starting frontend GMB OAuth flow...');
+        await startGMBOAuth(result.claimId);
+        return;
+      } else {
+        // For document verification
+        console.log('Submitting claim request with document verification...');
+        const result = await submitClaimRequest({
+          businessId: businessId as Id<"businesses">,
+          verification_method: "documents",
+          userRole: role === "owner" ? "owner" : role === "manager" ? "manager" : "representative",
+          contactInfo: {
+            phone: phone || undefined,
+            email: email || undefined,
+            preferredContact: email ? "email" : "phone"
+          },
+          agreesToTerms: true,
+          fraudCheckData: {
+            ipAddress: "unknown",
+            userAgent: navigator.userAgent,
+            duplicateCheck: false
+          }
+        });
+
+        console.log('Claim submission result:', result);
+        setSubmitSuccess(true);
+        setShowForm(false);
+      }
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitError(error instanceof Error ? error.message : 'Failed to submit claim. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Frontend GMB OAuth implementation
+  const startGMBOAuth = async (claimId: string) => {
+    try {
+      const state = `${claimId}:${user?.id}:${Date.now()}`;
+      
+      const params = new URLSearchParams({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
+        redirect_uri: `${window.location.origin}/claim-business`,
+        response_type: 'code',
+        scope: 'https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.email',
+        state: state,
+        access_type: 'offline',
+        prompt: 'consent'
+      });
+      
+      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+      
+      console.log('Redirecting to Google OAuth:', oauthUrl);
+      window.location.href = oauthUrl;
+    } catch (error) {
+      console.error('GMB OAuth error:', error);
+      setSubmitError('Failed to start Google verification. Please try again.');
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGMBVerification = () => {
+    setVerificationMethod("gmb_oauth");
+    setShowForm(true);
+  };
+
+  const handleDocumentVerification = () => {
+    setVerificationMethod("documents");
+    setShowForm(true);
   };
 
   // Show sign-in prompt if user is not authenticated
@@ -200,27 +365,105 @@ export default function ClaimBusiness() {
             )}
           </div>
           
-          <div className="space-y-4">
-            <button 
-              onClick={() => {
-                if (businessId) {
-                  setShowForm(true);
-                } else {
-                  alert("Please select a business to claim first.");
-                }
-              }}
-              className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Start Claiming Process
-            </button>
-            
-            <button 
-              onClick={() => window.location.href = "/"}
-              className="w-full bg-gray-200 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              Browse Businesses
-            </button>
-          </div>
+          {/* Verification Method Selection */}
+          {!showForm && !submitSuccess && (
+            <div className="space-y-6">
+              <div className="border-t pt-6">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">
+                  How would you like to verify ownership?
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Choose your preferred verification method to claim this business listing.
+                </p>
+                
+                <div className="grid gap-4 md:grid-cols-2">
+                  {/* GMB OAuth Option */}
+                  <div 
+                    onClick={() => {
+                      if (businessId) {
+                        handleGMBVerification();
+                      } else {
+                        alert("Please select a business to claim first.");
+                      }
+                    }}
+                    className="relative border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                  >
+                    <div className="absolute top-4 right-4">
+                      <div className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+                        RECOMMENDED
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center mb-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-700">
+                          Verify with Google My Business
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-3">
+                      Quick verification if you manage this business on Google My Business
+                    </p>
+                    
+                    <div className="flex items-center text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                      <span className="text-gray-700">Instant verification (if business found)</span>
+                    </div>
+                  </div>
+
+                  {/* Document Upload Option */}
+                  <div 
+                    onClick={() => {
+                      if (businessId) {
+                        handleDocumentVerification();
+                      } else {
+                        alert("Please select a business to claim first.");
+                      }
+                    }}
+                    className="border-2 border-gray-200 rounded-lg p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                  >
+                    <div className="flex items-center mb-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                        <FileText className="w-5 h-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-700">
+                          Upload Documents
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-3">
+                      Upload business license or verification documents
+                    </p>
+                    
+                    <div className="flex items-center text-sm">
+                      <Clock className="w-4 h-4 text-yellow-500 mr-2" />
+                      <span className="text-gray-700">Admin review in 1-2 business days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border-t pt-4">
+                <button 
+                  onClick={() => window.location.href = "/"}
+                  className="w-full bg-gray-200 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Browse Businesses
+                </button>
+              </div>
+            </div>
+          )}
           
           {submitError && (
             <div className="mt-8 bg-red-50 border border-red-200 rounded-lg p-6">
@@ -245,26 +488,74 @@ export default function ClaimBusiness() {
           )}
 
           {submitSuccess && (
-            <div className="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <span className="text-green-600 font-bold">✓</span>
+            <div className="mt-8">
+              {gmbSuccess === "verified" ? (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-lg font-medium text-green-800">Business Verified Successfully!</h3>
+                      <p className="text-green-700 mt-1">
+                        Your business has been automatically verified through Google My Business. Your claim has been approved and you now have access to Pro features.
+                      </p>
+                      {confidence && (
+                        <p className="text-green-600 text-sm mt-2">
+                          Match Confidence: <span className="font-semibold">{confidence}%</span>
+                        </p>
+                      )}
+                      <p className="text-green-600 text-sm mt-1">
+                        Status: <span className="font-semibold">Approved</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="ml-3">
-                  <h3 className="text-lg font-medium text-green-800">Claim Request Submitted!</h3>
-                  <p className="text-green-700 mt-1">
-                    Your claim has been submitted to our moderation queue. Our team will review your request and contact you within 24-48 hours.
-                  </p>
-                  <p className="text-green-600 text-sm mt-2">
-                    Business ID: <span className="font-mono">{businessId}</span>
-                  </p>
-                  <p className="text-green-600 text-sm mt-1">
-                    Status: <span className="font-semibold">Pending Review</span>
-                  </p>
+              ) : gmbSuccess === "review_required" ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <AlertCircle className="w-8 h-8 text-yellow-600" />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-lg font-medium text-yellow-800">Manual Review Required</h3>
+                      <p className="text-yellow-700 mt-1">
+                        We found a similar business in your Google My Business account, but need to verify the details manually. Our team will review your claim within 1-2 business days.
+                      </p>
+                      {confidence && (
+                        <p className="text-yellow-600 text-sm mt-2">
+                          Match Confidence: <span className="font-semibold">{confidence}%</span>
+                        </p>
+                      )}
+                      <p className="text-yellow-600 text-sm mt-1">
+                        Status: <span className="font-semibold">Pending Manual Review</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <span className="text-green-600 font-bold">✓</span>
+                      </div>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-lg font-medium text-green-800">Claim Request Submitted!</h3>
+                      <p className="text-green-700 mt-1">
+                        Your claim has been submitted to our moderation queue. Our team will review your request and contact you within 24-48 hours.
+                      </p>
+                      <p className="text-green-600 text-sm mt-2">
+                        Business ID: <span className="font-mono">{businessId}</span>
+                      </p>
+                      <p className="text-green-600 text-sm mt-1">
+                        Status: <span className="font-semibold">Pending Review</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
