@@ -16,10 +16,10 @@ export default function CTACards() {
             <div className="p-4 sm:p-6 lg:p-8 relative">
               {/* Badge - Absolute Positioning */}
               <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-ironwood-charcoal badge-free-bg shadow-sm"
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] sm:text-xs font-semibold text-ironwood-charcoal badge-free-bg shadow-sm"
                       style={{ borderColor: '#B8D0FF' }}>
-                  <Badge className="h-3.5 w-3.5" />
-                  Free Forever
+                  <Badge className="h-3 w-3" />
+                  Free
                 </span>
               </div>
 
@@ -87,9 +87,9 @@ export default function CTACards() {
             <div className="p-4 sm:p-6 lg:p-8 relative">
               {/* Recommended Badge Only */}
               <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-ocotillo-red shadow-md">
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] sm:text-xs font-semibold text-white bg-ocotillo-red shadow-md">
                   <Crown className="h-3 w-3" />
-                  RECOMMENDED
+                  Best
                 </span>
               </div>
 
