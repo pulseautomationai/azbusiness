@@ -7,92 +7,107 @@
 | Tier | Monthly | Annual (20% off) | Best For |
 |------|---------|------------------|----------|
 | **Free** | $0 | $0 | New businesses wanting basic visibility |
-| **Pro** | $29 | $23/mo ($276/yr) | Growing businesses needing credibility & leads |
-| **Power** | $97 | $78/mo ($936/yr) | Established businesses wanting premium placement & AI tools |
+| **Pro** | $29 | $23/mo ($276/yr) | Growing businesses needing credibility & enhanced visibility |
+| **Power** | $97 | $78/mo ($936/yr) | Established businesses wanting premium placement & lead generation |
 
 ## **Feature Comparison**
 
 ### **Foundation Features (All Tiers)**
 - ✅ Public business listing
-- ✅ Google reviews display
+- ✅ Google reviews display (limited to 3)
 - ✅ Business hours & contact info
 - ✅ Map & directions
-- ✅ Overview, Services, Reviews tabs
+- ✅ **SEO backlink** to your website
 
 ### **Key Differences by Tier**
 
 #### **Free Tier - Basic Visibility**
 - ❌ **No leads** - Contact form disabled
 - ❌ **No verification badge** - Less trust
-- 👁️ **Blurred business summary** - Only first line visible
+- ❌ **No Image Gallery** - Less trust
+- ❌ **No Summary** - Less trust
 - 📝 **Basic service list** - Simple bullets
-- ❌ **No SEO backlink**
-- 🏷️ **Grayed out badges**
-- ❌ **No analytics or insights**
+- ✅ Google reviews display (limited to 3)
 
-#### **Pro Tier ($29/mo) - Trust & Leads**
-- ✅ **5-50 leads/month** manually matched
+#### **Pro Tier ($29/mo) - Trust & Enhanced Visibility**
+- ❌ **No leads** - Contact form disabled
+- ❌ **No Image gallery** upload
+- 📈 **Featured Category Listing** for visibility
 - ✅ **Verified badge** for credibility
-- ✅ **Full business summary** 
-- 🎨 **Service cards** with descriptions
-- ✅ **SEO backlink** to your website
+- ✅ **Full AI business summary (that you can edit)** 
+- 🎨 **Basic Service cards (that you can edit)** 
 - 🏆 **Active badge display**
-- 📊 **Basic analytics** - views, clicks
-- 📈 **Category boost** for visibility
-- 🖼️ **Image gallery** upload
-- 📧 **Email support**
+- ✅ Google reviews display (limited to 10)
 
 #### **Power Tier ($97/mo) - Premium Growth**
 Everything in Pro PLUS:
-- 🚀 **Unlimited leads** auto-matched with instant alerts
-- 🤖 **AI Content Suite** ($200+ value):
-  - Business summary generator (5 tone options)
-  - Service enhancement with pricing suggestions
-  - Social media content creator
-- 🔍 **Advanced SEO Tools** ($300+ value):
-  - 6-category SEO audit scoring
-  - Keyword performance tracking
-  - Competitor analysis
-  - Local SEO optimization
+- 🚀 **Unlimited leads** instantly sent to your inbox
+- 🏠 **Homepage Feature** (rotating placement)
+- 🖼️ **Image gallery** upload
+- 🎨 **Enhanced Service cards (that you can edit)** 
 - 📝 **Monthly blog post** AI-written ($100+ value)
-- 🏠 **Homepage featuring** (rotating placement)
-- 📞 **VIP phone support** with concierge
-- 📊 **Advanced analytics** with insights
 - 🎯 **AI review analysis** - sentiment & keywords
+- ✅ Google reviews display (unlimited)
 
 ## **Value Comparison**
 
 ### **Free → Pro Upgrade Benefits**
-- Start receiving leads immediately
-- Build trust with verification badge
-- Full control over your listing
-- Track performance with analytics
-- **ROI**: 1-2 new customers covers the cost
+- **Build trust with verification badge** - Instant credibility signal
+- **Stand out with featured category placement** - Higher visibility than competitors
+- **Professional AI-generated business summary** - Compelling description vs no summary
+- **Enhanced service presentation with cards** - Professional display vs basic bullets
+- **More social proof with 10 reviews** - 10 Google reviews vs only 3
+- **Active badge display** - Show achievements vs grayed out badges
+- **ROI**: Enhanced credibility and visibility drive more customers organically
 
 ### **Pro → Power Upgrade Benefits**
-- Lead automation saves 5+ hours/month
-- AI tools worth $500+/month included
-- Professional blog content for SEO
-- Priority placement drives more traffic
-- **ROI**: AI tools alone worth 5x the price
+- **Start receiving unlimited leads immediately** - Direct revenue generation vs no leads
+- **Maximum visibility with homepage featuring** - Prime placement vs category-only
+- **Professional image gallery builds trust** - Visual credibility vs no images
+- **AI-powered blog content for SEO** - Monthly content creation vs no content
+- **Review insights for continuous improvement** - AI analysis vs basic review display
+- **Display all Google reviews** - Complete social proof vs limited to 10
+- **ROI**: Lead generation alone can pay for itself with 1-2 customers per month
 
 ## **Real Value Breakdown**
 
-### **Power Tier ($97/mo) Includes:**
-- AI Content Tools: ~$200/mo value
-- SEO Suite: ~$300/mo value  
-- Monthly Blog Post: ~$100-200 value
-- Lead Automation: ~$50/mo value
-- VIP Support: ~$50/mo value
-- **Total Value: $700-800/month for $97**
+### **Pro Tier ($29/mo) Value Analysis:**
+- Featured Category Listing: ~$50/mo value
+- AI Business Summary: ~$100/mo value (vs hiring copywriter)
+- Verification Badge: ~$25/mo value (trust building)
+- Service Cards Design: ~$75/mo value (vs design service)
+- Additional Review Display: ~$25/mo value (social proof)
+- **Total Value: $275/month for $29** (9x value)
+
+### **Power Tier ($97/mo) Value Analysis:**
+- Everything in Pro: $275/mo value
+- Lead Generation System: ~$300/mo value (vs lead services)
+- Homepage Featuring: ~$200/mo value (premium placement)
+- Image Gallery: ~$50/mo value (professional presentation)
+- Monthly Blog Post: ~$150/mo value (content creation)
+- AI Review Analysis: ~$100/mo value (sentiment analysis)
+- Unlimited Review Display: ~$50/mo value (complete social proof)
+- **Total Value: $1,125/month for $97** (11x value)
 
 ## **Best Choice By Business Type**
 
-- **Free**: Just starting out, testing the platform
-- **Pro**: Service businesses wanting steady lead flow
-- **Power**: Established businesses ready to scale with AI
+### **Free Tier Best For:**
+- **New businesses** testing the platform
+- **Budget-conscious businesses** needing basic online presence
+- **Businesses with minimal marketing needs**
+- **Those wanting to try before upgrading**
 
-The pricing creates a clear upgrade path where each tier unlocks significant new capabilities, with the Power tier providing enterprise-level marketing automation at a fraction of typical costs.
+### **Pro Tier Best For:**
+- **Service businesses** wanting enhanced credibility
+- **Established businesses** needing professional presentation
+- **Businesses focusing on trust building** over lead generation
+- **Companies ready to invest in visibility** but not leads yet
+
+### **Power Tier Best For:**
+- **Revenue-focused businesses** ready for lead generation
+- **Established businesses** wanting maximum visibility
+- **Companies with lead conversion systems** in place
+- **Businesses wanting complete marketing automation**
 
 ## **Detailed Feature Matrix**
 
@@ -101,84 +116,107 @@ The pricing creates a clear upgrade path where each tier unlocks significant new
 | Feature | Free | Pro | Power |
 |---------|------|-----|-------|
 | Public Business Listing | ✅ | ✅ | ✅ |
-| Google Reviews Display | ✅ | ✅ | ✅ |
-| Tabs (Overview, Services, Reviews) | ✅ | ✅ | ✅ |
+| Google Reviews Display | ✅ (3 reviews) | ✅ (10 reviews) | ✅ (Unlimited) |
+| Business Hours & Contact Info | ✅ | ✅ | ✅ |
 | Map & Directions | ✅ | ✅ | ✅ |
-| Basic Contact Info | ✅ | ✅ | ✅ |
-| Business Hours | ✅ | ✅ | ✅ |
-| Phone Number Display | ✅ | ✅ | ✅ |
+| SEO Backlink | ✅ | ✅ | ✅ |
+
+### **Trust & Credibility**
+
+| Feature | Free | Pro | Power |
+|---------|------|-----|-------|
+| Verified Badge | ❌ | ✅ | ✅ |
+| Business Summary | ❌ | ✅ AI-generated (editable) | ✅ AI-generated (editable) |
+| Service Display | Basic bullet list | Basic service cards (editable) | Enhanced service cards (editable) |
+| Badge System | ❌ Grayed out | ✅ Active display | ✅ Active display |
+| Image Gallery | ❌ | ❌ | ✅ |
+
+### **Visibility & Marketing**
+
+| Feature | Free | Pro | Power |
+|---------|------|-----|-------|
+| Featured Category Listing | ❌ | ✅ | ✅ |
+| Homepage Feature | ❌ | ❌ | ✅ Rotating placement |
+| Monthly Blog Post | ❌ | ❌ | ✅ AI-written |
+| AI Review Analysis | ❌ | ❌ | ✅ Sentiment & keywords |
 
 ### **Lead Generation**
 
 | Feature | Free | Pro | Power |
 |---------|------|-----|-------|
-| Similar Businesses Carousel | ✅ Priority placement | ✅ Priority placement | ✅ Priority placement |
-| Leads from Your Listing | ❌ | ✅ Manually Matched | ✅ Auto-Matched + Instant Alerts |
-| Lead Limits | 0 (No access) | 5-50 leads | Unlimited leads |
-| Contact Form | ❌ (Disabled) | ✅ Enabled | ✅ Enhanced |
-| Lead Notifications | ❌ | ✅ Basic | ✅ Instant alerts |
+| Contact Form | ❌ Disabled | ❌ Disabled | ✅ Enabled |
+| Lead Delivery | ❌ | ❌ | ✅ Instant to inbox |
+| Lead Limits | 0 | 0 | Unlimited |
 
-### **Branding & Trust**
+## **Upgrade Path Strategy**
 
-| Feature | Free | Pro | Power |
-|---------|------|-----|-------|
-| Verified Badge | ❌ | ✅ | ✅ |
-| Business Summary | Blurred (1-line preview) | Full text view | AI-enhanced + Style Options |
-| Service Display | Basic bullet list | Service cards | Enhanced AI cards with pricing |
-| Badge System | Grayed out | Standard badges | All badges + bonus badges |
-| Logo Upload | ✅ (after claiming) | ✅ | ✅ |
-| Image Gallery | ❌ | ✅ | ✅ |
-| Hero Image Upload | ❌ | ✅ | ✅ |
+### **Free → Pro Upgrade Strategy**
+- **Primary motivator**: Professional credibility and enhanced visibility
+- **Key psychological triggers**: 
+  - Verification badge for trust
+  - AI summary for professional presentation
+  - Featured placement for competitive advantage
+  - More reviews for social proof
+- **Value message**: "Build trust and stand out from competitors professionally"
+- **Target customer**: Businesses ready to invest in credibility but not leads
 
-### **SEO & Analytics**
+### **Pro → Power Upgrade Strategy**
+- **Primary motivator**: Lead generation and maximum visibility
+- **Key psychological triggers**:
+  - Contact form activation (start receiving leads)
+  - Homepage featuring (maximum visibility)
+  - Image gallery (complete professional presentation)
+  - Unlimited reviews (full social proof)
+- **Value message**: "Turn your enhanced profile into paying customers"
+- **Target customer**: Businesses ready to convert visibility into revenue
 
-| Feature | Free | Pro | Power |
-|---------|------|-----|-------|
-| SEO Backlink | ❌ | ✅ | ✅ |
-| Review Insights | ❌ | Basic analysis | AI sentiment & keyword analysis |
-| Category Boost | ❌ | Category-level bump | Homepage featured + top category |
-| Basic Analytics | ❌ | ✅ Views & clicks | ✅ |
-| Advanced Analytics | ❌ | ❌ | ✅ Detailed trends & insights |
-| Insights Tab Access | ❌ | ✅ | ✅ Enhanced |
+### **Annual Discount Strategy**
+- **20% off when paying annually**
+- **Pro**: Save $72/year ($23/mo instead of $29/mo)
+- **Power**: Save $228/year ($78/mo instead of $97/mo)
+- **Psychological benefit**: Commitment discount encourages longer-term relationships
 
-### **Premium Services & Support**
+## **Key Strategic Differentiators**
 
-| Feature | Free | Pro | Power |
-|---------|------|-----|-------|
-| Priority Support | ❌ | ✅ Email support | ✅ VIP phone + concierge |
-| Monthly Blog Posts | ❌ | ❌ | ✅ 1 AI-powered post/month |
-| Homepage Feature | ❌ | ❌ | ✅ Rotating placement |
-| Profile Editing | ❌ (claim required) | ✅ | ✅ |
-| Multi-category Listings | 1 category only | ✅ Multiple | ✅ Multiple |
+### **Strategic Design Philosophy**
+- **Free**: Basic presence with clear limitations to encourage upgrades
+- **Pro**: Enhanced credibility without leads (builds desire for Power tier)
+- **Power**: Complete solution with lead generation as primary value driver
 
-### **AI-Powered Features (Power Tier Exclusive)**
+### **Lead Generation Exclusivity**
+- **Only Power tier receives leads** - Creates clear value proposition
+- **No lead competition between tiers** - Simplified decision making
+- **Drives upgrade from Pro to Power** - Natural progression for revenue generation
 
-| Feature | Free | Pro | Power |
-|---------|------|-----|-------|
-| AI Content Generation | ❌ | ❌ | ✅ 5 tone controls |
-| AI Service Enhancement | ❌ | ❌ | ✅ With pricing suggestions |
-| AI Pricing Intelligence | ❌ | ❌ | ✅ Market-based recommendations |
-| AI Content Optimization | ❌ | ❌ | ✅ Automated recommendations |
-| AI Social Media Generator | ❌ | ❌ | ✅ Platform-specific content |
-| SEO Audit Tools | ❌ | ❌ | ✅ 6-category scoring |
-| Keyword Tracking | ❌ | ❌ | ✅ Performance monitoring |
-| Competitor SEO Analysis | ❌ | ❌ | ✅ Gap identification |
-| Local SEO Optimization | ❌ | ❌ | ✅ Arizona-specific strategies |
-| Social Media Health Analysis | ❌ | ❌ | ✅ Multi-platform optimization |
+### **Trust Building Progression**
+- **Free**: Basic listing with minimal trust signals (3 reviews)
+- **Pro**: Verified + professional presentation (10 reviews, badges, summary)
+- **Power**: Complete package with lead capture (unlimited reviews, gallery)
 
-## **Upgrade Path & Incentives**
+### **Review Display Strategy**
+- **Free**: 3 reviews (basic social proof)
+- **Pro**: 10 reviews (enhanced credibility)
+- **Power**: Unlimited reviews (maximum trust building)
+- **Psychology**: More reviews = higher trust at each tier
 
-### **Free → Pro**
-- Primary motivator: Access to leads and verification
-- Key features unlocked: Contact form, analytics, editing
-- Value message: "Start getting real leads from your listing"
+## **Competitive Advantage**
 
-### **Pro → Power**
-- Primary motivator: Automation and growth
-- Key features unlocked: AI tools, unlimited leads, SEO suite
-- Value message: "Put your marketing on autopilot with AI"
+### **Unique Value Propositions**
+1. **SEO backlink included in all tiers** - Immediate website SEO benefit (unique)
+2. **AI-powered content generation** - Professional summaries and service descriptions
+3. **Graduated review display** - More reviews unlock at each tier (encourages upgrades)
+4. **Lead generation exclusivity** - Only Power tier gets leads (clear upgrade incentive)
+5. **Annual discounts** - Significant savings for committed customers
+6. **Featured placement without leads** - Pro tier builds credibility first
 
-### **Annual Discount**
-- 20% off when paying annually
-- Pro: Save $72/year
-- Power: Save $228/year
+### **Market Positioning**
+- **Free**: Better than basic directories (includes SEO backlink)
+- **Pro**: Competitive with premium directories (enhanced credibility focus)
+- **Power**: Superior to lead generation services (complete package with credibility)
+
+### **Value Proposition Strength**
+- **Pro tier**: 9x value ($275 value for $29)
+- **Power tier**: 11x value ($1,125 value for $97)
+- **Clear ROI**: Each tier pays for itself with minimal customer acquisition
+
+This pricing structure creates a clear upgrade path focused on credibility building (Pro) and lead generation (Power), with each tier providing distinct value propositions that encourage natural progression through the tiers while delivering exceptional value at every level.
