@@ -63,6 +63,7 @@ export default [
     route("admin/moderation", "routes/admin/moderation.tsx"),
     route("admin/customers", "routes/admin/customers.tsx"),
     route("admin/businesses", "routes/admin/businesses.tsx"),
+    route("admin/businesses/create", "routes/admin/businesses/create.tsx"),
     route("admin/businesses/edit/:businessId", "routes/admin/businesses/edit.$businessId.tsx"),
     route("admin/categories", "routes/admin/categories.tsx"),
   ]),

@@ -2,19 +2,24 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://azbusiness.services/sitemap.xml
+Sitemap: https://azbusinessservices.com/sitemap.xml
 
-# Disallow admin and internal paths
-Disallow: /dashboard/
+# Disallow admin and private areas
 Disallow: /admin/
+Disallow: /dashboard/
 Disallow: /api/
-Disallow: /.netlify/
+Disallow: /_convex/
+Disallow: /temp_disabled_components/
 
-# Allow specific important paths
+# Allow important pages for SEO
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /add-business
 Allow: /category/
 Allow: /city/
 Allow: /business/
-Allow: /blog/
 Allow: /pricing
-Allow: /about
-Allow: /contact
+
+# Crawl-delay (optional, can help with server load)
+Crawl-delay: 1

@@ -403,4 +403,86 @@ export default defineSchema({
     .index("by_business", ["businessId"])
     .index("by_user", ["userId"])
     .index("by_status", ["status"]),
+    
+  // Business claims with multiple verification methods
+  businessClaims: defineTable({
+    businessId: v.id("businesses"),
+    userId: v.id("users"),
+    
+    // Basic claim information
+    status: v.string(), // "pending", "approved", "rejected", "needs_info"
+    submittedAt: v.number(),
+    reviewedAt: v.optional(v.number()),
+    reviewedBy: v.optional(v.id("users")),
+    
+    // Verification method selection
+    verification_method: v.union(
+      v.literal("documents"),    // Existing document upload
+      v.literal("gmb_oauth"),    // New GMB OAuth
+      v.literal("pending")       // During OAuth process
+    ),
+    
+    // Contact and role information
+    userRole: v.string(), // "owner", "manager", "employee", etc.
+    contactInfo: v.object({
+      phone: v.optional(v.string()),
+      email: v.optional(v.string()),
+      preferredContact: v.string()
+    }),
+    businessHours: v.optional(v.object({
+      timezone: v.string(),
+      availableHours: v.string(),
+      bestTimeToCall: v.string()
+    })),
+    
+    // Document verification data (existing method)
+    uploaded_documents: v.optional(v.array(v.object({
+      documentType: v.string(),
+      fileName: v.string(),
+      fileUrl: v.string(),
+      uploadedAt: v.number()
+    }))),
+    
+    // GMB OAuth verification data (new method)
+    gmb_verification: v.optional(v.object({
+      google_account_email: v.string(),
+      verified_at: v.number(),
+      gmb_location_id: v.string(),
+      matched_business_name: v.string(),
+      match_confidence: v.number(), // 0-100
+      requires_manual_review: v.boolean(),
+      verification_details: v.object({
+        name_match: v.number(),      // 0-100 similarity score
+        address_match: v.number(),   // 0-100 similarity score
+        phone_match: v.boolean()     // exact match or not provided
+      }),
+      oauth_state: v.optional(v.string()), // For OAuth flow tracking
+      access_token_hash: v.optional(v.string()), // Hashed token for security
+      token_expires_at: v.optional(v.number()),
+      all_gmb_locations: v.optional(v.array(v.any())), // Store all user's GMB locations for review
+      failure_reason: v.optional(v.string()) // If verification failed
+    })),
+    
+    // Admin review and notes
+    admin_notes: v.optional(v.array(v.object({
+      admin: v.string(),
+      note: v.string(),
+      timestamp: v.number(),
+      action: v.string()
+    }))),
+    
+    // Terms and fraud prevention
+    agreesToTerms: v.boolean(),
+    fraudCheckData: v.optional(v.object({
+      ipAddress: v.string(),
+      userAgent: v.string(),
+      duplicateCheck: v.boolean(),
+      riskScore: v.optional(v.number())
+    }))
+  })
+    .index("by_business", ["businessId"])
+    .index("by_user", ["userId"])
+    .index("by_status", ["status"])
+    .index("by_verification_method", ["verification_method"])
+    .index("by_submitted_at", ["submittedAt"]),
 });

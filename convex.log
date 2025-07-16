@@ -8,3 +8,604 @@ View the Convex dashboard at https://dashboard.convex.dev/d/calm-dalmatian-709
 - Preparing Convex functions...
 
 ✔ 08:08:00 Convex functions ready! (3.99s)
+7/14/2025, 2:05:57 PM [CONVEX M(businesses:createBusiness)] Uncaught Error: A business with this slug already exists
+    at handler (../convex/businesses.ts:282:23)
+
+7/14/2025, 2:05:58 PM [CONVEX M(businesses:createBusiness)] Uncaught Error: A business with this slug already exists
+    at handler (../convex/businesses.ts:282:23)
+
+7/14/2025, 2:05:58 PM [CONVEX M(businesses:createBusiness)] Uncaught Error: A business with this slug already exists
+    at handler (../convex/businesses.ts:282:23)
+
+7/14/2025, 2:05:59 PM [CONVEX M(businesses:createBusiness)] Uncaught Error: A business with this slug already exists
+    at handler (../convex/businesses.ts:282:23)
+
+7/14/2025, 2:05:59 PM [CONVEX M(businesses:createBusiness)] Uncaught Error: A business with this slug already exists
+    at handler (../convex/businesses.ts:282:23)
+
+- Preparing Convex functions...
+
+✔ 14:13:49 Convex functions ready! (4.66s)
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/verification.ts[0m:[93m510[0m:[93m48[0m - [91merror[0m[90m TS2345: [0mArgument of type '"businessVerifications"' is not assignable to parameter of type 'TableNamesInDataModel<{ users: { document: { _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: nu...'.
+
+[7m510[0m     const verificationId = await ctx.db.insert("businessVerifications", {
+[7m   [0m [91m                                               ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/verification.ts[0m:[93m525[0m:[93m7[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'verificationStatus' does not exist in type 'Partial<{ _id: Id<"businesses">; _creationTime: number; email?: string | undefined; urlPath?: string | undefined; logo?: string | undefined; heroImage?: string | undefined; website?: string | undefined; ... 33 more ...; updatedAt: number; }>'.
+
+[7m525[0m       verificationStatus: "pending",
+[7m   [0m [91m      ~~~~~~~~~~~~~~~~~~[0m
+
+Found 2 errors in the same file, starting at: convex/verification.ts[90m:510[0m
+- Preparing Convex functions...
+
+✔ 14:28:40 Convex functions ready! (4.17s)
+- Preparing Convex functions...
+
+✔ 14:28:45 Convex functions ready! (4.07s)
+- Preparing Convex functions...
+
+✔ 16:50:58 Convex functions ready! (4.05s)
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 2 errors in the same file, starting at: convex/http/sitemap.ts[90m:182[0m
+Filesystem changed during push, retrying...
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 2 errors in the same file, starting at: convex/http/sitemap.ts[90m:182[0m
+Filesystem changed during push, retrying...
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 2 errors in the same file, starting at: convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 2 errors in the same file, starting at: convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 2 errors in the same file, starting at: convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/http.ts[0m:[93m195[0m:[93m38[0m - [91merror[0m[90m TS2339: [0mProperty 'businessClaims' does not exist on type '{ rateLimit: { checkRateLimit: FunctionReference<"query", "internal", { userId: string; endpoint: string; }, { isRateLimited: boolean; requestCount: number; maxRequests: number; windowMs: number; resetTime: number; }, string | undefined>; recordRequest: FunctionReference<...>; }; }'.
+
+[7m195[0m       await ctx.runMutation(internal.businessClaims.updateClaimOAuthState, {
+[7m   [0m [91m                                     ~~~~~~~~~~~~~~[0m
+[96mconvex/http.ts[0m:[93m241[0m:[93m46[0m - [91merror[0m[90m TS2339: [0mProperty 'businessClaims' does not exist on type '{ rateLimit: { checkRateLimit: FunctionReference<"query", "internal", { userId: string; endpoint: string; }, { isRateLimited: boolean; requestCount: number; maxRequests: number; windowMs: number; resetTime: number; }, string | undefined>; recordRequest: FunctionReference<...>; }; }'.
+
+[7m241[0m               await ctx.runMutation(internal.businessClaims.updateGMBVerificationFailure, {
+[7m   [0m [91m                                             ~~~~~~~~~~~~~~[0m
+
+[96mconvex/http.ts[0m:[93m307[0m:[93m40[0m - [91merror[0m[90m TS2339: [0mProperty 'businessClaims' does not exist on type '{ rateLimit: { checkRateLimit: FunctionReference<"query", "internal", { userId: string; endpoint: string; }, { isRateLimited: boolean; requestCount: number; maxRequests: number; windowMs: number; resetTime: number; }, string | undefined>; recordRequest: FunctionReference<...>; }; }'.
+
+[7m307[0m         await ctx.runMutation(internal.businessClaims.updateGMBVerificationFailure, {
+[7m   [0m [91m                                       ~~~~~~~~~~~~~~[0m
+
+[96mconvex/http.ts[0m:[93m333[0m:[93m40[0m - [91merror[0m[90m TS2339: [0mProperty 'businessClaims' does not exist on type '{ rateLimit: { checkRateLimit: FunctionReference<"query", "internal", { userId: string; endpoint: string; }, { isRateLimited: boolean; requestCount: number; maxRequests: number; windowMs: number; resetTime: number; }, string | undefined>; recordRequest: FunctionReference<...>; }; }'.
+
+[7m333[0m         await ctx.runMutation(internal.businessClaims.updateGMBVerificationFailure, {
+[7m   [0m [91m                                       ~~~~~~~~~~~~~~[0m
+[96mconvex/http.ts[0m:[93m374[0m:[93m65[0m - [91merror[0m[90m TS2339: [0mProperty 'businessClaims' does not exist on type '{ rateLimit: { checkRateLimit: FunctionReference<"query", "internal", { userId: string; endpoint: string; }, { isRateLimited: boolean; requestCount: number; maxRequests: number; windowMs: number; resetTime: number; }, string | undefined>; recordRequest: FunctionReference<...>; }; }'.
+
+[7m374[0m       const verificationResult = await ctx.runMutation(internal.businessClaims.processGMBVerification, {
+[7m   [0m [91m                                                                ~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 7 errors in 2 files.
+
+Errors  Files
+     5  convex/http.ts[90m:195[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m82[0m:[93m46[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m82[0m       .filter((q) => q.eq(q.field("userId"), user._id))
+[7m  [0m [91m                                             ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m96[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m96[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m557[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m557[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m557[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m557[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m561[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m561[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m561[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m561[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 9 errors in 2 files.
+
+Errors  Files
+     7  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+Filesystem changed during push, retrying...
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m82[0m:[93m46[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m82[0m       .filter((q) => q.eq(q.field("userId"), user._id))
+[7m  [0m [91m                                             ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m96[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m96[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m557[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m557[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m557[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m557[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m561[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m561[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m561[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m561[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 9 errors in 2 files.
+
+Errors  Files
+     7  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m99[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m99[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 8 errors in 2 files.
+
+Errors  Files
+     6  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m99[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m99[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 8 errors in 2 files.
+
+Errors  Files
+     6  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m99[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m99[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 8 errors in 2 files.
+
+Errors  Files
+     6  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m99[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m99[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 8 errors in 2 files.
+
+Errors  Files
+     6  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m99[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m99[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 8 errors in 2 files.
+
+Errors  Files
+     6  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m
+- Preparing Convex functions...
+
+✖ TypeScript typecheck via `tsc` failed.
+To ignore failing typecheck, use `--typecheck=disable`.
+- Collecting TypeScript errors
+
+[96mconvex/businessClaims.ts[0m:[93m50[0m:[93m7[0m - [91merror[0m[90m TS2741: [0mProperty '_creationTime' is missing in type '{ _id: Id<"users">; tokenIdentifier: string; name: string | undefined; email: string | undefined; isActive: true; lastLoginAt: number; createdAt: number; }' but required in type '{ _id: Id<"users">; _creationTime: number; name?: string | undefined; email?: string | undefined; image?: string | undefined; role?: string | undefined; adminPermissions?: string[] | undefined; isActive?: boolean | undefined; lastLoginAt?: number | undefined; createdAt?: number | undefined; tokenIdentifier: string; }'.
+
+[7m50[0m       user = {
+[7m  [0m [91m      ~~~~[0m
+
+  [96mnode_modules/convex/dist/esm-types/server/system_fields.d.ts[0m:[93m11[0m:[93m5[0m
+    [7m11[0m     _creationTime: number;
+    [7m  [0m [96m    ~~~~~~~~~~~~~[0m
+    '_creationTime' is declared here.
+[96mconvex/businessClaims.ts[0m:[93m99[0m:[93m15[0m - [91merror[0m[90m TS18047: [0m'user' is possibly 'null'.
+
+[7m99[0m       userId: user._id,
+[7m  [0m [91m              ~~~~[0m
+
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m560[0m:[93m66[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[7m560[0m       query = query.withIndex("by_status", (q) => q.eq("status", args.status));
+[7m   [0m [91m                                                                 ~~~~~~~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m7[0m - [91merror[0m[90m TS2739: [0mType 'Query<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ... | "pending...' is missing the following properties from type 'QueryInitializer<{ document: { _id: Id<"businessClaims">; _creationTime: number; reviewedAt?: number | undefined; reviewedBy?: Id<"users"> | undefined; businessHours?: { timezone: string; availableHours: string; bestTimeToCall: string; } | undefined; ... 11 more ...; verification_method: "documents" | ... 1 more ......': fullTableScan, withIndex, withSearchIndex
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m      ~~~~~[0m
+[96mconvex/businessClaims.ts[0m:[93m564[0m:[93m92[0m - [91merror[0m[90m TS2345: [0mArgument of type 'string | undefined' is not assignable to parameter of type '"documents" | "gmb_oauth" | "pending"'.
+  Type 'undefined' is not assignable to type '"documents" | "gmb_oauth" | "pending"'.
+
+[7m564[0m       query = query.withIndex("by_verification_method", (q) => q.eq("verification_method", args.verificationMethod));
+[7m   [0m [91m                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m182[0m:[93m11[0m - [91merror[0m[90m TS7034: [0mVariable 'combinations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+
+[7m182[0m     const combinations = [];
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
+
+[96mconvex/http/sitemap.ts[0m:[93m192[0m:[93m18[0m - [91merror[0m[90m TS7005: [0mVariable 'combinations' implicitly has an 'any[]' type.
+
+[7m192[0m     const urls = combinations.map(combo => `  <url>
+[7m   [0m [91m                 ~~~~~~~~~~~~[0m
+
+Found 8 errors in 2 files.
+
+Errors  Files
+     6  convex/businessClaims.ts[90m:50[0m
+     2  convex/http/sitemap.ts[90m:182[0m

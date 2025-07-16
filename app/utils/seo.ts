@@ -11,6 +11,8 @@ export interface SEOMetadata {
     type: "website" | "article" | "business.business";
     url: string;
     image?: string;
+    imageWidth?: number;
+    imageHeight?: number;
     siteName: string;
   };
   twitter: {
@@ -26,7 +28,9 @@ export interface SEOMetadata {
 export class SEOGenerator {
   private static readonly SITE_NAME = "AZ Business Services";
   private static readonly SITE_URL = "https://azbusiness.services";
-  private static readonly DEFAULT_IMAGE = "/logo.png";
+  private static readonly DEFAULT_IMAGE = "https://azbusiness.services/logo.png";
+  private static readonly DEFAULT_IMAGE_WIDTH = 512;
+  private static readonly DEFAULT_IMAGE_HEIGHT = 512;
   private static readonly TWITTER_HANDLE = "@azbusiness";
 
   static generateHomepageSEO(): SEOMetadata {
@@ -45,6 +49,8 @@ export class SEOGenerator {
         type: "website",
         url: this.SITE_URL,
         image: this.DEFAULT_IMAGE,
+        imageWidth: this.DEFAULT_IMAGE_WIDTH,
+        imageHeight: this.DEFAULT_IMAGE_HEIGHT,
         siteName: this.SITE_NAME,
       },
       twitter: {
@@ -76,6 +82,8 @@ export class SEOGenerator {
         type: "business.business",
         url: businessUrl,
         image: business.logo || this.DEFAULT_IMAGE,
+        imageWidth: this.DEFAULT_IMAGE_WIDTH,
+        imageHeight: this.DEFAULT_IMAGE_HEIGHT,
         siteName: this.SITE_NAME,
       },
       twitter: {
@@ -110,6 +118,8 @@ export class SEOGenerator {
         type: "website",
         url: categoryUrl,
         image: this.DEFAULT_IMAGE,
+        imageWidth: this.DEFAULT_IMAGE_WIDTH,
+        imageHeight: this.DEFAULT_IMAGE_HEIGHT,
         siteName: this.SITE_NAME,
       },
       twitter: {
@@ -141,6 +151,8 @@ export class SEOGenerator {
         type: "website",
         url: cityUrl,
         image: this.DEFAULT_IMAGE,
+        imageWidth: this.DEFAULT_IMAGE_WIDTH,
+        imageHeight: this.DEFAULT_IMAGE_HEIGHT,
         siteName: this.SITE_NAME,
       },
       twitter: {
@@ -172,6 +184,8 @@ export class SEOGenerator {
         type: "article",
         url: blogUrl,
         image: post.image || this.DEFAULT_IMAGE,
+        imageWidth: this.DEFAULT_IMAGE_WIDTH,
+        imageHeight: this.DEFAULT_IMAGE_HEIGHT,
         siteName: this.SITE_NAME,
       },
       twitter: {
@@ -329,7 +343,7 @@ export class SEOGenerator {
         url: this.SITE_URL,
         logo: {
           "@type": "ImageObject",
-          url: `${this.SITE_URL}/logo.png`,
+          url: this.DEFAULT_IMAGE,
         },
       },
       datePublished: post.publishedAt,

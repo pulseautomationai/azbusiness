@@ -1,8 +1,8 @@
 import type { Config } from "@react-router/dev/config";
 
 export default {
-  // Use SPA mode due to React Router v7 + Vite 6 compatibility issues
-  ssr: false,
+  // Enable SSR mode for proper OpenGraph support in messaging apps
+  ssr: true,
   
   // Set serverBuildFile to "index.js"
   serverBuildFile: "index.js",

@@ -27,6 +27,14 @@ export function SEOMeta({ seo }: SEOMetaProps) {
         <>
           <meta property="og:image" content={seo.openGraph.image} />
           <meta property="og:image:alt" content={seo.openGraph.title} />
+          <meta property="og:image:type" content="image/png" />
+          {seo.openGraph.imageWidth && (
+            <meta property="og:image:width" content={seo.openGraph.imageWidth.toString()} />
+          )}
+          {seo.openGraph.imageHeight && (
+            <meta property="og:image:height" content={seo.openGraph.imageHeight.toString()} />
+          )}
+          <meta property="og:image:secure_url" content={seo.openGraph.image} />
         </>
       )}
       
@@ -94,8 +102,18 @@ export function generateMetaTags(seo: SEOMetadata) {
   if (seo.openGraph.image) {
     metaTags.push(
       { property: "og:image", content: seo.openGraph.image },
-      { property: "og:image:alt", content: seo.openGraph.title }
+      { property: "og:image:alt", content: seo.openGraph.title },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:secure_url", content: seo.openGraph.image }
     );
+    
+    if (seo.openGraph.imageWidth) {
+      metaTags.push({ property: "og:image:width", content: seo.openGraph.imageWidth.toString() });
+    }
+    
+    if (seo.openGraph.imageHeight) {
+      metaTags.push({ property: "og:image:height", content: seo.openGraph.imageHeight.toString() });
+    }
   }
 
   if (seo.twitter.image) {

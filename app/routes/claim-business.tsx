@@ -94,6 +94,11 @@ export default function ClaimBusiness() {
           
           // Clean up URL
           window.history.replaceState({}, document.title, window.location.pathname + '?businessId=' + businessId);
+          
+          // Redirect to onboarding flow after GMB OAuth success
+          setTimeout(() => {
+            window.location.href = `/claim-business/onboarding?claimId=${claimId}&businessId=${businessId}&status=verified`;
+          }, 2000);
 
         } catch (error) {
           console.error('OAuth callback error:', error);
@@ -110,9 +115,17 @@ export default function ClaimBusiness() {
     } else if (gmbSuccess === "verified") {
       setSubmitSuccess(true);
       setSubmitError(null);
+      // Redirect to onboarding flow
+      setTimeout(() => {
+        window.location.href = `/claim-business/onboarding?businessId=${businessId}&status=verified`;
+      }, 2000);
     } else if (gmbSuccess === "review_required") {
       setSubmitSuccess(true);
       setSubmitError(null);
+      // Redirect to onboarding flow
+      setTimeout(() => {
+        window.location.href = `/claim-business/onboarding?businessId=${businessId}&status=pending`;
+      }, 2000);
     }
   }, [gmbError, gmbSuccess, businessId]);
 
@@ -204,6 +217,11 @@ export default function ClaimBusiness() {
         console.log('Claim submission result:', result);
         setSubmitSuccess(true);
         setShowForm(false);
+        
+        // Redirect to onboarding flow after successful claim
+        setTimeout(() => {
+          window.location.href = `/claim-business/onboarding?claimId=${result.claimId}&businessId=${businessId}&status=pending`;
+        }, 2000);
       }
     } catch (error) {
       console.error('Submission error:', error);
@@ -298,25 +316,64 @@ export default function ClaimBusiness() {
             
             <div className="space-y-4">
               <Link 
+                to={`/sign-up?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`}
+                className="block w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors text-center font-semibold"
+              >
+                Create Account & Claim Business
+              </Link>
+              
+              <Link 
                 to={`/sign-in?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`}
                 className="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors text-center"
               >
                 Sign In to Continue
               </Link>
               
-              <Link 
-                to={`/sign-up?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`}
-                className="block w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors text-center"
-              >
-                Create Account
-              </Link>
-              
-              <button 
-                onClick={() => window.location.href = "/"}
-                className="w-full bg-gray-200 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Browse Businesses
-              </button>
+              <div className="text-center">
+                <button 
+                  onClick={() => window.location.href = "/"}
+                  className="text-gray-600 hover:text-gray-800 underline"
+                >
+                  Browse Businesses
+                </button>
+              </div>
+            </div>
+            
+            {/* Plan Preview for non-authenticated users */}
+            <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">What you'll get after claiming:</h3>
+              <div className="grid gap-4 md:grid-cols-3 text-sm">
+                <div className="bg-white p-4 rounded-lg border">
+                  <h4 className="font-medium text-gray-900 mb-2">Starter ($9/month)</h4>
+                  <ul className="text-gray-600 space-y-1">
+                    <li>• Professional presence</li>
+                    <li>• Verification badge</li>
+                    <li>• SEO backlink</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-blue-300 shadow-sm">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900">Pro ($29/month)</h4>
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Popular</span>
+                  </div>
+                  <ul className="text-gray-600 space-y-1">
+                    <li>• Featured placement</li>
+                    <li>• Editable content</li>
+                    <li>• Enhanced visibility</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-4 rounded-lg border">
+                  <h4 className="font-medium text-gray-900 mb-2">Power ($97/month)</h4>
+                  <ul className="text-gray-600 space-y-1">
+                    <li>• Exclusive leads</li>
+                    <li>• Homepage featuring</li>
+                    <li>• AI insights</li>
+                  </ul>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mt-4 text-center">
+                💡 You can also start with our free tier and upgrade anytime
+              </p>
             </div>
           </div>
         </div>

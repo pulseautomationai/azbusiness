@@ -1,0 +1,61 @@
+name: Update Sitemap
+
+on:
+  # Run daily at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+  
+  # Run when business data changes
+  push:
+    paths:
+      - 'convex/businesses.ts'
+      - 'convex/categories.ts'
+      - 'convex/cities.ts'
+
+jobs:
+  update-sitemap:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Generate sitemaps from database
+      env:
+        CONVEX_URL: ${{ secrets.CONVEX_URL }}
+        FRONTEND_URL: ${{ secrets.FRONTEND_URL || 'https://azbusinessservices.com' }}
+      run: npm run generate-sitemap-db
+    
+    - name: Commit and push if changed
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git add public/sitemap*.xml
+        git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Update sitemaps [skip ci]" && git push)
+    
+    - name: Ping Google
+      if: success()
+      run: |
+        curl -s "https://www.google.com/ping?sitemap=${FRONTEND_URL}/sitemap.xml"
+      env:
+        FRONTEND_URL: ${{ secrets.FRONTEND_URL || 'https://azbusinessservices.com' }}
+    
+    - name: Ping Bing
+      if: success()
+      run: |
+        curl -s "https://www.bing.com/ping?sitemap=${FRONTEND_URL}/sitemap.xml"
+      env:
+        FRONTEND_URL: ${{ secrets.FRONTEND_URL || 'https://azbusinessservices.com' }}

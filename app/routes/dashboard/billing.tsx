@@ -1,4 +1,6 @@
 import { useUser } from "@clerk/react-router";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { usePlanFeatures } from "~/hooks/usePlanFeatures";
 import { FeatureGate } from "~/components/FeatureGate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -17,6 +19,10 @@ import {
 export default function BillingPage() {
   const { user } = useUser();
   const planFeatures = usePlanFeatures();
+  
+  // Fetch real subscription data
+  const subscription = useQuery(api.subscriptions.fetchUserSubscription);
+  const subscriptionStatus = useQuery(api.subscriptions.checkUserSubscriptionStatus, {});
 
   if (!user) {
     return (
@@ -38,31 +44,32 @@ export default function BillingPage() {
     );
   }
 
-  const mockSubscription = {
+  // Use real subscription data or fallback to plan features
+  const currentSubscription = {
     plan: planFeatures.planTier,
-    status: 'active',
-    currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-    amount: planFeatures.planTier === 'power' ? 97 : planFeatures.planTier === 'pro' ? 29 : 0,
-    interval: 'month',
+    status: subscription?.status || (subscriptionStatus?.hasActiveSubscription ? 'active' : 'inactive'),
+    currentPeriodEnd: subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    amount: subscription?.amount || (planFeatures.planTier === 'power' ? 97 : planFeatures.planTier === 'pro' ? 29 : planFeatures.planTier === 'starter' ? 9 : 0),
+    interval: subscription?.interval || 'month',
   };
 
   const mockInvoices = [
     {
       id: 'inv_001',
       date: new Date('2024-12-13'),
-      amount: mockSubscription.amount,
+      amount: currentSubscription.amount,
       status: 'paid',
     },
     {
       id: 'inv_002', 
       date: new Date('2024-11-13'),
-      amount: mockSubscription.amount,
+      amount: currentSubscription.amount,
       status: 'paid',
     },
     {
       id: 'inv_003',
       date: new Date('2024-10-13'),
-      amount: mockSubscription.amount,
+      amount: currentSubscription.amount,
       status: 'paid',
     },
   ];
@@ -95,20 +102,20 @@ export default function BillingPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="text-2xl font-bold">{planFeatures.planTier.charAt(0).toUpperCase() + planFeatures.planTier.slice(1)}</h3>
                     <Badge variant={planFeatures.planTier === 'power' ? 'default' : planFeatures.planTier === 'pro' ? 'secondary' : 'outline'}>
-                      {mockSubscription.status.toUpperCase()}
+                      {currentSubscription.status?.toUpperCase() || 'INACTIVE'}
                     </Badge>
                   </div>
                   <p className="text-3xl font-bold">
-                    ${mockSubscription.amount}
+                    ${currentSubscription.amount}
                     <span className="text-base font-normal text-muted-foreground">/month</span>
                   </p>
                 </div>
               </div>
 
-              {mockSubscription.amount > 0 && (
+              {currentSubscription.amount > 0 && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <IconCalendar className="h-4 w-4" />
-                  Next billing date: {mockSubscription.currentPeriodEnd.toLocaleDateString()}
+                  Next billing date: {currentSubscription.currentPeriodEnd?.toLocaleDateString() || 'N/A'}
                 </div>
               )}
 
@@ -149,7 +156,7 @@ export default function BillingPage() {
                     <Button className="w-full">Upgrade Plan</Button>
                   </Link>
                 )}
-                {mockSubscription.amount > 0 && (
+                {currentSubscription.amount > 0 && (
                   <Button variant="outline">Manage Subscription</Button>
                 )}
               </div>

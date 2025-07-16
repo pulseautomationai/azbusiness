@@ -27,8 +27,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-// Temporarily disabled for SPA mode
-/*
+// Re-enabled for SSR mode to support OpenGraph
 export async function loader(args: Route.LoaderArgs) {
   const { userId } = await getAuth(args);
 
@@ -87,7 +86,6 @@ export async function loader(args: Route.LoaderArgs) {
     cities: cities || [],
   };
 }
-*/
 
 export default function Home() {
   const seo = SEOGenerator.generateHomepageSEO();

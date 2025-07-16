@@ -55,19 +55,13 @@ export default function AdminModeration() {
           adminNotes: adminNotes.trim() || "Claim approved manually by admin"
         });
       } else if (action === "reject") {
-        if (!adminNotes.trim()) {
-          alert("Please provide a reason for rejection");
-          setIsProcessing(false);
-          return;
-        }
         await rejectClaim({
           claimId: claimId as Id<"businessClaims">,
           reason: "Admin reviewed and rejected",
-          adminNotes: adminNotes.trim()
+          adminNotes: adminNotes.trim() || "Claim rejected by admin"
         });
       }
 
-      alert(`Claim ${action}d successfully`);
       setSelectedClaim(null);
       setAdminNotes("");
     } catch (error) {

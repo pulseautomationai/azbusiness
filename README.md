@@ -1,46 +1,154 @@
-# React Starter Kit (RSK)
+# AZ Business Services - Arizona Business Directory
 
-A modern, production-ready SaaS starter template for building full-stack React applications using React Router v7, Convex, Clerk, and Polar.sh. Ready for Vercel deployment with built-in AI chat capabilities.
+A professional business directory platform for Arizona service providers, featuring AI-powered content enhancement, exclusive lead generation, and predictable pricing that outcompetes traditional lead generation platforms like Thumbtack and Angi.
 
-## Features
+## 🏢 Business Overview
 
-- 🚀 **React Router v7** - Modern full-stack React framework with SSR
-- ⚡️ **Hot Module Replacement (HMR)** - Fast development experience
-- 📦 **Asset bundling and optimization** - Production-ready builds
-- 🔄 **Data loading and mutations** - Built-in loader/action patterns
-- 🔒 **TypeScript by default** - Type safety throughout
-- 🎨 **TailwindCSS v4** - Modern utility-first CSS
-- 🔐 **Authentication with Clerk** - Complete user management
-- 💳 **Subscription management with Polar.sh** - Billing and payments
-- 🗄️ **Real-time database with Convex** - Serverless backend
-- 🤖 **AI Chat Integration** - OpenAI-powered chat functionality
-- 📊 **Interactive Dashboard** - User management and analytics
-- 🎯 **Webhook handling** - Payment and subscription events
-- 📱 **Responsive Design** - Mobile-first approach
-- 🚢 **Vercel Deployment Ready** - One-click deployment
+**AZ Business Services** positions itself as the professional alternative to expensive lead generation platforms by offering:
 
-## Tech Stack
+- **Predictable monthly pricing** vs $80-100 per shared lead
+- **Exclusive lead delivery** (not shared with 3-5 competitors)  
+- **AI-enhanced professional presentation** vs basic directory listings
+- **Complete business growth package** with credibility, visibility, and lead generation
+
+## 💰 Three-Tier Pricing Strategy
+
+| Tier        | Monthly | Annual (25% off) | Target Customer                              | Core Value                                             |
+| ----------- | ------- | ---------------- | -------------------------------------------- | ------------------------------------------------------ |
+| **Starter** | $9      | $7/mo ($81/yr)   | New businesses wanting immediate credibility | Professional presence with AI summary & verification   |
+| **Pro**     | $29     | $22/mo ($264/yr) | Growing businesses needing enhanced control  | Featured placement + editable content + enhanced visibility |
+| **Power**   | $97     | $73/mo ($876/yr) | Established businesses ready for lead generation | Unlimited exclusive leads + homepage featuring + complete growth package |
+
+### 🎯 Competitive Advantages
+
+- **Lead Exclusivity**: Only Power tier customers compete for leads (no sharing with multiple contractors)
+- **Value Delivery**: $1000+/month worth of tools and services for $97/month
+- **AI Enhancement**: Professional content generation and business intelligence
+- **Local Focus**: Arizona-specific optimization and community building
+- **SEO Benefits**: Direct backlinks to customer websites included
+
+## 🚀 Features by Tier
+
+### Starter Plan ($9/month)
+- ✅ Professional business listing in Arizona's directory
+- ✅ AI-generated business summary (fixed)
+- ✅ Verification badge for instant credibility
+- ✅ SEO backlink to your website
+- ✅ Google reviews display (3 reviews)
+- ✅ Basic service presentation (bullet points)
+- ❌ No lead generation (contact form disabled)
+
+### Pro Plan ($29/month)
+**Everything in Starter PLUS:**
+- ✅ Editable AI business summary (full control)
+- ✅ Featured category placement
+- ✅ Enhanced service cards with descriptions
+- ✅ Extended review display (10 reviews)
+- ✅ Active badge system
+- ✅ Content editing control
+- ❌ No lead generation (maintains Power tier exclusivity)
+
+### Power Plan ($97/month)
+**Everything in Pro PLUS:**
+- ✅ **Unlimited exclusive lead generation**
+- ✅ Homepage featured placement (rotating premium visibility)
+- ✅ Professional image gallery
+- ✅ AI review analysis and sentiment insights
+- ✅ Business intelligence and competitive analysis
+- ✅ Unlimited review display
+- ✅ Priority customer support
+- ✅ Advanced analytics and performance tracking
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- **React Router v7** - Full-stack React framework
-- **TailwindCSS v4** - Utility-first CSS framework
-- **shadcn/ui** - Modern component library with Radix UI
-- **Lucide React & Tabler Icons** - Beautiful icon libraries
-- **Recharts** - Data visualization
-- **Motion** - Smooth animations
+- **React Router v7** - Full-stack React framework with SSR
+- **TailwindCSS v4** - Modern utility-first CSS with Desert Bloom color palette
+- **shadcn/ui** - Professional component library
+- **Lucide React** - Beautiful icons
+- **Recharts** - Data visualization for analytics
 
 ### Backend & Services
 - **Convex** - Real-time database and serverless functions
 - **Clerk** - Authentication and user management
 - **Polar.sh** - Subscription billing and payments
-- **OpenAI** - AI chat capabilities
+- **OpenAI GPT-4** - AI content generation and enhancement
+- **Google My Business API** - Business verification and data
 
-### Development & Deployment
-- **Vite** - Fast build tool
-- **TypeScript** - Type safety
-- **Vercel** - Deployment platform
+### Deployment
+- **Vercel** - Production hosting and deployment
+- **TypeScript** - Type safety throughout
+- **Vite** - Fast build tool and development
 
-## Getting Started
+## 🏗️ Architecture Overview
+
+### Key Components
+
+#### Business Profile System
+- **Single-page layout** with professional overview, services, reviews, and insights
+- **Plan-based feature gating** with contextual upgrade prompts
+- **AI content enhancement** for professional presentation
+- **Review intelligence** with sentiment analysis and keyword extraction
+
+#### Homepage Experience
+- **Hero section** with customer search functionality
+- **Plan comparison cards** focusing on Starter + Power tiers
+- **Competitive comparison table** vs Thumbtack/Angi
+- **AI showcase** with real examples of Professional Overview, Business Insights, and Review Intelligence
+- **Featured businesses** section
+- **FAQ section** with verification and pricing details
+
+#### Business Claiming System
+- **Unified claiming flow** from discovery to plan selection
+- **Smart duplicate detection** prevents unnecessary business creation
+- **GMB OAuth integration** for instant verification
+- **Document upload verification** as alternative method
+- **Post-claim onboarding** with welcome screen and next steps
+- **Seamless plan selection** with competitive advantages highlighted
+
+#### Admin Dashboard
+- **Business claim moderation** with GMB OAuth verification
+- **User management** with role-based permissions
+- **Analytics and reporting** with MRR/ARR tracking
+- **Platform health monitoring** and performance metrics
+
+## 📁 Project Structure
+
+```
+app/
+├── components/
+│   ├── ui/                    # shadcn/ui base components
+│   ├── business/              # Business profile components
+│   │   ├── single-page-business-profile.tsx    # Main profile layout
+│   │   ├── disabled-contact-form.tsx           # Lead capture form
+│   │   └── tabs/              # Tab content (Overview, Services, Reviews, Insights)
+│   ├── homepage/              # Homepage sections
+│   │   ├── hero.tsx           # Customer search interface
+│   │   ├── cta-cards.tsx      # Plan comparison cards
+│   │   ├── comparison-table.tsx # vs Competition table
+│   │   ├── ai-showcase.tsx    # AI capabilities showcase
+│   │   └── featured-businesses.tsx
+│   ├── admin/                 # Admin dashboard components
+│   └── FeatureGate.tsx        # Plan-based feature visibility
+├── routes/
+│   ├── admin/                 # Admin dashboard routes
+│   ├── [$category].[$city].[$businessName].tsx  # Business detail pages
+│   ├── home.tsx               # Homepage
+│   ├── pricing.tsx            # Pricing page
+│   └── about.tsx              # About page
+└── hooks/
+    ├── usePlanFeatures.ts     # Feature detection
+    └── useAnalyticsTracking.ts # Event tracking
+
+convex/
+├── businesses.ts              # Business data management
+├── businessClaims.ts          # Claim verification system
+├── users.ts                   # User management
+├── makeAdmin.ts               # Admin access controls
+└── schema.ts                  # Database schema
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -48,221 +156,163 @@ A modern, production-ready SaaS starter template for building full-stack React a
 - Clerk account for authentication
 - Convex account for database
 - Polar.sh account for subscriptions
-- OpenAI API key (for AI chat features)
+- OpenAI API key for AI features
 
 ### Installation
 
-1. Clone the repository and install dependencies:
-
+1. **Clone and install dependencies:**
 ```bash
+git clone <repository-url>
+cd azbusiness
 npm install
 ```
 
-2. Copy the environment file and configure your credentials:
-
+2. **Set up environment variables:**
 ```bash
 cp .env.example .env.local
 ```
 
-3. Set up your environment variables in `.env.local`:
-
+Configure your `.env.local`:
 ```bash
 # Convex Configuration
-CONVEX_DEPLOYMENT=your_convex_deployment_here
-VITE_CONVEX_URL=your_convex_url_here
+CONVEX_DEPLOYMENT=your_convex_deployment
+VITE_CONVEX_URL=your_convex_url
 
 # Clerk Authentication
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
-CLERK_SECRET_KEY=your_clerk_secret_key_here
-VITE_CLERK_FRONTEND_API_URL=your_clerk_frontend_api_url_here
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+CLERK_SECRET_KEY=your_clerk_secret
 
-# Polar.sh Configuration
-POLAR_ACCESS_TOKEN=your_polar_access_token_here
-POLAR_ORGANIZATION_ID=your_polar_organization_id_here
-POLAR_WEBHOOK_SECRET=your_polar_webhook_secret_here
+# Polar.sh Billing
+POLAR_ACCESS_TOKEN=your_polar_token
+POLAR_ORGANIZATION_ID=your_polar_org_id
 
-# OpenAI Configuration (for AI chat)
-OPENAI_API_KEY=your_openai_api_key_here
+# OpenAI for AI Features
+OPENAI_API_KEY=your_openai_key
 
-# Frontend URL for redirects
+# Frontend URL
 FRONTEND_URL=http://localhost:5173
 ```
 
-4. Initialize Convex:
-
+3. **Start development servers:**
 ```bash
+# Terminal 1: Start Convex backend (REQUIRED - run first)
 npx convex dev
-```
 
-5. Set up your Polar.sh webhook endpoint:
-   - URL: `{your_domain}/webhook/polar`
-   - Events: All subscription events
-
-### Development
-
-Start the development server with HMR:
-
-```bash
+# Terminal 2: Start React frontend
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+4. **Access the application:**
+- **Frontend**: http://localhost:5173
+- **Admin Panel**: http://localhost:5173/admin
+- **Convex Dashboard**: Check terminal output for dashboard URL
 
-## Building for Production
+## 🔧 Development Workflow
 
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Vercel Deployment (Recommended)
-
-This starter kit is optimized for Vercel deployment with the `@vercel/react-router` preset:
-
-1. Connect your repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-The `react-router.config.ts` includes the Vercel preset for seamless deployment.
-
-### Docker Deployment
-
-To build and run using Docker:
+### Essential Commands
 
 ```bash
-docker build -t my-app .
+# Development
+npm run dev                    # Start frontend development server
+npx convex dev                 # Start Convex backend (run first)
 
-# Run the container
-docker run -p 3000:3000 my-app
+# Build & Deploy
+npm run build                  # Production build
+npm run typecheck              # TypeScript validation
+
+# Data Management
+npm run import-csv             # Import business data
+npm run migrate-urls           # Update business URL structure
+npm run featured-businesses    # Manage featured listings
 ```
 
-The containerized application can be deployed to any platform that supports Docker:
+### Important Notes
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+- **Always run both servers**: Convex backend AND React frontend
+- **Admin access**: Use `/admin` routes for business management
+- **Feature testing**: Verify plan-tier restrictions and upgrade flows
+- **AI integration**: OpenAI GPT-4 powers all content enhancement features
 
-### DIY Deployment
+## 📊 Business Model & Revenue
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+### Revenue Targets (Year 1)
+- **500 Starter customers**: $4,500 MRR
+- **200 Pro customers**: $5,800 MRR  
+- **100 Power customers**: $9,700 MRR
+- **Total Target**: $20,000 MRR ($240,000 ARR)
 
-Make sure to deploy the output of `npm run build`
+### Value Propositions
+- **Starter → Pro**: $325/month value for $29 (11x return)
+- **Pro → Power**: $1000+/month value for $97 (10x+ return)
+- **Competition**: Break-even at just 1-2 exclusive leads per month vs $80-100 per shared lead
 
-```
-├── package.json
-├── package-lock.json
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
+### Key Metrics
+- **Customer Acquisition Cost (CAC)**: Target <$50 for Starter, <$150 for Power
+- **Customer Lifetime Value (CLV)**: Target 12+ months average retention
+- **Upgrade Rate**: Target 25% Starter→Pro, 40% Pro→Power within 6 months
 
-## Architecture
+## 🎯 Market Positioning
 
-### Key Routes
-- `/` - Homepage with pricing
-- `/pricing` - Dynamic pricing page
-- `/dashboard` - Protected user dashboard
-- `/dashboard/chat` - AI-powered chat interface
-- `/dashboard/settings` - User settings
-- `/success` - Subscription success page
-- `/webhook/polar` - Polar.sh webhook handler
+### Target Customers
 
-### Key Components
+**Starter Tier**: New businesses, budget-conscious contractors (0-2 years, <$50K revenue)
+**Pro Tier**: Established businesses wanting enhanced visibility (2-5 years, $50K-200K revenue)  
+**Power Tier**: Revenue-focused businesses ready for growth (3+ years, $200K+ revenue)
 
-#### Authentication & Authorization
-- Protected routes with Clerk authentication
-- Server-side user data loading with loaders
-- Automatic user synchronization
+### Competitive Landscape
 
-#### Subscription Management
-- Dynamic pricing cards fetched from Polar.sh
-- Secure checkout flow with redirect handling
-- Real-time subscription status updates
-- Customer portal for subscription management
-- Webhook handling for payment events
+| Feature | Thumbtack/Angi | Yelp/Directories | AZ Business Services |
+|---------|----------------|------------------|---------------------|
+| Pricing | $80-100/shared lead | Free but limited | $9-97/month predictable |
+| Lead Quality | Shared with 3-5 contractors | Hope customers find you | Exclusive delivery |
+| Professional Tools | None | Basic | Complete AI suite |
+| Local Focus | National platform | Generic | Arizona-optimized |
 
-#### Dashboard Features
-- Interactive sidebar navigation
-- Real-time data updates
-- User profile management
-- AI chat functionality
-- Subscription status display
+## 🔐 Security & Authentication
 
-#### AI Chat Integration
-- OpenAI-powered conversations
-- Real-time message streaming
-- Chat history persistence
-- Responsive chat interface
+- **Role-based access**: user, admin, super_admin permissions
+- **Business verification**: GMB OAuth + document verification
+- **API protection**: All Convex functions include proper auth checks
+- **Data validation**: Input sanitization and schema validation
+- **Rate limiting**: Built-in protection against API abuse
 
-## Environment Variables
+## 📈 Analytics & Reporting
 
-### Required for Production
+### Platform Analytics
+- **Real-time metrics** with health scoring
+- **Revenue analytics** with MRR/ARR tracking
+- **User engagement** analysis and retention cohorts
+- **Business performance** scoring and optimization recommendations
 
-- `CONVEX_DEPLOYMENT` - Your Convex deployment URL
-- `VITE_CONVEX_URL` - Your Convex client URL
-- `VITE_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
-- `CLERK_SECRET_KEY` - Clerk secret key
-- `VITE_CLERK_FRONTEND_API_URL` - Clerk frontend API URL
-- `POLAR_ACCESS_TOKEN` - Polar.sh API access token
-- `POLAR_ORGANIZATION_ID` - Your Polar.sh organization ID
-- `POLAR_WEBHOOK_SECRET` - Polar.sh webhook secret
-- `OPENAI_API_KEY` - OpenAI API key for chat features
-- `FRONTEND_URL` - Your production frontend URL
+### Business Intelligence
+- **Competitive analysis** and market positioning
+- **SEO performance** tracking and recommendations
+- **Lead generation** analytics and conversion optimization
+- **Customer satisfaction** monitoring and feedback loops
 
-## Project Structure
+## 🚀 Deployment
 
-```
-├── app/
-│   ├── components/         # Reusable UI components
-│   │   ├── ui/            # shadcn/ui components
-│   │   ├── homepage/      # Homepage sections
-│   │   └── dashboard/     # Dashboard components
-│   ├── routes/            # React Router routes
-│   └── utils/             # Utility functions
-├── convex/                # Convex backend functions
-├── public/                # Static assets
-└── docs/                  # Documentation
-```
+### Vercel (Recommended)
+1. Connect repository to Vercel
+2. Set environment variables in dashboard
+3. Deploy automatically on push to main
 
-## Key Dependencies
+### Production Checklist
+- [ ] Environment variables configured
+- [ ] Convex deployment active
+- [ ] Clerk authentication setup
+- [ ] Polar.sh webhooks configured
+- [ ] OpenAI API key active
+- [ ] Domain and SSL configured
 
-- `react` & `react-dom` v19 - Latest React
-- `react-router` v7 - Full-stack React framework
-- `@clerk/react-router` - Authentication
-- `convex` - Real-time database
-- `@polar-sh/sdk` - Subscription management
-- `@ai-sdk/openai` & `ai` - AI chat capabilities
-- `@vercel/react-router` - Vercel deployment
-- `tailwindcss` v4 - Styling
-- `@radix-ui/*` - UI primitives
+## 📞 Support & Contact
 
-## Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run typecheck` - Run TypeScript checks
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License.
+- **Documentation**: See `CLAUDE.md` for detailed technical documentation
+- **Issues**: Report bugs and feature requests via GitHub Issues
+- **Business inquiries**: Contact through platform or pulseautomation.ai
 
 ---
 
-**Stop rebuilding the same foundation over and over.** RSK eliminates months of integration work by providing a complete, production-ready SaaS template with authentication, payments, AI chat, and real-time data working seamlessly out of the box.
+**AZ Business Services** - Building Arizona's premier business directory with AI-powered professional presentation, exclusive lead generation, and predictable pricing that scales with business growth.
 
-Built with ❤️ using React Router v7, Convex, Clerk, Polar.sh, and OpenAI.
+Built with React Router v7, Convex, Clerk, Polar.sh, and OpenAI GPT-4.

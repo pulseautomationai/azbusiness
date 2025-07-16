@@ -10,14 +10,15 @@ This document outlines the current end-to-end system for the Arizona Business Di
 
 ## 🏢 Business Concept
 
-An AI-powered local business directory platform for Arizona service businesses, with a free public listing and premium paid tiers. The platform offers:
+An AI-powered local business directory platform for Arizona service businesses, positioned as the professional alternative to expensive lead generation platforms. The platform offers:
 
 - Rich, claimable business listings with real SEO value
-- AI-enhanced insights and profile enrichment
-- Lead generation via the directory itself
-- Upgrade paths from Free → Pro → Power tiers
+- AI-enhanced insights and professional profile enrichment
+- Exclusive lead generation (not shared with competitors)
+- Predictable monthly pricing vs variable per-lead costs
+- Upgrade paths from Starter → Pro → Power tiers
 
-The business model combines directory exposure, lead delivery, AI tools, and content creation into a tiered SaaS plan for local business owners.
+The business model combines directory exposure, exclusive lead delivery, AI-powered professional presentation, and complete business growth tools into a tiered SaaS plan that scales with business growth.
 
 ---
 
@@ -29,13 +30,20 @@ The business model combines directory exposure, lead delivery, AI tools, and con
 
 ---
 
-## 💰 Pricing Model
+## 💰 Pricing Model - Three-Tier Strategy
 
-| Tier  | Price | Target Customer                      | Core Value                                             |
-| ----- | ----- | ------------------------------------ | ------------------------------------------------------ |
-| Free  | \$0   | Unclaimed or early-stage businesses  | Basic online visibility, no lead access                |
-| Pro   | \$29  | Growing service businesses           | Verified trust signals + lead eligibility              |
-| Power | \$97  | Established businesses with traction | Hands-free AI, blog content, lead delivery, visibility |
+| Tier        | Monthly | Annual (25% off) | Target Customer                              | Core Value                                             |
+| ----------- | ------- | ---------------- | -------------------------------------------- | ------------------------------------------------------ |
+| **Starter** | $9      | $7/mo ($81/yr)   | New businesses wanting immediate credibility | Professional presence with AI summary & verification   |
+| **Pro**     | $29     | $22/mo ($264/yr) | Growing businesses needing enhanced control  | Featured placement + editable content + enhanced visibility |
+| **Power**   | $97     | $73/mo ($876/yr) | Established businesses ready for lead generation | Unlimited exclusive leads + homepage featuring + complete growth package |
+
+### **Key Competitive Advantages:**
+- 🎯 **Exclusive leads** (not shared with 3-5 competitors like Thumbtack/Angi)
+- 💰 **Predictable flat pricing** vs $80-100 per shared lead on competition
+- 🤖 **AI-powered professional presentation** vs basic directory listings
+- 🔗 **SEO benefits included** (direct backlink to your website)
+- 📈 **Complete growth package** (credibility + visibility + leads + analytics)
 
 ---
 
@@ -51,32 +59,48 @@ The business model combines directory exposure, lead delivery, AI tools, and con
 
 ## 🧱 Business Listing Page Architecture
 
+**Updated to Single-Page Layout:**
 ```
-| Header (Business name, tags, rating)
-| Hero Banner (Static)
-| Tabs: Overview | Services | Reviews | Insights*
-| Sidebar: Contact, Map, Hours, Social Links, Badges
+| Header (Business name, verification badge, rating)
+| Professional Overview (AI-generated, editable on Pro+)
+| Enhanced Service Cards (Pro+) or Basic List (Starter)
+| Google Reviews & Review Intelligence (Power tier)
+| Business Insights & Competitive Intelligence (Power tier)
+| Contact Info, Map, Hours, Social Links
+| Badge System (plan-based visibility)
 | Sticky CTA (Claim Listing or Upgrade)
-| Footer: Similar Businesses
+| Similar Businesses
+```
+
+**Homepage Architecture:**
+```
+| Hero Section (customer search)
+| Plan Cards (Starter + Power focus)
+| Comparison Table (vs Thumbtack/Angi)
+| AI Showcase (Professional Overview, Competitive Intelligence, Review Intelligence)
+| Featured Businesses
+| FAQ Section
 ```
 
 ---
 
 ## 🔢 Component Visibility Matrix + Plan Logic
 
-| Component / Feature              | Free                   | Pro                 | Power                                             |
+| Component / Feature              | Starter ($9)           | Pro ($29)           | Power ($97)                                       |
 | -------------------------------- | ---------------------- | ------------------- | ------------------------------------------------- |
-| Business Summary                 | Blurred 1-line preview | Full text           | AI-enhanced + style options                       |
-| Service Display                  | Bullet list            | Service cards       | Enhanced cards w/ AI pricing blurbs               |
-| Review Insights                  | ❌                      | Basic               | AI sentiment & keyword analysis                   |
-| SEO Backlink                     | ❌                      | ✅                   | ✅                                                 |
-| Verified Badge                   | ❌                      | ✅                   | ✅                                                 |
-| Badge System                     | Grayed                 | Standard            | Full (all bonus logic)                            |
-| Category Boost                   | ❌                      | Category-level bump | Homepage placement (rotating) + top-category slot |
-| Leads from Your Listing          | ❌                      | Manually matched    | Auto-matched + Instant alerting                   |
-| Concierge Support Access         | ❌                      | ❌                   | ✅                                                 |
-| Monthly Blog Post (AI)           | ❌                      | ❌                   | ✅ 1x/mo AI blog for SEO                           |
-| Tabs, GMB Reviews, Map, Carousel | ✅                      | ✅                   | ✅                                                 |
+| Professional Overview            | AI-generated (fixed)   | AI-generated (editable) | AI-enhanced + style options                   |
+| Service Display                  | Basic bullet list      | Enhanced service cards | Enhanced cards w/ AI pricing insights        |
+| Review Intelligence              | ❌                      | Basic display       | AI sentiment & keyword analysis                   |
+| SEO Backlink                     | ✅                      | ✅                   | ✅                                                 |
+| Verification Badge               | ✅                      | ✅                   | ✅                                                 |
+| Badge System                     | Grayed out             | Active standard     | Full system (all bonus logic)                    |
+| Category Placement               | Standard listing       | Featured in category | Featured + Homepage placement (rotating)         |
+| Lead Generation                  | ❌ (Contact form disabled) | ❌ (Contact form disabled) | ✅ Unlimited exclusive leads             |
+| Image Gallery                    | ❌                      | ❌                   | ✅ Professional work photos                       |
+| Business Insights                | ❌                      | ❌                   | ✅ Competitive intelligence & analytics            |
+| Priority Support                 | ❌                      | ❌                   | ✅ Dedicated assistance                           |
+| Content Editing Control          | ❌                      | ✅                   | ✅                                                 |
+| Google Reviews Display           | 3 reviews              | 10 reviews          | Unlimited reviews                                |
 
 ---
 
@@ -97,22 +121,22 @@ The business model combines directory exposure, lead delivery, AI tools, and con
 
 ## 💡 What You Get — Customer-Facing Pricing Table
 
-| Feature                    | Free        | Pro              | Power                                           |
+| Feature                    | Starter ($9) | Pro ($29)       | Power ($97)                                      |
 | -------------------------- | ----------- | ---------------- | ----------------------------------------------- |
 | Public Business Listing    | ✅           | ✅                | ✅                                               |
-| Google Reviews             | ✅           | ✅                | ✅                                               |
-| Tabs (Overview, etc.)      | ✅           | ✅                | ✅                                               |
-| Similar Businesses         | ✅           | ✅                | ✅                                               |
-| Leads from Your Listing    | ❌           | Manually Matched | Auto-Matched + Instant Alerts                   |
-| Verified Badge             | ❌           | ✅                | ✅                                               |
-| Business Summary           | Blurred     | Full View        | AI-enhanced + Style Options                     |
-| Service Display            | Bullet List | Service Cards    | Enhanced Cards with Pricing                     |
-| SEO Backlink               | ❌           | ✅                | ✅                                               |
-| Review Insights            | ❌           | Basic            | AI Sentiment + Keyword Summary                  |
-| Badge System               | Grayed out  | Standard         | All Badges (Locally Loved, Fast Response, etc.) |
-| Category Boost             | ❌           | ✅                | ✅ + Homepage Featured (rotating)                |
-| Dedicated Concierge Access | ❌           | ❌                | ✅                                               |
-| Monthly Blog Post          | ❌           | ❌                | ✅ 1/mo AI-powered post                          |
+| SEO Backlink to Website    | ✅           | ✅                | ✅                                               |
+| Professional Overview      | AI-generated | Fully Editable   | AI-enhanced + Style Options                     |
+| Verification Badge         | ✅           | ✅                | ✅                                               |
+| Google Reviews Display     | 3 reviews   | 10 reviews       | Unlimited reviews                               |
+| Service Presentation       | Basic bullets| Enhanced cards   | Enhanced Cards with AI Pricing                  |
+| Category Placement         | Standard    | Featured         | Featured + Homepage Spotlight                   |
+| Lead Generation            | ❌           | ❌                | ✅ Unlimited Exclusive Leads                     |
+| Image Gallery              | ❌           | ❌                | ✅ Professional work photos                      |
+| Review Intelligence        | ❌           | Basic display    | AI Sentiment + Keyword Analysis                 |
+| Business Insights          | ❌           | ❌                | ✅ Competitive Intelligence & Analytics          |
+| Badge System               | Grayed out  | Active standard  | All Badges (Locally Loved, Fast Response, etc.) |
+| Priority Support           | ❌           | ❌                | ✅ Dedicated assistance                          |
+| Content Editing Control    | ❌           | ✅                | ✅                                               |
 
 ---
 
@@ -121,13 +145,23 @@ Let me know if you’d like a PDF export of this or want to train an assistant f
 
 
 ### Project Completion Status
-- **✅ Phase 1-2**: Foundations & Free Plan MVP (100% Complete)
-- **✅ Phase 3**: Pro Features (100% Complete) 
-- **✅ Phase 4**: Power Features with AI Enhancement (100% Complete)
+- **✅ Phase 1-2**: Foundations & Starter Plan MVP (100% Complete)
+- **✅ Phase 3**: Pro Features with Enhanced Visibility (100% Complete) 
+- **✅ Phase 4**: Power Features with AI Enhancement & Lead Generation (100% Complete)
 - **✅ Phase 5.1-5.2**: Admin Dashboard & Platform Analytics (100% Complete)
-- **🚧 Phase 5.3**: Content Management & AI Training (In Progress)
+- **✅ Phase 6**: Homepage Redesign & AI Showcase (100% Complete)
+- **✅ Phase 7**: Pricing Strategy Implementation & Component Updates (100% Complete)
+- **✅ Phase 8**: Business Claiming + Signup Flow Integration (100% Complete)
 
-**Total Value Delivered**: $1,500+/month equivalent in SaaS tools and services
+**Recent Major Updates (Current Session):**
+- **Business Claiming Integration**: Complete claim → plan selection → onboarding flow
+- **Smart Duplicate Detection**: Prevents duplicate business creation with fuzzy matching
+- **Enhanced User Experience**: Progress indicators, status-based messaging, plan previews
+- **Seamless Authentication**: "Create Account & Claim Business" integration
+- **Database Enhancements**: Duplicate checking, claim-to-subscription linking
+- **Post-Claim Onboarding**: Welcome screens, business info display, next steps guidance
+
+**Total Value Delivered**: $1,800+/month equivalent in SaaS tools and services
 
 ## Essential Commands
 
@@ -329,6 +363,25 @@ analyticsEvents: {
 - **Automated Reporting**: Daily/weekly/monthly reports with alert generation
 - **Competitive Intelligence**: Market share, pricing analysis, feature gaps
 
+### ✅ Phase 6: Business Claiming + Signup Flow Integration (COMPLETE)
+#### Unified Claiming Experience
+- **Claim Flow Routes**: `/claim-business/onboarding` and `/claim-business/plans` for seamless user journey
+- **Smart Business Matching**: Duplicate detection prevents unnecessary business creation
+- **Post-Claim Onboarding**: Welcome screen, business info display, and progress tracking
+- **Plan Selection Integration**: Immediate plan selection after successful claim with competitive advantages
+
+#### Enhanced User Experience
+- **Progress Indicators**: Clear 3-step flow (Claim → Choose Plan → Complete)
+- **Status-Based Messaging**: Different UI for pending/approved/verified claims
+- **Authentication Integration**: Seamless signup with "Create Account & Claim Business" CTA
+- **Plan Previews**: Shows benefits of each tier before user authentication
+
+#### Database Integration
+- **Duplicate Prevention**: `checkDuplicateBusiness` function with fuzzy matching
+- **Claim-to-Subscription Linking**: Direct flow from claiming to plan selection
+- **Redirect Handling**: Proper post-authentication claiming with preserved parameters
+- **Real-time Status Updates**: Claim status tracking throughout the process
+
 ## Development Workflow
 
 ### Current Development Process
@@ -355,16 +408,29 @@ analyticsEvents: {
 ## Business Logic & Monetization
 
 ### Three-Tier Subscription Model
-- **Free Plan**: Basic listing with upgrade prompts (5 leads max)
-- **Pro Plan ($29/month)**: Enhanced features, analytics, lead management (50 leads max)  
-- **Power Plan ($97/month)**: Full AI suite, advanced SEO tools, unlimited leads
+- **Starter Plan ($9/month)**: Professional credibility with AI summary, verification badge, SEO backlink
+- **Pro Plan ($29/month)**: Enhanced visibility with featured placement, editable content, service cards (no leads)  
+- **Power Plan ($97/month)**: Complete growth package with unlimited exclusive leads, homepage featuring, AI insights
+
+### Competitive Positioning Strategy
+- **vs Thumbtack/Angi**: Predictable $97/month vs $80-100 per shared lead
+- **vs Basic Directories**: AI-enhanced professional presentation vs basic listings
+- **Lead Exclusivity**: Only Power tier customers compete for leads (no internal competition)
+- **Annual Discounts**: 25% off annual plans (Starter $81/yr, Pro $264/yr, Power $876/yr)
 
 ### Value Proposition by Tier
-- **Free → Pro**: Lead generation, basic analytics, verification badge
-- **Pro → Power**: AI content generation ($200+/month value), advanced SEO tools ($300+/month value)
-- **Power Benefits**: Complete marketing automation worth $500+/month in equivalent tools
+- **Starter → Pro**: Enhanced control, featured placement, professional service cards ($325/month value for $29)
+- **Pro → Power**: Exclusive lead generation, homepage featuring, complete AI suite ($1000+/month value for $97)
+- **Break-even Analysis**: Just 1-2 exclusive leads per month beats competition costs
+
+### Revenue Projections (Year 1 Target)
+- **500 Starter customers**: $4,500 MRR
+- **200 Pro customers**: $5,800 MRR  
+- **100 Power customers**: $9,700 MRR
+- **Total Target**: $20,000 MRR ($240,000 ARR)
 
 ### Admin Revenue Tools
+- **Business Claim Moderation**: Streamlined verification process with GMB OAuth integration
 - **Subscription Analytics**: Real-time MRR/ARR tracking with forecasting
 - **User Engagement**: Retention analysis and upgrade opportunity identification
 - **Competitive Intelligence**: Market positioning and pricing optimization

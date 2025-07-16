@@ -211,7 +211,7 @@ export const Header = () => {
                     <Button asChild size="sm" variant="outline" className="border-ironwood-charcoal/20 hover:bg-agave-cream/50 hover:border-ironwood-charcoal/40">
                       <Link to="/dashboard" prefetch="viewport">
                         <List className="mr-1.5 h-4 w-4" />
-                        <span>My Listings</span>
+                        <span>Dashboard</span>
                       </Link>
                     </Button>
                     <Button asChild size="sm" className="bg-ocotillo-red text-white hover:bg-ocotillo-red/90">
@@ -230,7 +230,7 @@ export const Header = () => {
                       size="sm"
                     >
                       <Link to="/sign-in" prefetch="viewport">
-                        <span>Login</span>
+                        <span>Sign In</span>
                       </Link>
                     </Button>
                     <Button
