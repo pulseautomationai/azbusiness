@@ -103,7 +103,7 @@ export default function AdminSettings() {
                     Receive notifications via email
                   </p>
                 </div>
-                <Switch defaultChecked />
+                <Switch checked={true} />
               </div>
               
               <div className="flex items-center justify-between">
@@ -113,7 +113,7 @@ export default function AdminSettings() {
                     Get notified when new business claims are submitted
                   </p>
                 </div>
-                <Switch defaultChecked />
+                <Switch checked={true} />
               </div>
               
               <div className="flex items-center justify-between">
@@ -123,7 +123,7 @@ export default function AdminSettings() {
                     Important system updates and maintenance notifications
                   </p>
                 </div>
-                <Switch defaultChecked />
+                <Switch checked={true} />
               </div>
               
               <Separator />
@@ -201,7 +201,7 @@ export default function AdminSettings() {
                     Enable maintenance mode to prevent public access
                   </p>
                 </div>
-                <Switch />
+                <Switch checked={false} />
               </div>
               
               <div className="flex items-center justify-between">
@@ -211,7 +211,7 @@ export default function AdminSettings() {
                     Enable debug logging for troubleshooting
                   </p>
                 </div>
-                <Switch />
+                <Switch checked={false} />
               </div>
               
               <Separator />
