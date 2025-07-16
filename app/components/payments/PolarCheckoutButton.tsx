@@ -20,16 +20,16 @@ interface PolarCheckoutButtonProps {
 // Map plan IDs to price IDs for different billing periods
 const PLAN_PRICE_IDS = {
   starter: {
-    monthly: process.env.NEXT_PUBLIC_POLAR_STARTER_MONTHLY_PRICE_ID || "starter_monthly",
-    yearly: process.env.NEXT_PUBLIC_POLAR_STARTER_YEARLY_PRICE_ID || "starter_yearly",
+    monthly: import.meta.env.VITE_POLAR_STARTER_MONTHLY_PRICE_ID || "starter_monthly",
+    yearly: import.meta.env.VITE_POLAR_STARTER_YEARLY_PRICE_ID || "starter_yearly",
   },
   pro: {
-    monthly: process.env.NEXT_PUBLIC_POLAR_PRO_MONTHLY_PRICE_ID || "pro_monthly", 
-    yearly: process.env.NEXT_PUBLIC_POLAR_PRO_YEARLY_PRICE_ID || "pro_yearly",
+    monthly: import.meta.env.VITE_POLAR_PRO_MONTHLY_PRICE_ID || "pro_monthly", 
+    yearly: import.meta.env.VITE_POLAR_PRO_YEARLY_PRICE_ID || "pro_yearly",
   },
   power: {
-    monthly: process.env.NEXT_PUBLIC_POLAR_POWER_MONTHLY_PRICE_ID || "power_monthly",
-    yearly: process.env.NEXT_PUBLIC_POLAR_POWER_YEARLY_PRICE_ID || "power_yearly",
+    monthly: import.meta.env.VITE_POLAR_POWER_MONTHLY_PRICE_ID || "power_monthly",
+    yearly: import.meta.env.VITE_POLAR_POWER_YEARLY_PRICE_ID || "power_yearly",
   },
 };
 
