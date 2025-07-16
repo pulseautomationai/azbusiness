@@ -1,8 +1,9 @@
 import type { Config } from "@react-router/dev/config";
 
 export default {
-  // Enable SSR mode for proper OpenGraph support in messaging apps
-  ssr: true,
+  // Temporarily disable SSR for development due to Clerk CORS issues
+  // TODO: Re-enable SSR for production deployment for OpenGraph support
+  ssr: false,
   
   // Set serverBuildFile to "index.js"
   serverBuildFile: "index.js",

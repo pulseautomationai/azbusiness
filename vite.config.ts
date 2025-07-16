@@ -10,13 +10,13 @@ export default defineConfig({
     tsconfigPaths()
   ],
   server: {
-  host: true,
-  port: Number(process.env.PORT) || 5173,
-  allowedHosts: [
-    'serves-uses-existence-sleeve.trycloudflare.com',
-    '.trycloudflare.com' // Allow any trycloudflare.com subdomain
-  ]
-},
+    host: true,
+    port: Number(process.env.PORT) || 5173,
+    allowedHosts: [
+      'serves-uses-existence-sleeve.trycloudflare.com',
+      '.trycloudflare.com' // Allow any trycloudflare.com subdomain
+    ]
+  },
   define: {
     __APP_ENV__: JSON.stringify(process.env.VITE_VERCEL_ENV || 'development'),
   },
