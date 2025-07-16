@@ -128,19 +128,7 @@ export const Header = () => {
                   )}
                 </li>
                 
-                {/* How It Works */}
-                <li>
-                  <Link
-                    to="/how-it-works"
-                    onClick={() => handleNavClick("/how-it-works")}
-                    className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
-                    prefetch="viewport"
-                  >
-                    <span>How It Works</span>
-                  </Link>
-                </li>
-                
-                {/* About */}
+                {/* Why Choose Us */}
                 <li>
                   <Link
                     to="/about"
@@ -148,7 +136,7 @@ export const Header = () => {
                     className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
                     prefetch="viewport"
                   >
-                    <span>About</span>
+                    <span>Why Choose Us</span>
                   </Link>
                 </li>
                 
@@ -190,19 +178,7 @@ export const Header = () => {
                     </ul>
                   </li>
                   
-                  {/* How It Works */}
-                  <li>
-                    <Link
-                      to="/how-it-works"
-                      onClick={() => handleNavClick("/how-it-works")}
-                      className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
-                      prefetch="viewport"
-                    >
-                      <span>How It Works</span>
-                    </Link>
-                  </li>
-                  
-                  {/* About */}
+                  {/* Why Choose Us */}
                   <li>
                     <Link
                       to="/about"
@@ -210,7 +186,7 @@ export const Header = () => {
                       className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
                       prefetch="viewport"
                     >
-                      <span>About</span>
+                      <span>Why Choose Us</span>
                     </Link>
                   </li>
                   

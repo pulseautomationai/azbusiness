@@ -6,6 +6,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
+import { Link } from "react-router";
 
 interface DisabledContactFormProps {
   business: {
@@ -163,9 +164,11 @@ export function DisabledContactForm({ business, onClose }: DisabledContactFormPr
                     <p className="text-xs text-orange-700 mb-3">
                       Upgrade to Pro to receive leads through this form
                     </p>
-                    <Button size="sm" className="w-full bg-orange-600 hover:bg-orange-700">
-                      Upgrade to Pro - $29/month
-                    </Button>
+                    <Link to="/pricing">
+                      <Button size="sm" className="w-full bg-orange-600 hover:bg-orange-700">
+                        Upgrade to Pro - $29/month
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

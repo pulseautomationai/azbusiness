@@ -5,8 +5,8 @@ import PricingSection from "~/components/pricing/pricing-section";
 import type { Route } from "./+types/pricing";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Pricing Plans for Business Listings - AZ Business Services";
-  const description = "Choose the perfect plan to showcase your Arizona business. From free listings to powerful marketing tools, find the plan that fits your needs and budget.";
+  const title = "Professional Business Listings - Predictable Pricing | AZ Business Services";
+  const description = "Unlike Thumbtack's $80-100 per shared lead, get exclusive leads and professional AI-enhanced listings for one flat monthly rate. Starter $9, Pro $29, Power $97.";
 
   return [
     { title },

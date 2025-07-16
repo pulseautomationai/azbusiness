@@ -97,7 +97,6 @@ export default function ReviewSection({
       {/* Rating Summary */}
       <Card>
         <CardHeader>
-          <CardTitle>Customer Reviews</CardTitle>
           <CardDescription>
             Based on {reviewCount} review{reviewCount !== 1 ? "s" : ""}
           </CardDescription>

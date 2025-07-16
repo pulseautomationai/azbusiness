@@ -15,7 +15,7 @@ export const makeCurrentUserAdmin = mutation({
     // Find user by token
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.subject))
+      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
       .unique();
 
     console.log("Found user:", user);

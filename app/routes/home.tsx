@@ -2,8 +2,11 @@ import { getAuth } from "@clerk/react-router/ssr.server";
 import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import HeroSection from "~/components/homepage/hero";
-import FeaturedBusinesses from "~/components/homepage/featured-businesses";
+import BusinessOwnerHeader from "~/components/homepage/business-owner-header";
+import ComparisonTable from "~/components/homepage/comparison-table";
+import AIShowcase from "~/components/homepage/ai-showcase";
 import CTACards from "~/components/homepage/cta-cards";
+import FeaturedBusinesses from "~/components/homepage/featured-businesses";
 import Footer from "~/components/homepage/footer";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { withConvexRetry } from "~/utils/retry";
@@ -103,14 +106,20 @@ export default function Home() {
       <ComponentErrorBoundary componentName="Hero Section">
         <HeroSection />
       </ComponentErrorBoundary>
-      <ComponentErrorBoundary componentName="CTA Cards">
+      <ComponentErrorBoundary componentName="Plan Cards">
         <CTACards />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="Comparison Table">
+        <ComparisonTable />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="AI Showcase">
+        <AIShowcase />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="Featured Businesses">
         <FeaturedBusinesses />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="FAQ Section">
-        <FAQSection className="bg-desert-sky-blue/10" />
+        <FAQSection className="bg-agave-cream" />
       </ComponentErrorBoundary>
       <Footer />
     </>

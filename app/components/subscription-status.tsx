@@ -13,60 +13,22 @@ import { Badge } from "~/components/ui/badge";
 import { Calendar, CreditCard, ExternalLink, Loader2 } from "lucide-react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
-import { LoadingSpinner } from "~/components/loading-spinner";
-import { useQueryWithRetry } from "~/hooks/useRetryableQuery";
-import { RetryableQueryWrapper } from "~/components/ui/query-error-boundary";
 
 export default function SubscriptionStatus() {
   const { isSignedIn, userId } = useAuth();
   const [loadingDashboard, setLoadingDashboard] = useState(false);
 
-  // Use original queries first
-  const subscriptionQuery = useQuery(
+  // Simplified queries without retry logic
+  const subscription = useQuery(
     api.subscriptions.fetchUserSubscription,
     isSignedIn ? {} : "skip"
   );
-  const subscriptionStatusQuery = useQuery(
+  const subscriptionStatus = useQuery(
     api.subscriptions.checkUserSubscriptionStatus,
     isSignedIn && userId ? { userId } : "skip"
   );
-  
-  // Enhance with retry logic
-  const subscriptionWithRetry = useQueryWithRetry(
-    subscriptionQuery,
-    null, // No error from useQuery
-    Boolean(!subscriptionQuery && isSignedIn), // isLoading
-    undefined, // No refetch available from useQuery
-    {
-      maxRetries: 3,
-      retryDelay: 1000,
-      enableAutoRetry: false, // Manual retry only
-      retryCondition: (error: any) => {
-        return error?.message?.includes('network') || error?.message?.includes('fetch');
-      }
-    }
-  );
-
-  const subscriptionStatusWithRetry = useQueryWithRetry(
-    subscriptionStatusQuery,
-    null, // No error from useQuery  
-    Boolean(!subscriptionStatusQuery && isSignedIn && userId), // isLoading
-    undefined, // No refetch available from useQuery
-    {
-      maxRetries: 3,
-      retryDelay: 1000,
-      enableAutoRetry: false,
-      retryCondition: (error: any) => {
-        return error?.message?.includes('network') || error?.message?.includes('fetch');
-      }
-    }
-  );
 
   const createPortalUrl = useAction(api.subscriptions.createCustomerPortalUrl);
-
-  // Use data from retry-enhanced queries
-  const subscription = subscriptionWithRetry.data;
-  const subscriptionStatus = subscriptionStatusWithRetry.data;
 
   const handleManageSubscription = async () => {
     if (!subscription?.customerId) return;
@@ -97,40 +59,20 @@ export default function SubscriptionStatus() {
     );
   }
 
-  // Show loading state with retry wrapper
-  const isLoading = subscriptionWithRetry.isLoading || subscriptionStatusWithRetry.isLoading;
-  const hasError = subscriptionWithRetry.error || subscriptionStatusWithRetry.error;
-
-  if (!subscription && (isLoading || hasError)) {
+  // Show loading state
+  if (subscription === undefined || subscriptionStatus === undefined) {
     return (
-      <RetryableQueryWrapper
-        data={subscription}
-        error={hasError}
-        isLoading={isLoading}
-        retryFn={() => {
-          // For demo purposes - in reality, useQuery doesn't provide refetch
-          window.location.reload();
-        }}
-        loadingFallback={
-          <Card>
-            <CardHeader>
-              <CardTitle>Subscription Status</CardTitle>
-              <CardDescription>
-                <LoadingSpinner size="sm" text="Loading subscription details..." />
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        }
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>Subscription Status</CardTitle>
-            <CardDescription>
+      <Card>
+        <CardHeader>
+          <CardTitle>Subscription Status</CardTitle>
+          <CardDescription>
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
               Loading subscription details...
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </RetryableQueryWrapper>
+            </div>
+          </CardDescription>
+        </CardHeader>
+      </Card>
     );
   }
 

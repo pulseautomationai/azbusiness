@@ -61,7 +61,6 @@ export function ReviewsTab({ business, businessContent, reviews, isOwner }: Revi
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Star className="h-5 w-5" />
-            Customer Reviews
           </CardTitle>
           <CardDescription>
             What our customers are saying about {business.name}

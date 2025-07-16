@@ -1,5 +1,5 @@
 // Feature configuration for plan-based visibility
-export type PlanTier = "free" | "pro" | "power";
+export type PlanTier = "free" | "starter" | "pro" | "power";
 
 export interface Feature {
   id: string;
@@ -16,8 +16,8 @@ export const features: Record<string, Feature> = {
     id: "heroImageUpload",
     name: "Custom Hero Image",
     description: "Upload a custom hero banner image",
-    availableIn: ["pro", "power"],
-    upgradeMessage: "Upgrade to Pro to upload custom images",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power to upload custom images",
   },
   
   editProfile: {
@@ -35,6 +35,31 @@ export const features: Record<string, Feature> = {
     availableIn: ["pro", "power"],
     upgradeMessage: "Upgrade to Pro to customize your summary",
   },
+
+  // New Starter Features
+  aiSummaryBasic: {
+    id: "aiSummaryBasic",
+    name: "AI Business Summary",
+    description: "AI-generated business summary (non-editable)",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter for AI-generated summary",
+  },
+
+  verifiedBadgeStarter: {
+    id: "verifiedBadgeStarter", 
+    name: "Verification Badge",
+    description: "Show verified business badge",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter to get verified",
+  },
+
+  seoBacklink: {
+    id: "seoBacklink",
+    name: "SEO Backlink",
+    description: "Direct SEO backlink to your website",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
   
   // Service Features
   serviceCards: {
@@ -43,6 +68,22 @@ export const features: Record<string, Feature> = {
     description: "Display services with icons and descriptions",
     availableIn: ["pro", "power"],
     upgradeMessage: "Upgrade to Pro for enhanced service display",
+  },
+
+  serviceListBasic: {
+    id: "serviceListBasic",
+    name: "Basic Service List",
+    description: "Simple bullet-point service presentation",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter for service listing",
+  },
+
+  featuredCategoryListing: {
+    id: "featuredCategoryListing",
+    name: "Featured Category Listing",
+    description: "Priority placement in service category",
+    availableIn: ["pro", "power"],
+    upgradeMessage: "Upgrade to Pro for featured placement",
   },
   
   aiServiceDescriptions: {
@@ -83,25 +124,41 @@ export const features: Record<string, Feature> = {
     id: "contactForm",
     name: "Contact Form",
     description: "Receive customer inquiries",
-    availableIn: ["pro", "power"],
-    upgradeMessage: "Upgrade to Pro to enable contact form",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power to enable contact form",
   },
   
   leadNotifications: {
     id: "leadNotifications",
     name: "Lead Notifications",
     description: "Get notified of new leads",
-    availableIn: ["pro", "power"],
-    upgradeMessage: "Upgrade to Pro for lead notifications",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power for lead notifications",
+  },
+
+  unlimitedLeads: {
+    id: "unlimitedLeads",
+    name: "Unlimited Leads",
+    description: "Receive unlimited customer inquiries",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power for unlimited leads",
   },
   
   // AI Features
-  aiSummary: {
-    id: "aiSummary",
+  aiBusinessSummary: {
+    id: "aiBusinessSummary",
     name: "AI Business Summary",
-    description: "AI-generated business summary",
+    description: "AI-generated business summary with key metrics",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
+  
+  aiBusinessOverview: {
+    id: "aiBusinessOverview",
+    name: "AI Business Overview", 
+    description: "Advanced AI business insights and recommendations",
     availableIn: ["power"],
-    upgradeMessage: "Upgrade to Power for AI content",
+    upgradeMessage: "Upgrade to Power for AI business insights",
   },
   
   reviewAnalysis: {
@@ -259,9 +316,9 @@ export const features: Record<string, Feature> = {
   imageGallery: {
     id: "imageGallery",
     name: "Image Gallery",
-    description: "Upload multiple business images",
-    availableIn: ["pro", "power"],
-    upgradeMessage: "Upgrade to Pro for image gallery",
+    description: "Upload and showcase up to 10 business images",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power for image gallery",
   },
 
   leadTracking: {
@@ -334,9 +391,24 @@ export const planComparison = {
     features: getFeaturesForPlan("free"),
     highlights: [
       "Basic listing with GMB data",
-      "Customer reviews display",
+      "AI Business Summary",
+      "Customer reviews display (3)",
       "Map and directions",
       "Basic contact info",
+      "SEO backlink",
+    ],
+  },
+  starter: {
+    name: "Starter",
+    price: 9,
+    features: getFeaturesForPlan("starter"),
+    highlights: [
+      "Professional business listing",
+      "AI Business Summary",
+      "Verification badge",
+      "SEO backlink",
+      "Google reviews (3)",
+      "Basic service list",
     ],
   },
   pro: {
@@ -344,13 +416,12 @@ export const planComparison = {
     price: 29,
     features: getFeaturesForPlan("pro"),
     highlights: [
-      "Everything in Free",
-      "Edit business profile",
-      "Upload custom images",
-      "Contact form with leads",
-      "Basic analytics",
-      "Verified badge",
-      "Priority placement",
+      "Everything in Starter",
+      "AI Business Summary",
+      "Featured category listing",
+      "Enhanced service cards",
+      "Google reviews (10)",
+      "Active badge system",
     ],
   },
   power: {
@@ -359,11 +430,12 @@ export const planComparison = {
     features: getFeaturesForPlan("power"),
     highlights: [
       "Everything in Pro",
-      "AI-powered content",
-      "Advanced analytics",
-      "Review insights",
-      "SEO audit tools",
+      "AI Business Overview",
+      "Image Gallery (up to 10 photos)",
+      "Unlimited leads",
       "Homepage featuring",
+      "Google reviews (unlimited)",
+      "AI review analysis",
       "VIP support",
     ],
   },

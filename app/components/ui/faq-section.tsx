@@ -13,62 +13,74 @@ const faqItems: FAQItem[] = [
   {
     id: "what-is-az-business",
     question: "What is AZ Business Services?",
-    answer: "AZ Business Services is Arizona's most trusted local business directory. We help customers find verified, reviewed service providers while helping businesses grow their online presence and attract more leads through our comprehensive listing platform.",
+    answer: "AZ Business Services is Arizona's premier business directory connecting local customers with verified service providers. Unlike lead generation platforms that charge per shared lead, we provide professional directory listings with AI-enhanced features and exclusive lead capture for predictable monthly pricing.",
     icon: <Building className="h-5 w-5" />
   },
   {
     id: "how-to-claim",
     question: "How do I claim my business listing?",
-    answer: "Claiming your business is simple and free! Click 'Claim This Listing' on your business page, verify your ownership through a quick process, and start managing your profile immediately. You'll gain access to edit your information, respond to reviews, and track your listing performance.",
+    answer: "Claiming your business is simple and free! Find your business listing, click \"Claim This Listing,\" verify your ownership through our quick verification process, and choose your plan. You'll immediately gain access to edit your profile and start managing your professional presence.",
     icon: <HelpCircle className="h-5 w-5" />
   },
   {
-    id: "free-vs-paid",
-    question: "What's the difference between Free and Paid plans?",
-    answer: "Free listings include basic business information and customer reviews. Paid plans ($29 Pro, $97 Power) offer premium features like priority placement in search results, lead management, AI-enhanced content, SEO tools, and dedicated support to help grow your business faster.",
+    id: "plan-differences",
+    question: "What's the difference between Starter, Pro, and Power plans?",
+    answer: "Starter ($9/month): Professional directory presence with AI-generated summary, verification badge, and basic contact info. Contact form disabled with upgrade prompts.\n\nPro ($29/month): Everything in Starter plus editable content, enhanced service presentation, featured category placement, and extended review display. No lead generation - contact form remains disabled.\n\nPower ($97/month): Everything in Pro plus unlimited exclusive lead capture, AI business intelligence, customer insights analysis, professional image gallery, and homepage featuring.",
     icon: <CreditCard className="h-5 w-5" />
   },
   {
     id: "lead-generation",
     question: "How does lead generation work?",
-    answer: "Pro and Power plan customers receive qualified leads directly to their inbox. Our platform matches customer inquiries with relevant businesses based on location, services, and customer preferences. Power plan includes automated lead routing and instant notifications.",
+    answer: "Only Power plan customers ($97/month) receive exclusive leads directly to their inbox when potential customers submit inquiries through their directory listing. Unlike Thumbtack or Angi, leads aren't shared with 3-5 competitors. Pro customers get enhanced visibility and professional presentation, but must upgrade to Power for actual lead capture.",
     icon: <Users className="h-5 w-5" />
-  },
-  {
-    id: "verification-process",
-    question: "What is the business verification process?",
-    answer: "We verify businesses through multiple methods including business license validation, phone verification, and documentation review. Verified businesses receive a trust badge, improved search visibility, and customer confidence that comes with our quality assurance.",
-    icon: <Shield className="h-5 w-5" />
   },
   {
     id: "ai-features",
-    question: "What AI features are included in the Power plan?",
-    answer: "Power plan includes AI-powered business summary generation, service descriptions with pricing insights, social media content creation, SEO audit recommendations, competitor analysis, and monthly blog post creation to boost your online presence and search rankings.",
+    question: "What AI features are included?",
+    answer: "All Plans: AI-generated professional business summary\n\nPower Plan: Advanced AI features including complete business intelligence analysis, customer sentiment analysis of all reviews, competitive positioning insights, AI-powered service descriptions and strategic recommendations, and professional presentation optimization.",
     icon: <Zap className="h-5 w-5" />
-  },
-  {
-    id: "seo-benefits",
-    question: "How does listing help my SEO?",
-    answer: "Your business listing provides valuable backlinks to your website, improves local search visibility, and creates consistent NAP (Name, Address, Phone) citations across the web. Power plan includes advanced SEO audits and keyword optimization recommendations.",
-    icon: <TrendingUp className="h-5 w-5" />
-  },
-  {
-    id: "pricing-billing",
-    question: "How does pricing and billing work?",
-    answer: "We offer transparent monthly pricing: Free (always), Pro ($29/month), and Power ($97/month). All paid plans are month-to-month with no long-term contracts. You can upgrade, downgrade, or cancel anytime through your account dashboard.",
-    icon: <DollarSign className="h-5 w-5" />
-  },
-  {
-    id: "customer-support",
-    question: "What kind of customer support do you provide?",
-    answer: "Free users get community support and help docs. Pro users receive priority email support. Power plan customers get dedicated account management with direct phone support, strategy consultations, and hands-on assistance with profile optimization.",
-    icon: <Users className="h-5 w-5" />
   },
   {
     id: "get-started",
     question: "How quickly can I get started?",
-    answer: "You can claim your free listing and start getting visibility immediately! The entire process takes less than 5 minutes. For paid plans, premium features activate instantly upon subscription, and our team can help optimize your listing within 24 hours.",
+    answer: "You can claim your listing and start receiving visibility immediately! The entire process takes less than 5 minutes. For paid plans, premium features activate instantly upon subscription, and our team can help optimize your listing within 24 hours.",
     icon: <Clock className="h-5 w-5" />
+  },
+  {
+    id: "pricing-billing",
+    question: "How does pricing and billing work?",
+    answer: "We offer transparent monthly pricing: Starter ($9), Pro ($29), and Power ($97). All plans are month-to-month with no long-term contracts. You can upgrade, downgrade, or cancel anytime through your account dashboard. Annual plans save 25% with same flexibility.",
+    icon: <DollarSign className="h-5 w-5" />
+  },
+  {
+    id: "vs-competitors",
+    question: "How is this different from Thumbtack or Angi?",
+    answer: "Exclusive leads (not shared with 3-5 contractors), predictable monthly pricing (vs $80-100 per lead), professional directory presence (vs basic contractor profiles), AI-enhanced listings, and Arizona-focused local expertise. We provide better value and professional presentation.",
+    icon: <TrendingUp className="h-5 w-5" />
+  },
+  {
+    id: "customer-support",
+    question: "What kind of customer support do you provide?",
+    answer: "All Plans: Community support and help documentation\n\nPower: Priority customer support with dedicated assistance for lead management and profile optimization",
+    icon: <Users className="h-5 w-5" />
+  },
+  {
+    id: "verification-process",
+    question: "How does the business verification process work?",
+    answer: "We verify businesses through multiple methods including business license validation, phone verification, and documentation review. For businesses with existing Google My Business profiles, we offer instant verification through Google My Business authorization - simply sign up and verify instantly. Verified businesses receive a trust badge, improved search visibility, and customer confidence that comes with our quality assurance process.",
+    icon: <Shield className="h-5 w-5" />
+  },
+  {
+    id: "see-results",
+    question: "Can I see results before upgrading?",
+    answer: "Yes! Starter and Pro listings provide professional credibility and enhanced visibility. You can see your listing performance and visitor engagement. To actually capture leads from visitors, you'll need to upgrade to Power plan.",
+    icon: <Rocket className="h-5 w-5" />
+  },
+  {
+    id: "power-value",
+    question: "What makes the Power plan worth $97/month?",
+    answer: "Power plan delivers equivalent value of $1,200+/month in business tools: professional consultation ($500), customer analytics ($200), website-quality presentation ($200), AI business intelligence ($200), unlimited exclusive leads ($400+). Most customers see ROI within the first month.",
+    icon: <DollarSign className="h-5 w-5" />
   }
 ];
 
@@ -143,9 +155,13 @@ export default function FAQSection({ className = "" }: FAQSectionProps) {
                 >
                   <div className="px-6 pb-6">
                     <div className="border-t border-prickly-pear-pink/30 pt-4">
-                      <p className="text-ironwood-charcoal/70 leading-relaxed">
-                        {item.answer}
-                      </p>
+                      <div className="text-ironwood-charcoal/70 leading-relaxed space-y-3">
+                        {item.answer.split('\n\n').map((paragraph, index) => (
+                          <p key={index} className={paragraph.includes(':') ? 'font-medium' : ''}>
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>

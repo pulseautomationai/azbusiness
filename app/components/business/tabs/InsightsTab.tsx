@@ -8,6 +8,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Progress } from "~/components/ui/progress";
 import { FeatureGate } from "~/components/FeatureGate";
+import { Link } from "react-router";
 
 interface InsightsTabProps {
   business: any;
@@ -53,7 +54,9 @@ export function InsightsTab({ business, businessContent, isOwner }: InsightsTabP
           <p className="text-muted-foreground mb-4">
             Upgrade to Pro to access business insights, analytics, and performance data
           </p>
-          <Button>Upgrade to Pro</Button>
+          <Link to="/pricing">
+            <Button>Upgrade to Pro</Button>
+          </Link>
         </CardContent>
       </Card>
     );

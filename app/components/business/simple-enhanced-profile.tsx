@@ -116,9 +116,11 @@ function SimpleEnhancedProfile({
             <p className="text-sm text-muted-foreground">
               🔒 <strong>Upgrade to Pro</strong> to see the full AI-generated business summary
             </p>
-            <Button variant="outline" size="sm" className="mt-2">
-              Upgrade Now
-            </Button>
+            <Link to="/pricing">
+              <Button variant="outline" size="sm" className="mt-2">
+                Upgrade Now
+              </Button>
+            </Link>
           </div>
         </div>
       );
@@ -166,9 +168,11 @@ function SimpleEnhancedProfile({
               <p className="text-sm text-muted-foreground">
                 💎 <strong>Upgrade to Pro</strong> to see enhanced service cards with pricing and detailed descriptions
               </p>
-              <Button variant="outline" size="sm" className="mt-2">
-                See {business.services.length - 4} More Services
-              </Button>
+              <Link to="/pricing">
+                <Button variant="outline" size="sm" className="mt-2">
+                  See {business.services.length - 4} More Services
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -195,9 +199,11 @@ function SimpleEnhancedProfile({
                   : "Claim this business to enable contact forms"
                 }
               </p>
-              <Button>
-                {business.claimed ? "Upgrade to Pro" : "Claim This Business"}
-              </Button>
+              <Link to={business.claimed ? "/pricing" : `/claim-business?businessId=${business._id}`}>
+                <Button>
+                  {business.claimed ? "Upgrade to Pro" : "Claim This Business"}
+                </Button>
+              </Link>
             </Card>
           </div>
         </div>
@@ -323,7 +329,6 @@ function SimpleEnhancedProfile({
               <TabsContent value="reviews" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Customer Reviews</CardTitle>
                     <CardDescription>
                       See what our customers are saying
                     </CardDescription>
@@ -368,9 +373,11 @@ function SimpleEnhancedProfile({
                       <p className="text-muted-foreground mb-4">
                         Get detailed analytics about your business performance, customer engagement, and growth opportunities.
                       </p>
-                      <Button>
-                        Upgrade to Pro to Unlock Insights
-                      </Button>
+                      <Link to="/pricing">
+                        <Button>
+                          Upgrade to Pro to Unlock Insights
+                        </Button>
+                      </Link>
                     </CardContent>
                   </Card>
                 )}
@@ -483,9 +490,11 @@ function SimpleEnhancedProfile({
                   }
                 </p>
               </div>
-              <Button>
-                {!business.claimed ? "Claim This Business" : "Upgrade to Pro"}
-              </Button>
+              <Link to={!business.claimed ? `/claim-business?businessId=${business._id}` : "/pricing"}>
+                <Button>
+                  {!business.claimed ? "Claim This Business" : "Upgrade to Pro"}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

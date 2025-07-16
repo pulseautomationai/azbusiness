@@ -34,7 +34,7 @@ const footerLinks = {
   company: {
     title: "Company",
     links: [
-      { name: "About Us", href: "/about" },
+      { name: "Why Choose Us", href: "/about" },
       { name: "Blog", href: "/blog" },
       { name: "Privacy Policy", href: "/privacy-policy" },
       { name: "Terms of Service", href: "/terms-of-service" },

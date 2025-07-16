@@ -213,7 +213,9 @@ export default function PowerTierProfile({
             <p className="text-sm text-muted-foreground mb-3">
               Upgrade to Pro to see the complete AI-generated business summary
             </p>
-            <Button size="sm">Upgrade to Pro</Button>
+            <Link to="/pricing">
+              <Button size="sm">Upgrade to Pro</Button>
+            </Link>
           </div>
         </div>
       );
@@ -290,7 +292,9 @@ export default function PowerTierProfile({
               <p className="text-sm text-muted-foreground mb-3">
                 Upgrade to Pro for enhanced service cards with descriptions and AI-powered content
               </p>
-              <Button size="sm">Upgrade to Pro</Button>
+              <Link to="/pricing">
+                <Button size="sm">Upgrade to Pro</Button>
+              </Link>
             </div>
           )}
         </div>
@@ -455,7 +459,6 @@ export default function PowerTierProfile({
               <TabsContent value="reviews" className="mt-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Customer Reviews</CardTitle>
                     {business.planTier === "power" && (
                       <CardDescription className="flex items-center gap-2">
                         <BarChart3 className="w-4 h-4" />

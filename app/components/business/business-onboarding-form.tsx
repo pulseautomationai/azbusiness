@@ -27,6 +27,10 @@ interface BusinessFormData {
   services: string[];
 }
 
+interface BusinessOnboardingFormProps {
+  onBusinessCreated?: (businessId: string) => void;
+}
+
 const ARIZONA_CITIES = [
   "Phoenix", "Tucson", "Mesa", "Chandler", "Scottsdale", "Glendale", "Gilbert", 
   "Tempe", "Peoria", "Surprise", "Yuma", "Avondale", "Flagstaff", "Goodyear", 
@@ -34,7 +38,7 @@ const ARIZONA_CITIES = [
   "Oro Valley", "Prescott", "Bullhead City", "Prescott Valley", "Apache Junction"
 ];
 
-export function BusinessOnboardingForm() {
+export function BusinessOnboardingForm({ onBusinessCreated }: BusinessOnboardingFormProps = {}) {
   const navigate = useNavigate();
   const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
@@ -134,12 +138,18 @@ export function BusinessOnboardingForm() {
         slug: generateSlug(formData.name),
         services: validServices,
         ownerId: user.id,
+        categoryId: formData.categoryId as any, // Type assertion for Convex ID
       };
 
-      await createBusiness(businessData);
+      const businessId = await createBusiness(businessData);
       
       toast.success("Business created successfully!");
-      navigate("/dashboard");
+      
+      if (onBusinessCreated) {
+        onBusinessCreated(businessId);
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error("Error creating business:", error);
       toast.error("Failed to create business. Please try again.");

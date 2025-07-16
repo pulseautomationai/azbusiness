@@ -5,7 +5,7 @@ import { getAuth } from "@clerk/react-router/ssr.server";
 import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
-import PowerTierProfile from "~/components/business/power-tier-profile";
+import SinglePageBusinessProfile from "~/components/business/single-page-business-profile";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../convex/_generated/api";
 import { SlugGenerator } from "~/utils/slug-generator";
@@ -180,7 +180,7 @@ export default function BusinessDetailPage() {
     <>
       <Header />
       <ComponentErrorBoundary componentName="Business Profile">
-        <PowerTierProfile 
+        <SinglePageBusinessProfile 
           business={business}
           relatedBusinesses={filteredRelatedBusinesses}
           reviews={[]} // Placeholder for now
