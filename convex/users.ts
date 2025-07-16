@@ -4,24 +4,13 @@ import { v } from "convex/values";
 export const findUserByToken = query({
   args: { tokenIdentifier: v.string() },
   handler: async (ctx, args) => {
-    // Get the user's identity from the auth context
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      return null;
-    }
-
-    // Check if we've already stored this identity before
+    // Use the provided tokenIdentifier parameter
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.subject))
+      .withIndex("by_token", (q) => q.eq("tokenIdentifier", args.tokenIdentifier))
       .unique();
 
-    if (user !== null) {
-      return user;
-    }
-
-    return null;
+    return user;
   },
 });
 
