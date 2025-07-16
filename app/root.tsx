@@ -18,9 +18,10 @@ import { HydrateFallback } from "./components/hydrate-fallback";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
-// Remove SSR loader for SPA mode
-export async function loader() {
-  return {};
+// SSR loader with proper Clerk authentication handling
+export async function loader(args: Route.LoaderArgs) {
+  const { rootAuthLoader } = await import("@clerk/react-router/ssr.server");
+  return rootAuthLoader(args);
 }
 export const links: Route.LinksFunction = () => [
   // DNS prefetch for external services
@@ -98,9 +99,10 @@ function PerformanceMonitor({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export default function App() {
+export default function App({ loaderData }: Route.ComponentProps) {
   return (
     <ClerkProvider
+      loaderData={loaderData}
       publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
       signUpFallbackRedirectUrl="/"
       signInFallbackRedirectUrl="/"
