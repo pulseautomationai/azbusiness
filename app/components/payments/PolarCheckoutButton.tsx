@@ -9,7 +9,7 @@ import { useToast } from "~/hooks/use-toast";
 interface PolarCheckoutButtonProps {
   planId: "starter" | "pro" | "power";
   planName: string;
-  priceId: string;
+  productId: string;
   amount: number;
   billingPeriod: "monthly" | "yearly";
   className?: string;
@@ -17,26 +17,26 @@ interface PolarCheckoutButtonProps {
   disabled?: boolean;
 }
 
-// Map plan IDs to price IDs for different billing periods
-const PLAN_PRICE_IDS = {
+// Map plan IDs to product IDs for different billing periods
+const PLAN_PRODUCT_IDS = {
   starter: {
-    monthly: import.meta.env.VITE_POLAR_STARTER_MONTHLY_PRICE_ID || "starter_monthly",
-    yearly: import.meta.env.VITE_POLAR_STARTER_YEARLY_PRICE_ID || "starter_yearly",
+    monthly: import.meta.env.VITE_POLAR_STARTER_MONTHLY_PRODUCT_ID || "starter_monthly",
+    yearly: import.meta.env.VITE_POLAR_STARTER_YEARLY_PRODUCT_ID || "starter_yearly",
   },
   pro: {
-    monthly: import.meta.env.VITE_POLAR_PRO_MONTHLY_PRICE_ID || "pro_monthly", 
-    yearly: import.meta.env.VITE_POLAR_PRO_YEARLY_PRICE_ID || "pro_yearly",
+    monthly: import.meta.env.VITE_POLAR_PRO_MONTHLY_PRODUCT_ID || "pro_monthly", 
+    yearly: import.meta.env.VITE_POLAR_PRO_YEARLY_PRODUCT_ID || "pro_yearly",
   },
   power: {
-    monthly: import.meta.env.VITE_POLAR_POWER_MONTHLY_PRICE_ID || "power_monthly",
-    yearly: import.meta.env.VITE_POLAR_POWER_YEARLY_PRICE_ID || "power_yearly",
+    monthly: import.meta.env.VITE_POLAR_POWER_MONTHLY_PRODUCT_ID || "power_monthly",
+    yearly: import.meta.env.VITE_POLAR_POWER_YEARLY_PRODUCT_ID || "power_yearly",
   },
 };
 
 export default function PolarCheckoutButton({
   planId,
   planName,
-  priceId,
+  productId,
   amount,
   billingPeriod,
   className = "",
@@ -68,20 +68,33 @@ export default function PolarCheckoutButton({
     setIsLoading(true);
     
     try {
-      // Use the appropriate price ID based on plan and billing period
-      const actualPriceId = PLAN_PRICE_IDS[planId][billingPeriod] || priceId;
+      // Use the appropriate product ID based on plan and billing period
+      const actualProductId = PLAN_PRODUCT_IDS[planId][billingPeriod] || productId;
+      
+      // Debug: Log all available product IDs
+      console.log("All available product IDs:", {
+        PLAN_PRODUCT_IDS,
+        envVars: {
+          STARTER_MONTHLY: import.meta.env.VITE_POLAR_STARTER_MONTHLY_PRODUCT_ID,
+          STARTER_YEARLY: import.meta.env.VITE_POLAR_STARTER_YEARLY_PRODUCT_ID,
+          PRO_MONTHLY: import.meta.env.VITE_POLAR_PRO_MONTHLY_PRODUCT_ID,
+          PRO_YEARLY: import.meta.env.VITE_POLAR_PRO_YEARLY_PRODUCT_ID,
+          POWER_MONTHLY: import.meta.env.VITE_POLAR_POWER_MONTHLY_PRODUCT_ID,
+          POWER_YEARLY: import.meta.env.VITE_POLAR_POWER_YEARLY_PRODUCT_ID,
+        }
+      });
       
       console.log("Creating checkout session for:", {
         planId,
         planName,
-        priceId: actualPriceId,
+        productId: actualProductId,
         amount,
         billingPeriod,
         userEmail: user.emailAddresses[0].emailAddress,
       });
 
       const checkoutUrl = await createCheckoutSession({
-        priceId: actualPriceId,
+        productId: actualProductId,
       });
 
       if (checkoutUrl) {
@@ -141,7 +154,7 @@ export function StarterCheckoutButton({
     <PolarCheckoutButton
       planId="starter"
       planName="Starter"
-      priceId={PLAN_PRICE_IDS.starter[billingPeriod]}
+      productId={PLAN_PRODUCT_IDS.starter[billingPeriod]}
       amount={billingPeriod === "yearly" ? 7 : 9}
       billingPeriod={billingPeriod}
       className={className}
@@ -164,7 +177,7 @@ export function ProCheckoutButton({
     <PolarCheckoutButton
       planId="pro"
       planName="Pro"
-      priceId={PLAN_PRICE_IDS.pro[billingPeriod]}
+      productId={PLAN_PRODUCT_IDS.pro[billingPeriod]}
       amount={billingPeriod === "yearly" ? 22 : 29}
       billingPeriod={billingPeriod}
       className={className}
@@ -187,7 +200,7 @@ export function PowerCheckoutButton({
     <PolarCheckoutButton
       planId="power"
       planName="Power"
-      priceId={PLAN_PRICE_IDS.power[billingPeriod]}
+      productId={PLAN_PRODUCT_IDS.power[billingPeriod]}
       amount={billingPeriod === "yearly" ? 73 : 97}
       billingPeriod={billingPeriod}
       className={className}

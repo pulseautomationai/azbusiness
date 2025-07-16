@@ -6,12 +6,12 @@ import { action, httpAction, mutation, query } from "./_generated/server";
 
 const createCheckout = async ({
   customerEmail,
-  productPriceId,
+  productId,
   successUrl,
   metadata,
 }: {
   customerEmail: string;
-  productPriceId: string;
+  productId: string;
   successUrl: string;
   metadata?: Record<string, string>;
 }) => {
@@ -24,34 +24,13 @@ const createCheckout = async ({
     accessToken: process.env.POLAR_ACCESS_TOKEN,
   });
 
-  // Get product ID from price ID
-  const { result: productsResult } = await polar.products.list({
-    organizationId: process.env.POLAR_ORGANIZATION_ID,
-    isArchived: false,
-  });
-
-  let productId = null;
-  for (const product of productsResult.items) {
-    const hasPrice = product.prices.some(
-      (price: any) => price.id === productPriceId
-    );
-    if (hasPrice) {
-      productId = product.id;
-      break;
-    }
-  }
-
-  if (!productId) {
-    throw new Error(`Product not found for price ID: ${productPriceId}`);
-  }
-
   const checkoutData = {
     products: [productId],
     successUrl: successUrl,
     customerEmail: customerEmail,
     metadata: {
       ...metadata,
-      priceId: productPriceId,
+      productId: productId,
     },
   };
 
@@ -130,9 +109,39 @@ export const getAvailablePlans = action({
   },
 });
 
+// Debug function to list all products and their prices
+export const debugPolarProducts = action({
+  handler: async (ctx) => {
+    const polar = new Polar({
+      server: (process.env.POLAR_SERVER as "sandbox" | "production") || "sandbox",
+      accessToken: process.env.POLAR_ACCESS_TOKEN,
+    });
+
+    const { result: productsResult } = await polar.products.list({
+      organizationId: process.env.POLAR_ORGANIZATION_ID,
+      isArchived: false,
+    });
+
+    console.log("Available products and prices:");
+    const debugInfo = productsResult.items.map(product => ({
+      productId: product.id,
+      productName: product.name,
+      prices: product.prices.map((price: any) => ({
+        priceId: price.id,
+        amount: price.priceAmount,
+        currency: price.priceCurrency,
+        interval: price.recurringInterval,
+      }))
+    }));
+
+    console.log(JSON.stringify(debugInfo, null, 2));
+    return debugInfo;
+  },
+});
+
 export const createCheckoutSession = action({
   args: {
-    priceId: v.string(),
+    productId: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -154,10 +163,23 @@ export const createCheckoutSession = action({
       }
     }
 
+    // Debug: Log the product ID being used
+    console.log(`Creating checkout for product ID: ${args.productId}`);
+    
+    // Debug: Log the environment variables
+    console.log("Environment variables:", {
+      FRONTEND_URL: process.env.FRONTEND_URL,
+      POLAR_SERVER: process.env.POLAR_SERVER,
+      POLAR_ORGANIZATION_ID: process.env.POLAR_ORGANIZATION_ID ? "Set" : "Missing",
+    });
+
+    const successUrl = `${process.env.FRONTEND_URL}/success`;
+    console.log("Success URL:", successUrl);
+
     const checkout = await createCheckout({
       customerEmail: user.email!,
-      productPriceId: args.priceId,
-      successUrl: `${process.env.FRONTEND_URL}/success`,
+      productId: args.productId,
+      successUrl: successUrl,
       metadata: {
         userId: user.tokenIdentifier,
       },
