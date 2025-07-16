@@ -4,18 +4,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Button } from "~/components/ui/button";
 import { ArrowRight, CheckCircle, Heart, Shield, Handshake, Users, ExternalLink, User, MapPin, Building2, Target, Star, TrendingUp, Sun } from "lucide-react";
 import { Link } from "react-router";
+import { SEOGenerator } from "~/utils/seo";
+import { generateMetaTags } from "~/components/seo/seo-meta";
 import type { Route } from "./+types/about";
 
 export function meta({}: Route.MetaArgs) {
   const title = "Why Choose Us - AZ Business Services";
   const description = "Meet John Schulenburg, founder of AZ Business Services. Learn why he built this platform to help Arizona businesses grow and connect with local customers.";
 
-  return [
-    { title },
-    { name: "description", content: description },
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
-  ];
+  // Create custom SEO for about page
+  const seo = {
+    title,
+    description,
+    keywords: "AZ Business Services, Arizona business directory, John Schulenburg, local businesses, about us, founder",
+    canonical: "https://azbusiness.services/about",
+    openGraph: {
+      title,
+      description,
+      type: "website" as const,
+      url: "https://azbusiness.services/about",
+      image: "/logo.png",
+      siteName: "AZ Business Services",
+    },
+    twitter: {
+      card: "summary" as const,
+      title,
+      description,
+      image: "/logo.png",
+      site: "@azbusiness",
+    },
+  };
+
+  const { metaTags } = generateMetaTags(seo);
+  return metaTags;
 }
 
 // Temporarily disabled for SPA mode
@@ -32,7 +53,7 @@ export default function AboutPage() {
       <Header />
       
       {/* Hero Section: Professional Presentation Focus */}
-      <section className="pt-32 pb-20 relative overflow-hidden bg-agave-cream">
+      <section className="pt-40 pb-20 relative overflow-hidden bg-agave-cream">
         {/* Subtle topographic pattern */}
         <div className="absolute inset-0 opacity-5">
           <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" className="absolute top-10 left-10 fill-prickly-pear-pink">
@@ -109,32 +130,37 @@ export default function AboutPage() {
             {/* Content */}
             <div className="flex-1 text-center lg:text-left">
               <h3 className="font-serif text-xl lg:text-2xl font-medium text-ironwood-charcoal mb-6">
-                The Problem with Lead Generation Platforms
+                My Background in Home Services
               </h3>
               
               <div className="space-y-6 text-base lg:text-lg leading-relaxed text-ironwood-charcoal">
                 <p>
-                  After watching too many Arizona contractors get frustrated with Thumbtack and Angi, I realized the real problem wasn't just the cost — it was the entire approach.
-                </p>
-                <p>
-                  Business owners were paying $80-100 for leads shared with 3-5 competitors, creating bidding wars that drove prices down and quality concerns up. Worse, these costs were unpredictable, making it impossible to budget for growth.
+                  I've spent years helping home service businesses grow through my automation company, <a href="https://pulseautomation.ai" target="_blank" rel="noopener noreferrer" className="text-ocotillo-red hover:text-ocotillo-red/80 underline">Pulse Automation</a>. Working with contractors across Arizona, I kept seeing the same frustration: expensive, shared leads from Thumbtack and Angi that created bidding wars and unpredictable costs.
                 </p>
                 
                 <h4 className="font-serif text-lg lg:text-xl font-medium text-ironwood-charcoal mt-8 mb-4">
-                  A Better Approach: Professional Presentation + Community Growth
+                  The Problem with Lead Generation Platforms
                 </h4>
                 
                 <p>
-                  AZ Business Services was created with a different philosophy: instead of buying expensive shared leads, invest in professional presentation that converts every visitor into an exclusive inquiry.
+                  After watching too many contractors struggle with $80-100 leads shared with 3-5 competitors, I realized the real problem wasn't just cost — it was the entire approach. These platforms create a race to the bottom that hurts quality businesses.
+                </p>
+                
+                <h4 className="font-serif text-lg lg:text-xl font-medium text-ironwood-charcoal mt-8 mb-4">
+                  A Better Philosophy
+                </h4>
+                
+                <p>
+                  I built AZ Business Services with a simple belief: invest in professional presentation that converts visitors into exclusive inquiries, instead of buying expensive shared leads.
                 </p>
                 
                 <div className="bg-agave-cream p-6 rounded-lg my-8">
-                  <h5 className="font-semibold text-ironwood-charcoal mb-4">Our approach is simple:</h5>
+                  <h5 className="font-semibold text-ironwood-charcoal mb-4">Our approach:</h5>
                   <ul className="space-y-2 text-ironwood-charcoal/80">
-                    <li>• Build a stunning professional presence that builds immediate trust</li>
-                    <li>• Position yourself to capture inquiries exclusively (never shared)</li>
-                    <li>• Pay predictable monthly rates instead of per-lead fees</li>
-                    <li>• Benefit as Arizona's business directory grows together</li>
+                    <li>• Professional presence that builds immediate trust</li>
+                    <li>• Exclusive inquiries (never shared with competitors)</li>
+                    <li>• Predictable monthly investment</li>
+                    <li>• AI-enhanced listings that showcase your expertise</li>
                   </ul>
                 </div>
                 
@@ -143,18 +169,18 @@ export default function AboutPage() {
                 </h4>
                 
                 <p>
-                  When a customer finds your business through our directory, they see a professional, verified, AI-enhanced profile that builds confidence. They contact you directly — not you plus 4 competitors.
+                  When customers find you through our directory, they see a professional, verified profile that builds confidence. They contact you directly — not you plus 4 competitors.
                 </p>
                 <p>
                   No bidding wars. No shared leads. No surprise costs. Just professional presentation that works.
                 </p>
                 <p>
-                  As more Arizona residents discover our directory, every business benefits from increased visibility while paying the same predictable rate.
+                  As Arizona's directory grows, every business benefits from increased visibility while paying the same predictable rate.
                 </p>
               </div>
               
               <p className="mt-8 text-sm font-medium text-ironwood-charcoal/70">
-                — John Schumberg, Founder of AZ Business Services
+                — John Schulenburg, Founder of AZ Business Services & <a href="https://pulseautomation.ai" target="_blank" rel="noopener noreferrer" className="text-ocotillo-red hover:text-ocotillo-red/80 underline">Pulse Automation</a>
               </p>
             </div>
           </div>
@@ -167,7 +193,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-serif text-3xl lg:text-4xl font-medium text-ironwood-charcoal mb-6">
-              Why Arizona Businesses Choose Professional Presentation Over Lead Buying
+              Why Arizona Businesses Choose AZ Business Services Over Lead Generation Platforms
             </h2>
           </div>
           
@@ -184,15 +210,15 @@ export default function AboutPage() {
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span>3-5 contractors compete</span>
+                    <span>3-5 contractors compete for every lead</span>
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span>Every inquiry (good or bad)</span>
+                    <span>Pay for bad leads too</span>
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span>Basic listing only</span>
+                    <span>Basic contractor profile only</span>
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
@@ -200,7 +226,7 @@ export default function AboutPage() {
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span>Comparison shopping</span>
+                    <span>Comparison shopping focus</span>
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
@@ -208,7 +234,7 @@ export default function AboutPage() {
                     <span className="text-red-500">❌</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Pay forever per lead</span>
+                    <span>No lasting business presence</span>
                     <span className="text-red-500">❌</span>
                   </div>
                 </div>
@@ -223,35 +249,35 @@ export default function AboutPage() {
                 </h3>
                 <div className="space-y-4 text-sm text-ironwood-charcoal/70">
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>$9-97/month flat rate</span>
+                    <span>$9-97/month predictable pricing</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>Direct contact only</span>
+                    <span>Exclusive leads (Power tier only)</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>Fixed monthly investment</span>
+                    <span>Professional AI-enhanced listings</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>AI-enhanced complete profile</span>
+                    <span>Featured category placement (Pro+)</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>Budget-friendly fixed rates</span>
+                    <span>Homepage featuring (Power)</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>Professional first impression</span>
+                    <span>AI business intelligence (Power)</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-prickly-pear-pink/20 pb-2">
-                    <span>Win with credibility</span>
+                    <span>Professional image galleries (Power)</span>
                     <span className="text-green-500">✅</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Build lasting online presence</span>
+                    <span>Lasting directory presence</span>
                     <span className="text-green-500">✅</span>
                   </div>
                 </div>

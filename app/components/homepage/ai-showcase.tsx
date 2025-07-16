@@ -9,11 +9,42 @@ export default function AIShowcase() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-medium text-ironwood-charcoal mb-4">
-            See What Our AI Intelligence Delivers
+            The Professional Difference: AI-Enhanced Business Listings
           </h2>
           <p className="text-lg text-ironwood-charcoal/70 mb-2">
             Real examples from Power tier customers
           </p>
+          
+          {/* Comparison Demo Section */}
+          <div className="mt-8 mb-12 text-center">
+            <h3 className="text-xl md:text-2xl font-semibold text-ironwood-charcoal mb-3">
+              Power vs Starter: See the Difference
+            </h3>
+            <p className="text-base text-ironwood-charcoal/70 mb-6">
+              Compare how the same business type looks with different plan tiers
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="bg-ocotillo-red hover:bg-ocotillo-red/90 text-white font-semibold shadow-md"
+              >
+                <Link to="/hvac-services/phoenix/reliance-heating-and-air-conditioning">
+                  View Power Example
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-2 border-ironwood-charcoal/60 text-ironwood-charcoal hover:bg-ironwood-charcoal hover:text-white font-semibold shadow-md transition-all"
+              >
+                <Link to="/hvac-services/phoenix/one-stop-heating-and-cooling-master-mechanical">
+                  View Starter Example
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Row 1: Professional Overview (Image Left, Text Right) */}

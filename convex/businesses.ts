@@ -189,55 +189,52 @@ export const getFeaturedBusinesses = query({
   },
 });
 
-// Search businesses
+// Search businesses - simplified version without search index
 export const searchBusinesses = query({
   args: {
-    searchTerm: v.string(),
-    citySlug: v.optional(v.string()),
-    categorySlug: v.optional(v.string()),
+    query: v.string(),
+    limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    // Get category and city IDs if provided
-    let categoryId: Id<"categories"> | undefined;
-    let cityName: string | undefined;
+    const limit = args.limit || 20;
+    const queryLower = args.query.toLowerCase();
 
-    if (args.categorySlug) {
-      const category = await ctx.db
-        .query("categories")
-        .withIndex("by_slug", (q) => q.eq("slug", args.categorySlug!))
-        .first();
-      categoryId = category?._id;
-    }
-
-    if (args.citySlug) {
-      const city = await ctx.db
-        .query("cities")
-        .withIndex("by_slug", (q) => q.eq("slug", args.citySlug!))
-        .first();
-      cityName = city?.name;
-    }
-
-    // Search with filters
-    const searchResults = await ctx.db
+    // Get all active businesses and filter them
+    const allBusinesses = await ctx.db
       .query("businesses")
-      .withSearchIndex("search_businesses", (q) => {
-        let search = q.search("name", args.searchTerm);
-        
-        if (cityName) {
-          search = search.eq("city", cityName);
-        }
-        if (categoryId) {
-          search = search.eq("categoryId", categoryId);
-        }
-        search = search.eq("active", true);
-        
-        return search;
-      })
+      .filter((q) => q.eq(q.field("active"), true))
       .collect();
 
-    // Add category info
+    // Filter businesses by search term (name, phone, address, description)
+    const filteredBusinesses = allBusinesses.filter(business => 
+      business.name.toLowerCase().includes(queryLower) ||
+      business.phone?.toLowerCase().includes(queryLower) ||
+      business.address?.toLowerCase().includes(queryLower) ||
+      business.description?.toLowerCase().includes(queryLower) ||
+      business.shortDescription?.toLowerCase().includes(queryLower) ||
+      business.city.toLowerCase().includes(queryLower)
+    );
+
+    // Sort by relevance (exact matches first, then partial matches)
+    filteredBusinesses.sort((a, b) => {
+      const aNameExact = a.name.toLowerCase() === queryLower;
+      const bNameExact = b.name.toLowerCase() === queryLower;
+      if (aNameExact && !bNameExact) return -1;
+      if (!aNameExact && bNameExact) return 1;
+
+      const aNameStart = a.name.toLowerCase().startsWith(queryLower);
+      const bNameStart = b.name.toLowerCase().startsWith(queryLower);
+      if (aNameStart && !bNameStart) return -1;
+      if (!aNameStart && bNameStart) return 1;
+
+      return b.rating - a.rating;
+    });
+
+    // Apply limit and add category info
+    const limitedResults = filteredBusinesses.slice(0, limit);
+    
     const resultsWithCategory = await Promise.all(
-      searchResults.map(async (business) => {
+      limitedResults.map(async (business) => {
         const category = await ctx.db.get(business.categoryId);
         return {
           ...business,
@@ -362,6 +359,69 @@ export const updateBusinessUrls = mutation({
   },
 });
 
+// Check for duplicate businesses
+export const checkDuplicateBusiness = mutation({
+  args: {
+    name: v.string(),
+    city: v.string(),
+    address: v.string(),
+    phone: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check for exact name match in same city
+    const exactMatch = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("name"), args.name))
+      .filter((q) => q.eq(q.field("city"), args.city))
+      .first();
+    
+    if (exactMatch) {
+      return exactMatch;
+    }
+    
+    // Check for similar name match (case insensitive)
+    const similarMatch = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("city"), args.city))
+      .collect();
+    
+    const nameToCheck = args.name.toLowerCase().trim();
+    const similarBusiness = similarMatch.find(business => {
+      const businessName = business.name.toLowerCase().trim();
+      return businessName === nameToCheck || 
+             businessName.includes(nameToCheck) || 
+             nameToCheck.includes(businessName);
+    });
+    
+    if (similarBusiness) {
+      return similarBusiness;
+    }
+    
+    // Check for same phone number
+    const phoneMatch = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("phone"), args.phone))
+      .first();
+    
+    if (phoneMatch) {
+      return phoneMatch;
+    }
+    
+    // Check for same address
+    const addressMatch = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("address"), args.address))
+      .filter((q) => q.eq(q.field("city"), args.city))
+      .first();
+    
+    if (addressMatch) {
+      return addressMatch;
+    }
+    
+    return null;
+  },
+});
+
 // Delete a business
 export const deleteBusiness = mutation({
   args: {
@@ -370,6 +430,51 @@ export const deleteBusiness = mutation({
   handler: async (ctx, args) => {
     await ctx.db.delete(args.businessId);
     return { success: true };
+  },
+});
+
+// Delete multiple businesses (bulk delete)
+export const deleteMultipleBusinesses = mutation({
+  args: {
+    businessIds: v.array(v.id("businesses")),
+  },
+  handler: async (ctx, args) => {
+    // Get current user for admin check
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Authentication required");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .unique();
+
+    if (!user || user.role !== "admin") {
+      throw new Error("Admin access required");
+    }
+
+    const results = [];
+    
+    for (const businessId of args.businessIds) {
+      try {
+        await ctx.db.delete(businessId);
+        results.push({ businessId, success: true });
+      } catch (error) {
+        results.push({ 
+          businessId, 
+          success: false, 
+          error: error instanceof Error ? error.message : String(error) 
+        });
+      }
+    }
+
+    return {
+      success: true,
+      results,
+      successCount: results.filter(r => r.success).length,
+      errorCount: results.filter(r => !r.success).length,
+    };
   },
 });
 

@@ -9,23 +9,11 @@ import SinglePageBusinessProfile from "~/components/business/single-page-busines
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../convex/_generated/api";
 import { SlugGenerator } from "~/utils/slug-generator";
+import { generateMetaForRoute } from "~/utils/seo-middleware";
 import type { Route } from "./+types/[$category].[$city].[$businessName]";
 
 export function meta({ params }: Route.MetaArgs) {
-  // Since the loader is disabled, we'll use a generic meta for now
-  const title = "Business Directory - AZ Business Services";
-  const description = "Discover local businesses in Arizona. Find professional services, read reviews, and connect with trusted providers.";
-
-  return [
-    { title },
-    { name: "description", content: description },
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
-    { property: "og:type", content: "website" },
-    { name: "twitter:title", content: title },
-    { name: "twitter:description", content: description },
-    { name: "twitter:card", content: "summary_large_image" },
-  ];
+  return generateMetaForRoute("business", params);
 }
 
 /*

@@ -9,19 +9,26 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { Badge } from "~/components/ui/badge";
+import { Checkbox } from "~/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "~/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff } from "lucide-react";
+import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff, Plus, ChevronDown, Trash, Settings, MoreHorizontal, Download, Copy } from "lucide-react";
 import { toast } from "~/hooks/use-toast";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { SlugGenerator } from "~/utils/slug-generator";
 
 export default function AdminBusinesses() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [planFilter, setPlanFilter] = useState<"all" | "free" | "pro" | "power">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [zipcodeFilter, setZipcodeFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  
+  // Bulk selection state
+  const [selectedBusinesses, setSelectedBusinesses] = useState<Set<Id<"businesses">>>(new Set());
+  const [isAllSelected, setIsAllSelected] = useState(false);
 
   // Get filter options
   const categories = useQuery(api.categories.getAllCategoriesForAdmin);
@@ -41,6 +48,8 @@ export default function AdminBusinesses() {
 
   const updateBusinessStatus = useMutation(api.businesses.updateBusinessStatus);
   const updateBusiness = useMutation(api.businesses.updateBusiness);
+  const deleteBusiness = useMutation(api.businesses.deleteBusiness);
+  const deleteMultipleBusinesses = useMutation(api.businesses.deleteMultipleBusinesses);
 
   const handleStatusToggle = async (businessId: Id<"businesses">, currentStatus: boolean) => {
     try {
@@ -101,6 +110,203 @@ export default function AdminBusinesses() {
     }
   };
 
+  const handleDeleteBusiness = async (businessId: Id<"businesses">, businessName: string) => {
+    if (!confirm(`Are you sure you want to delete "${businessName}"? This action cannot be undone and will remove the business listing page.`)) {
+      return;
+    }
+    
+    try {
+      await deleteBusiness({ businessId });
+      toast({
+        title: "Business deleted",
+        description: `${businessName} has been permanently deleted`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete business",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Bulk selection handlers
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedBusinesses(new Set());
+      setIsAllSelected(false);
+    } else {
+      const allIds = new Set(businesses?.map(b => b._id) || []);
+      setSelectedBusinesses(allIds);
+      setIsAllSelected(true);
+    }
+  };
+
+  const handleSelectBusiness = (businessId: Id<"businesses">) => {
+    const newSelection = new Set(selectedBusinesses);
+    if (newSelection.has(businessId)) {
+      newSelection.delete(businessId);
+    } else {
+      newSelection.add(businessId);
+    }
+    setSelectedBusinesses(newSelection);
+    setIsAllSelected(newSelection.size === businesses?.length);
+  };
+
+  // Bulk actions
+  const handleBulkDelete = async () => {
+    if (selectedBusinesses.size === 0) return;
+    
+    const selectedCount = selectedBusinesses.size;
+    if (!confirm(`Are you sure you want to delete ${selectedCount} businesses? This action cannot be undone and will remove their listing pages.`)) {
+      return;
+    }
+    
+    try {
+      await deleteMultipleBusinesses({ businessIds: Array.from(selectedBusinesses) });
+      setSelectedBusinesses(new Set());
+      setIsAllSelected(false);
+      toast({
+        title: "Businesses deleted",
+        description: `${selectedCount} businesses have been permanently deleted`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete some businesses",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBulkStatusUpdate = async (newStatus: boolean) => {
+    if (selectedBusinesses.size === 0) return;
+    
+    const action = newStatus ? "activate" : "deactivate";
+    const selectedCount = selectedBusinesses.size;
+    
+    try {
+      // Update each selected business
+      await Promise.all(
+        Array.from(selectedBusinesses).map(businessId =>
+          updateBusinessStatus({ businessId, action })
+        )
+      );
+      
+      setSelectedBusinesses(new Set());
+      setIsAllSelected(false);
+      toast({
+        title: `Businesses ${action}d`,
+        description: `${selectedCount} businesses have been ${action}d`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to ${action} some businesses`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBulkPlanUpdate = async (newPlan: string) => {
+    if (selectedBusinesses.size === 0) return;
+    
+    const selectedCount = selectedBusinesses.size;
+    
+    try {
+      // Update each selected business
+      await Promise.all(
+        Array.from(selectedBusinesses).map(businessId =>
+          updateBusiness({ businessId, updates: { planTier: newPlan } })
+        )
+      );
+      
+      setSelectedBusinesses(new Set());
+      setIsAllSelected(false);
+      toast({
+        title: "Plans updated",
+        description: `${selectedCount} businesses updated to ${newPlan} plan`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update some business plans",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCloneBusiness = async (businessId: Id<"businesses">, businessName: string) => {
+    try {
+      // For now, just show a message. In a full implementation, this would:
+      // 1. Fetch the business details
+      // 2. Navigate to create form with pre-filled data
+      toast({
+        title: "Clone feature coming soon",
+        description: `This will create a copy of "${businessName}"`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to clone business",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExportBusiness = async (businessId: Id<"businesses">, businessName: string) => {
+    try {
+      // Get the business data
+      const business = businesses?.find(b => b._id === businessId);
+      if (!business) return;
+      
+      // Create a cleaned version for export
+      const exportData = {
+        name: business.name,
+        address: business.address,
+        city: business.city,
+        state: business.state,
+        zip: business.zip,
+        phone: business.phone,
+        website: business.website,
+        email: business.email,
+        description: business.description,
+        services: business.services,
+        hours: business.hours,
+        category: business.category?.name,
+        planTier: business.planTier,
+        active: business.active,
+        verified: business.verified,
+        featured: business.featured,
+        rating: business.rating,
+        reviewCount: business.reviewCount,
+        exportedAt: new Date().toISOString(),
+      };
+      
+      // Convert to JSON and download
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `${businessName.toLowerCase().replace(/\s+/g, '-')}-export.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
+      toast({
+        title: "Business exported",
+        description: `Downloaded ${exportFileDefaultName}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export business data",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getPlanBadgeColor = (planTier: string) => {
     switch (planTier) {
       case "power":
@@ -134,6 +340,50 @@ export default function AdminBusinesses() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {selectedBusinesses.size > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button variant="outline">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Actions ({selectedBusinesses.size})
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate(true)}>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Activate Selected
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate(false)}>
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Deactivate Selected
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkPlanUpdate("free")}>
+                  <Badge className="h-4 w-4 mr-2" />
+                  Set to Free Plan
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkPlanUpdate("pro")}>
+                  <Badge className="h-4 w-4 mr-2" />
+                  Set to Pro Plan
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkPlanUpdate("power")}>
+                  <Badge className="h-4 w-4 mr-2" />
+                  Set to Power Plan
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={handleBulkDelete}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete Selected
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          <Button onClick={() => navigate("/admin/businesses/create")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Business
+          </Button>
           <Badge variant="outline">{businesses.length} businesses</Badge>
         </div>
       </div>
@@ -239,8 +489,17 @@ export default function AdminBusinesses() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all businesses"
+                  />
+                </TableHead>
                 <TableHead>Business</TableHead>
                 <TableHead>Category</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead>ZIP</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Featured</TableHead>
@@ -251,15 +510,31 @@ export default function AdminBusinesses() {
               {businesses.map((business: any) => (
                 <TableRow key={business._id}>
                   <TableCell>
+                    <Checkbox
+                      checked={selectedBusinesses.has(business._id)}
+                      onCheckedChange={() => handleSelectBusiness(business._id)}
+                      aria-label={`Select ${business.name}`}
+                    />
+                  </TableCell>
+                  <TableCell>
                     <div>
                       <p className="font-medium">{business.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {business.city}, {business.state}
+                        {business.address}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell>
                     {business.category?.name || "Uncategorized"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      <p className="font-medium">{business.city}</p>
+                      <p className="text-muted-foreground">{business.state}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm font-mono">{business.zip}</span>
                   </TableCell>
                   <TableCell>
                     <Select
@@ -305,27 +580,58 @@ export default function AdminBusinesses() {
                     </Button>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link to={(() => {
-                          // Use urlPath if available, otherwise generate URL using SlugGenerator
-                          if (business.urlPath) {
-                            return business.urlPath;
-                          }
-                          const categorySlug = SlugGenerator.generateCategorySlug(business.category?.name || 'uncategorized');
-                          const citySlug = SlugGenerator.generateCitySlug(business.city);
-                          const businessSlug = SlugGenerator.generateBusinessNameSlug(business.name);
-                          return `/${categorySlug}/${citySlug}/${businessSlug}`;
-                        })()}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link to={`/admin/businesses/edit/${business._id}`}>
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            // Use urlPath if available, otherwise generate URL using SlugGenerator
+                            let url;
+                            if (business.urlPath) {
+                              url = business.urlPath;
+                            } else {
+                              const categorySlug = SlugGenerator.generateCategorySlug(business.category?.name || 'uncategorized');
+                              const citySlug = SlugGenerator.generateCitySlug(business.city);
+                              const businessSlug = SlugGenerator.generateBusinessNameSlug(business.name);
+                              url = `/${categorySlug}/${citySlug}/${businessSlug}`;
+                            }
+                            window.open(url, '_blank');
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Public Page
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => {
+                            navigate(`/admin/businesses/edit/${business._id}`);
+                          }}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleCloneBusiness(business._id, business.name)}>
+                          <Copy className="h-4 w-4 mr-2" />
+                          Clone Business
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleExportBusiness(business._id, business.name)}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Export Data
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteBusiness(business._id, business.name)}
+                          className="text-red-600 hover:text-red-700 focus:text-red-700"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Business
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

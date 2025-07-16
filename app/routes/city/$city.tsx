@@ -6,26 +6,11 @@ import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
 import CityPageContent from "~/components/city/city-page-content";
 import { api } from "../../../convex/_generated/api";
+import { generateMetaForRoute } from "~/utils/seo-middleware";
 import type { Route } from "./+types/$city";
 
 export function meta({ params }: Route.MetaArgs) {
-  // Convert slug to title case for display
-  const cityName = params.city
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-  
-  const title = `${cityName}, AZ - Local Service Providers | AZ Business Services`;
-  const description = `Find trusted home service professionals in ${cityName}, Arizona. Browse HVAC, plumbing, electrical, and more. Compare ratings, read reviews, get quotes.`;
-
-  return [
-    { title },
-    { name: "description", content: description },
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
-    { name: "twitter:title", content: title },
-    { name: "twitter:description", content: description },
-  ];
+  return generateMetaForRoute("city", params);
 }
 
 // Temporarily disabled for SPA mode

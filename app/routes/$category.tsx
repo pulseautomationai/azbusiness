@@ -5,26 +5,11 @@ import Footer from "~/components/homepage/footer";
 import CategoryPageContent from "~/components/category/category-page-content";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../convex/_generated/api";
+import { generateMetaForRoute } from "~/utils/seo-middleware";
 import type { Route } from "./+types/$category";
 
 export function meta({ params }: Route.MetaArgs) {
-  // Convert slug to title case for display
-  const categoryName = params.category
-    .split("-")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-  
-  const title = `${categoryName} in Arizona - Find Local Professionals | AZ Business Services`;
-  const description = `Find reliable ${categoryName.toLowerCase()} specialists in Arizona. Compare top-rated local professionals, read reviews, and get quotes for your project.`;
-
-  return [
-    { title },
-    { name: "description", content: description },
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
-    { name: "twitter:title", content: title },
-    { name: "twitter:description", content: description },
-  ];
+  return generateMetaForRoute("category", params);
 }
 
 // Temporarily disabled for SPA mode

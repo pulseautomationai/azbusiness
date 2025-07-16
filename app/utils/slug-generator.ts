@@ -107,6 +107,37 @@ export class SlugGenerator {
   static generateShortDescription(businessName: string, categoryName: string, cityName: string): string {
     return `${businessName} - ${categoryName} in ${cityName}, Arizona`;
   }
+
+  /**
+   * Convert slug back to formatted name
+   */
+  static formatSlugToName(slug: string): string {
+    return slug
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  /**
+   * Convert business name slug back to formatted business name
+   */
+  static generateBusinessNameFromSlug(slug: string): string {
+    return this.formatSlugToName(slug);
+  }
+
+  /**
+   * Convert city slug back to formatted city name
+   */
+  static generateCityFromSlug(slug: string): string {
+    return this.formatSlugToName(slug);
+  }
+
+  /**
+   * Convert category slug back to formatted category name
+   */
+  static generateCategoryFromSlug(slug: string): string {
+    return this.formatSlugToName(slug);
+  }
 }
 
 export default SlugGenerator;

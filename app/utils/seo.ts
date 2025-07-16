@@ -26,7 +26,7 @@ export interface SEOMetadata {
 export class SEOGenerator {
   private static readonly SITE_NAME = "AZ Business Services";
   private static readonly SITE_URL = "https://azbusiness.services";
-  private static readonly DEFAULT_IMAGE = "/favicon.png";
+  private static readonly DEFAULT_IMAGE = "/logo.png";
   private static readonly TWITTER_HANDLE = "@azbusiness";
 
   static generateHomepageSEO(): SEOMetadata {
@@ -329,7 +329,7 @@ export class SEOGenerator {
         url: this.SITE_URL,
         logo: {
           "@type": "ImageObject",
-          url: `${this.SITE_URL}/favicon.png`,
+          url: `${this.SITE_URL}/logo.png`,
         },
       },
       datePublished: post.publishedAt,
