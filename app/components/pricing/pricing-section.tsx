@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import FAQSection from "~/components/ui/faq-section";
-// Temporarily disabled Polar checkout buttons to fix pricing page errors
-// import { StarterCheckoutButton, ProCheckoutButton, PowerCheckoutButton } from "~/components/payments/PolarCheckoutButton";
+import { StarterCheckoutButton, ProCheckoutButton, PowerCheckoutButton } from "~/components/payments/PolarCheckoutButton";
 
 interface PricingSectionProps {
   isSignedIn: boolean;
@@ -292,21 +291,30 @@ export default function PricingSection({ isSignedIn }: PricingSectionProps) {
                   </div>
                   
                   <div className="mt-8">
-                    {/* Temporarily using plain buttons until Polar checkout is fixed */}
-                    <Button
-                      asChild
-                      className={`w-full py-3 text-sm font-semibold transition-all duration-200 ${
-                        plan.id === 'starter' 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
-                          : plan.id === 'pro'
-                          ? 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg' 
-                          : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1'
-                      }`}
-                    >
-                      <Link to="/contact">
+                    {plan.id === 'starter' && (
+                      <StarterCheckoutButton
+                        billingPeriod={billingPeriod}
+                        className="w-full py-3 text-sm font-semibold transition-all duration-200 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
+                      >
                         {plan.cta}
-                      </Link>
-                    </Button>
+                      </StarterCheckoutButton>
+                    )}
+                    {plan.id === 'pro' && (
+                      <ProCheckoutButton
+                        billingPeriod={billingPeriod}
+                        className="w-full py-3 text-sm font-semibold transition-all duration-200 bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg"
+                      >
+                        {plan.cta}
+                      </ProCheckoutButton>
+                    )}
+                    {plan.id === 'power' && (
+                      <PowerCheckoutButton
+                        billingPeriod={billingPeriod}
+                        className="w-full py-3 text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      >
+                        {plan.cta}
+                      </PowerCheckoutButton>
+                    )}
                   </div>
                 </div>
               </div>
