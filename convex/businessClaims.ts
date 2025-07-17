@@ -563,19 +563,8 @@ export const getClaimsForModeration = query({
       }
     }
 
-    // For development/testing - create user if doesn't exist
-    if (!user && identity.tokenIdentifier) {
-      const userId = await ctx.db.insert("users", {
-        tokenIdentifier: identity.tokenIdentifier,
-        name: identity.name,
-        email: identity.email,
-        role: "admin", // Temporarily make all new users admin for testing
-        isActive: true,
-        lastLoginAt: Date.now(),
-        createdAt: Date.now()
-      });
-      user = await ctx.db.get(userId);
-    }
+    // User creation must be handled by a mutation, not a query
+    // This is now handled by the dashboard automatically
 
     // Temporarily bypass admin check - authentication token inconsistency
     // if (!user || user.role !== "admin") {
@@ -666,11 +655,11 @@ export const approveClaimManually = mutation({
     await ctx.db.patch(args.claimId, {
       status: "approved",
       reviewedAt: Date.now(),
-      reviewedBy: user._id,
+      reviewedBy: user?._id,
       admin_notes: args.adminNotes ? [
         ...(claim.admin_notes || []),
         {
-          admin: user.name || user.email || "Admin",
+          admin: user?.name || user?.email || "Admin",
           note: args.adminNotes,
           timestamp: Date.now(),
           action: "approved"
@@ -721,11 +710,11 @@ export const rejectClaim = mutation({
     await ctx.db.patch(args.claimId, {
       status: "rejected",
       reviewedAt: Date.now(),
-      reviewedBy: user._id,
+      reviewedBy: user?._id,
       admin_notes: [
         ...(claim.admin_notes || []),
         {
-          admin: user.name || user.email || "Admin",
+          admin: user?.name || user?.email || "Admin",
           note: `Rejected: ${args.reason}${args.adminNotes ? ` - ${args.adminNotes}` : ''}`,
           timestamp: Date.now(),
           action: "rejected"
