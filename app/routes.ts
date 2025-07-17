@@ -44,6 +44,7 @@ export default [
   route("terms", "routes/terms.tsx"),
   route("terms-of-service", "routes/terms-of-service.tsx"),
   
+  
   // SEO routes (handled by static files in public/ directory)
   route("test", "routes/test.ts"),
   
