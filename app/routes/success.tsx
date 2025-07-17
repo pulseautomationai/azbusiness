@@ -28,19 +28,23 @@ export default function Success() {
   }, [isSignedIn]); // upsertUser is stable and doesn't need to be in deps
 
   if (!isSignedIn) {
+    console.log("User not signed in on success page");
     return (
       <section className="flex flex-col items-center justify-center min-h-screen px-4">
         <Card className="max-w-md w-full text-center">
           <CardHeader>
-            <CardTitle className="text-2xl">Access Denied</CardTitle>
+            <CardTitle className="text-2xl">Authentication Required</CardTitle>
             <CardDescription>
-              Please sign in to view your subscription details.
+              Please sign in to view your subscription details. Your payment was successful - you just need to sign in to complete the process.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <Button asChild className="w-full">
-              <Link to="/sign-in">Sign In</Link>
+              <Link to="/sign-in?redirect=/success">Sign In</Link>
             </Button>
+            <p className="text-sm text-muted-foreground">
+              If you're having trouble, try refreshing this page or contact support.
+            </p>
           </CardContent>
         </Card>
       </section>
@@ -48,11 +52,24 @@ export default function Success() {
   }
 
   if (!subscription) {
+    console.log("No subscription found for user, still loading...");
     return (
       <section className="flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Loading your subscription details...</span>
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Loading your subscription details...</span>
+          </div>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            Your payment was processed successfully. We're checking for your subscription details - this usually takes just a few seconds.
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={() => window.location.reload()}
+            className="mt-4"
+          >
+            Refresh Page
+          </Button>
         </div>
       </section>
     );

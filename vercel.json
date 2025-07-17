@@ -1,17 +1,4 @@
 {
-  "functions": {
-    "app/routes/api/webhook.ts": {
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/payments/webhook",
-      "destination": "https://brainy-mole-762.convex.cloud/payments/webhook"
-    },
-    {
-      "source": "/payments/webhook/test", 
-      "destination": "https://brainy-mole-762.convex.cloud/payments/webhook/test"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "build/client"
 }
