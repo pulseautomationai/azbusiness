@@ -40,6 +40,8 @@ const createCheckout = async ({
   );
 
   const result = await polar.checkouts.create(checkoutData);
+  console.log("Checkout created, URL:", result.url);
+  console.log("Checkout ID:", result.id);
   return result;
 };
 
@@ -321,6 +323,9 @@ export const handleWebhookEvent = mutation({
       switch (eventType) {
         case "subscription.created":
           console.log(`Processing subscription.created for user: ${eventData.metadata?.userId}`);
+          console.log("Full webhook data:", JSON.stringify(eventData, null, 2));
+          console.log("Metadata received:", JSON.stringify(eventData.metadata, null, 2));
+          
           // Insert new subscription
           await ctx.db.insert("subscriptions", {
             polarId: eventData.id,
