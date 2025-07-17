@@ -4,15 +4,6 @@
   "functions": {
     "build/server/index.js": {
       "runtime": "nodejs18.x"
-    },
-    "api/webhook.ts": {
-      "runtime": "nodejs18.x"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/payments/webhook",
-      "destination": "/api/webhook"
-    }
-  ]
+  }
 }
