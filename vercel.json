@@ -1,9 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "build/client",
-  "functions": {
-    "build/server/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  "outputDirectory": "build/client"
 }
