@@ -1,34 +1,17 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "build/client",
-  "routes": [
+  "functions": {
+    "app/routes/api/webhook.ts": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
     {
-      "src": "/payments/webhook",
-      "dest": "https://brainy-mole-762.convex.cloud/payments/webhook"
+      "source": "/payments/webhook",
+      "destination": "https://brainy-mole-762.convex.cloud/payments/webhook"
     },
     {
-      "src": "/payments/webhook/test",
-      "dest": "https://brainy-mole-762.convex.cloud/payments/webhook/test"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "https://brainy-mole-762.convex.cloud/api/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/logo.png",
-      "dest": "/logo.png"
-    },
-    {
-      "src": "/(.*\\.(png|jpg|jpeg|gif|svg|ico|css|js))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/payments/webhook/test", 
+      "destination": "https://brainy-mole-762.convex.cloud/payments/webhook/test"
     }
   ]
 }
