@@ -3,6 +3,14 @@
   "outputDirectory": "build/client",
   "routes": [
     {
+      "src": "/payments/webhook/(.*)",
+      "dest": "https://brainy-mole-762.convex.cloud/payments/webhook/$1"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "https://brainy-mole-762.convex.cloud/api/$1"
+    },
+    {
       "src": "/assets/(.*)",
       "dest": "/assets/$1"
     },
