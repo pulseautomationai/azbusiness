@@ -7,8 +7,8 @@ import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 const menuItems = [
-  // { name: "Blog", href: "/blog" }, // Temporarily hidden until blog section is developed
-  { name: "Pricing", href: "/pricing" },
+  { name: "How It Works", href: "/about" },
+  { name: "About", href: "/about" },
 ];
 
 const browseItems = [
@@ -128,15 +128,17 @@ export const Header = () => {
                   )}
                 </li>
                 
-                {/* Why Choose Us */}
+                {/* For Business Owners */}
                 <li>
                   <Link
-                    to="/about"
-                    onClick={() => handleNavClick("/about")}
-                    className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
+                    to="/for-businesses"
+                    onClick={() => handleNavClick("/for-businesses")}
+                    className="block duration-150 transition-colors"
                     prefetch="viewport"
                   >
-                    <span>Why Choose Us</span>
+                    <span className="bg-prickly-pear-pink text-ironwood-charcoal px-4 py-2 rounded-lg text-sm font-medium hover:bg-prickly-pear-pink/80 transition-colors inline-block">
+                      For Business Owners
+                    </span>
                   </Link>
                 </li>
                 
@@ -178,15 +180,15 @@ export const Header = () => {
                     </ul>
                   </li>
                   
-                  {/* Why Choose Us */}
+                  {/* For Business Owners */}
                   <li>
                     <Link
-                      to="/about"
-                      onClick={() => handleNavClick("/about")}
+                      to="/for-businesses"
+                      onClick={() => handleNavClick("/for-businesses")}
                       className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
                       prefetch="viewport"
                     >
-                      <span>Why Choose Us</span>
+                      <span>For Business Owners</span>
                     </Link>
                   </li>
                   

@@ -73,10 +73,10 @@ export default function FeaturedBusinesses() {
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <div className="mb-12 text-center">
             <h2 className="font-serif text-3xl md:text-4xl font-medium text-ironwood-charcoal">
-              Featured Businesses
+              Top-Rated Pros Near You
             </h2>
             <p className="mt-4 text-lg text-ironwood-charcoal/70">
-              Top-rated service providers ready to help
+              Discover Arizona's most trusted service professionals
             </p>
           </div>
           <ComponentLoading text="Loading featured businesses..." />
@@ -90,11 +90,24 @@ export default function FeaturedBusinesses() {
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="mb-12 text-center">
           <h2 className="font-serif text-3xl md:text-4xl font-medium text-ironwood-charcoal">
-            Featured Businesses
+            Top-Rated Pros Near You
           </h2>
           <p className="mt-4 text-lg text-ironwood-charcoal/70">
-            Top-rated service providers ready to help
+            Discover Arizona's most trusted service professionals
           </p>
+          
+          {/* Filter tabs */}
+          <div className="flex justify-center gap-4 mt-6">
+            <button className="px-4 py-2 text-sm font-medium text-ocotillo-red border-b-2 border-ocotillo-red">
+              All Categories
+            </button>
+            <button className="px-4 py-2 text-sm font-medium text-ironwood-charcoal/60 hover:text-ironwood-charcoal">
+              Most Popular
+            </button>
+            <button className="px-4 py-2 text-sm font-medium text-ironwood-charcoal/60 hover:text-ironwood-charcoal">
+              Newest Reviews
+            </button>
+          </div>
         </div>
 
         <div className="relative">

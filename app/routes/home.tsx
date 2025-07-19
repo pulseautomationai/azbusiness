@@ -2,11 +2,13 @@ import { getAuth } from "@clerk/react-router/ssr.server";
 import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import HeroSection from "~/components/homepage/hero";
-import BusinessOwnerHeader from "~/components/homepage/business-owner-header";
-import ComparisonTable from "~/components/homepage/comparison-table";
-import AIShowcase from "~/components/homepage/ai-showcase";
-import CTACards from "~/components/homepage/cta-cards";
-import FeaturedBusinesses from "~/components/homepage/featured-businesses";
+import TopPerformers from "~/components/homepage/top-performers";
+import BusinessRankingsTable from "~/components/homepage/business-rankings-table";
+import HowItWorks from "~/components/homepage/how-it-works";
+import CityChampions from "~/components/homepage/city-champions";
+import SmartRecommendations from "~/components/homepage/smart-recommendations";
+import SuccessStories from "~/components/homepage/success-stories";
+import SocialProof from "~/components/homepage/social-proof";
 import Footer from "~/components/homepage/footer";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { withConvexRetry } from "~/utils/retry";
@@ -14,7 +16,7 @@ import { SEOGenerator } from "~/utils/seo";
 import { generateMetaTags } from "~/components/seo/seo-meta";
 import { api } from "../../convex/_generated/api";
 import type { Route } from "./+types/home";
-import FAQSection from "~/components/ui/faq-section";
+import ConsumerFAQ from "~/components/homepage/consumer-faq";
 
 export function meta({}: Route.MetaArgs) {
   const seo = SEOGenerator.generateHomepageSEO();
@@ -106,20 +108,29 @@ export default function Home() {
       <ComponentErrorBoundary componentName="Hero Section">
         <HeroSection />
       </ComponentErrorBoundary>
-      <ComponentErrorBoundary componentName="Plan Cards">
-        <CTACards />
+      <ComponentErrorBoundary componentName="Top Performers">
+        <TopPerformers />
       </ComponentErrorBoundary>
-      <ComponentErrorBoundary componentName="Comparison Table">
-        <ComparisonTable />
+      <ComponentErrorBoundary componentName="Business Rankings Table">
+        <BusinessRankingsTable />
       </ComponentErrorBoundary>
-      <ComponentErrorBoundary componentName="AI Showcase">
-        <AIShowcase />
+      <ComponentErrorBoundary componentName="How It Works">
+        <HowItWorks />
       </ComponentErrorBoundary>
-      <ComponentErrorBoundary componentName="Featured Businesses">
-        <FeaturedBusinesses />
+      <ComponentErrorBoundary componentName="City Champions">
+        <CityChampions />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="Smart Recommendations">
+        <SmartRecommendations />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="Success Stories">
+        <SuccessStories />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="Social Proof">
+        <SocialProof />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="FAQ Section">
-        <FAQSection className="bg-agave-cream" />
+        <ConsumerFAQ className="bg-agave-cream" />
       </ComponentErrorBoundary>
       <Footer />
     </>

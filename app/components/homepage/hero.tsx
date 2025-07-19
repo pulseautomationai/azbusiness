@@ -51,15 +51,31 @@ export default function HeroSection() {
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="font-serif text-5xl md:text-6xl lg:text-6xl font-medium text-ironwood-charcoal mb-6 relative">
-            Arizona's Most Trusted <span className="text-ocotillo-red">Local Pros</span> — All in One Place
+            Find Arizona's Most Trusted <span className="text-ocotillo-red">Local Pros</span>
             {/* Subtle text shadow for depth */}
             <div className="absolute inset-0 font-serif text-5xl md:text-6xl lg:text-6xl font-medium text-ocotillo-red/5 translate-x-1 translate-y-1 -z-10">
-              Arizona's Most Trusted Local Pros — All in One Place
+              Find Arizona's Most Trusted Local Pros
             </div>
           </h1>
-          <p className="text-lg text-ironwood-charcoal/80 mb-12 relative z-10">
-            Verified, reviewed, and ready to help — connect instantly with top-rated service providers near you.
+          <p className="text-lg text-ironwood-charcoal/80 mb-8 relative z-10">
+            Verified professionals. Real reviews. Right in your neighborhood.
           </p>
+
+          {/* Trust indicators */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-ironwood-charcoal/70 mb-8">
+            <div className="flex items-center gap-2">
+              <span className="text-cholla-green">✓</span>
+              <span>500+ Verified Businesses</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cholla-green">✓</span>
+              <span>15,000+ Customer Reviews</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cholla-green">✓</span>
+              <span>Arizona-Only Focus</span>
+            </div>
+          </div>
 
           {/* Integrated Search Widget */}
           <div className="mt-8 relative z-10">
