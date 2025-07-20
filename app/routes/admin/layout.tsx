@@ -11,7 +11,9 @@ import {
   IconSettings, 
   IconArrowLeft,
   IconUsers,
-  IconTags
+  IconTags,
+  IconUpload,
+  IconTestPipe
 } from "@tabler/icons-react";
 
 // Admin-specific sidebar data
@@ -33,6 +35,11 @@ const adminSidebarData = {
       icon: IconBuilding,
     },
     {
+      title: "Import Management",
+      url: "/admin/imports",
+      icon: IconUpload,
+    },
+    {
       title: "Customers",
       url: "/admin/customers",
       icon: IconUsers,
@@ -41,6 +48,11 @@ const adminSidebarData = {
       title: "Categories",
       url: "/admin/categories",
       icon: IconTags,
+    },
+    {
+      title: "AI Ranking Tests",
+      url: "/admin/ai-ranking-tests",
+      icon: IconTestPipe,
     },
   ],
   navSecondary: [

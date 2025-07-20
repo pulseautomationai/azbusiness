@@ -69,11 +69,11 @@ A professional business directory platform for Arizona service providers, featur
 - **Recharts** - Data visualization for analytics
 
 ### Backend & Services
-- **Convex** - Real-time database and serverless functions
+- **Convex** - Real-time database and serverless functions with multi-source data architecture
 - **Clerk** - Authentication and user management
 - **Polar.sh** - Subscription billing and payments
 - **OpenAI GPT-4** - AI content generation and enhancement
-- **Google My Business API** - Business verification and data
+- **Google My Business API** - Business verification, data sync, and real-time review integration
 
 ### Deployment
 - **Vercel** - Production hosting and deployment
@@ -88,7 +88,7 @@ A professional business directory platform for Arizona service providers, featur
 - **Single-page layout** with professional overview, services, reviews, and insights
 - **Plan-based feature gating** with contextual upgrade prompts
 - **AI content enhancement** for professional presentation
-- **Review intelligence** with sentiment analysis and keyword extraction
+- **Multi-source review intelligence** with sentiment analysis, keyword extraction, and source tracking
 
 #### Homepage Experience
 - **Hero section** with customer search functionality
@@ -101,16 +101,33 @@ A professional business directory platform for Arizona service providers, featur
 #### Business Claiming System
 - **Unified claiming flow** from discovery to plan selection
 - **Smart duplicate detection** prevents unnecessary business creation
-- **GMB OAuth integration** for instant verification
+- **GMB OAuth integration** for instant verification and data sync
 - **Document upload verification** as alternative method
 - **Post-claim onboarding** with welcome screen and next steps
 - **Seamless plan selection** with competitive advantages highlighted
+
+#### Multi-Source Data Management (NEW)
+- **Intelligent data handling** from GMB API, admin imports, and manual entry
+- **Source-aware architecture** without database redundancy
+- **Priority-based conflict resolution** (GMB > Admin > Manual > System)
+- **Field-level source preferences** and locking capabilities
+- **Complete audit trail** for all data changes and imports
+- **Real-time GMB review sync** with sentiment analysis
 
 #### Admin Dashboard
 - **Business claim moderation** with GMB OAuth verification
 - **User management** with role-based permissions
 - **Analytics and reporting** with MRR/ARR tracking
 - **Platform health monitoring** and performance metrics
+- **Import QA & Validation System** - Comprehensive post-import quality assurance
+
+#### Import QA & Validation System (NEW)
+- **6-category validation** covering database integrity, data quality, SEO compliance, sitemap integration, functional systems, and performance
+- **Scoring system** with weighted assessments (0-100) for import quality
+- **Real-time validation UI** integrated into Import Manager with progress tracking
+- **CLI validation tool** for batch testing and automation
+- **Export capabilities** with JSON/CSV reporting for detailed analysis
+- **Sample business selection** for manual quality verification
 
 ## 📁 Project Structure
 
@@ -121,6 +138,8 @@ app/
 │   ├── business/              # Business profile components
 │   │   ├── single-page-business-profile.tsx    # Main profile layout
 │   │   ├── disabled-contact-form.tsx           # Lead capture form
+│   │   ├── DataSourceManager.tsx               # Multi-source data management UI
+│   │   ├── ReviewManagement.tsx                # Multi-source review display & analytics
 │   │   └── tabs/              # Tab content (Overview, Services, Reviews, Insights)
 │   ├── homepage/              # Homepage sections
 │   │   ├── hero.tsx           # Customer search interface
@@ -129,6 +148,10 @@ app/
 │   │   ├── ai-showcase.tsx    # AI capabilities showcase
 │   │   └── featured-businesses.tsx
 │   ├── admin/                 # Admin dashboard components
+│   │   ├── ImportManager.tsx               # CSV import with validation integration
+│   │   ├── ImportValidation.tsx            # Detailed validation results display
+│   │   ├── ImportHistory.tsx               # Import history with validation status
+│   │   └── DataSourceManager.tsx           # Multi-source data management
 │   └── FeatureGate.tsx        # Plan-based feature visibility
 ├── routes/
 │   ├── admin/                 # Admin dashboard routes
@@ -136,16 +159,30 @@ app/
 │   ├── home.tsx               # Homepage
 │   ├── pricing.tsx            # Pricing page
 │   └── about.tsx              # About page
-└── hooks/
-    ├── usePlanFeatures.ts     # Feature detection
-    └── useAnalyticsTracking.ts # Event tracking
+├── hooks/
+│   ├── usePlanFeatures.ts     # Feature detection
+│   └── useAnalyticsTracking.ts # Event tracking
+└── utils/
+    └── gmb-oauth.ts           # GMB API integration with review endpoints
 
 convex/
 ├── businesses.ts              # Business data management
 ├── businessClaims.ts          # Claim verification system
+├── gmbReviews.ts              # GMB review sync and management functions
+├── importValidation.ts        # Import QA validation system
+├── batchImport.ts             # Import batch management
 ├── users.ts                   # User management
 ├── makeAdmin.ts               # Admin access controls
-└── schema.ts                  # Database schema
+└── schema.ts                  # Multi-source database schema
+
+scripts/
+└── validate-import.ts         # CLI validation tool
+
+documentation/
+├── IMPORT_QA_README.md        # Import validation system documentation
+├── DB_SCHEMA_README.md        # Complete multi-source data architecture
+├── CLAUDE.md                  # Technical documentation and project status
+└── README.md                  # This file
 ```
 
 ## 🚀 Getting Started
@@ -224,6 +261,12 @@ npm run typecheck              # TypeScript validation
 npm run import-csv             # Import business data
 npm run migrate-urls           # Update business URL structure
 npm run featured-businesses    # Manage featured listings
+
+# Import QA & Validation
+npm run validate-import        # CLI validation tool for import quality assurance
+
+# Multi-Source Data Features
+# See DB_SCHEMA_README.md for complete documentation
 ```
 
 ### Important Notes
@@ -232,6 +275,9 @@ npm run featured-businesses    # Manage featured listings
 - **Admin access**: Use `/admin` routes for business management
 - **Feature testing**: Verify plan-tier restrictions and upgrade flows
 - **AI integration**: OpenAI GPT-4 powers all content enhancement features
+- **Multi-Source Data**: See `DB_SCHEMA_README.md` for complete architecture documentation
+- **GMB Integration**: Real-time review sync and business data management
+- **Data Source Management**: Field-level control over data sources with priority-based resolution
 
 ## 📊 Business Model & Revenue
 
@@ -307,7 +353,9 @@ npm run featured-businesses    # Manage featured listings
 
 ## 📞 Support & Contact
 
-- **Documentation**: See `CLAUDE.md` for detailed technical documentation
+- **Technical Documentation**: See `CLAUDE.md` for detailed technical documentation
+- **Data Architecture**: See `DB_SCHEMA_README.md` for multi-source data management
+- **Import QA System**: See `IMPORT_QA_README.md` for validation system documentation
 - **Issues**: Report bugs and feature requests via GitHub Issues
 - **Business inquiries**: Contact through platform or pulseautomation.ai
 

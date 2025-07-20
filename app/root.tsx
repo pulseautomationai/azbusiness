@@ -101,7 +101,7 @@ function PerformanceMonitor({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <ClerkProvider
-      publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
+      publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY} // Development keys - update for production
       signUpFallbackRedirectUrl="/"
       signInFallbackRedirectUrl="/"
     >

@@ -1,8 +1,0 @@
-
-> dev
-> react-router dev
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: http://192.168.0.251:5173/
-3:12:13 PM [vite] .env.local changed, restarting server...
-3:12:13 PM [vite] server restarted.

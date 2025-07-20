@@ -15,6 +15,7 @@ import { cn } from "~/lib/utils";
 import ContactForm from "./contact-form";
 import BusinessCard from "../category/business-card";
 import { ClaimBanner } from "./claim-banner";
+import { generateBusinessStructuredData } from "~/utils/structuredData";
 
 interface BusinessProfileProps {
   business: {
@@ -66,6 +67,23 @@ export default function SinglePageBusinessProfile({
   isOwner 
 }: BusinessProfileProps) {
   const [showContactForm, setShowContactForm] = useState(false);
+
+  // Helper function to format review dates
+  const formatReviewDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return "1 day ago";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 14) return "1 week ago";
+    if (diffDays < 21) return "2 weeks ago";
+    if (diffDays < 28) return "3 weeks ago";
+    if (diffDays < 60) return "1 month ago";
+    if (diffDays < 90) return "2 months ago";
+    return date.toLocaleDateString();
+  };
 
   // Plan tier helper functions
   const isVisible = (feature: string) => {
@@ -157,8 +175,18 @@ export default function SinglePageBusinessProfile({
     return '🔧'; // Default service icon
   };
 
+  // Generate structured data for SEO
+  const structuredData = generateBusinessStructuredData(business, null);
+
   return (
     <div className="min-h-screen bg-background pt-24">
+      {/* Local Business Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData)
+        }}
+      />
       {/* Claim Banner for Unclaimed Businesses */}
       {!business.claimed && (
         <section className="py-4 bg-amber-50 border-b border-amber-200">
@@ -694,89 +722,72 @@ export default function SinglePageBusinessProfile({
                         <span className="text-lg font-bold text-foreground">{business.rating.toFixed(1)}</span>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Displaying 3 of {business.reviewCount} reviews
+                        {reviews && reviews.length > 0 ? (
+                          (() => {
+                            const maxReviews = business.planTier === "free" ? 3 : business.planTier === "pro" ? 10 : reviews.length;
+                            const displayCount = Math.min(reviews.length, maxReviews);
+                            return `Displaying ${displayCount} of ${business.reviewCount} reviews`;
+                          })()
+                        ) : (
+                          `No reviews to display`
+                        )}
                       </p>
                     </div>
 
                     {/* Individual Reviews */}
                     <div className="pt-4 pb-6 space-y-6">
-                      {/* Review 1 */}
-                      <div className="border-b border-border pb-6 last:border-b-0 last:pb-0">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                            <Users className="w-6 h-6 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold text-foreground">Sarah M.</h4>
-                              <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className="w-4 h-4 fill-amber-400 text-amber-400"
-                                  />
-                                ))}
+                      {reviews && reviews.length > 0 ? (
+                        reviews.slice(0, business.planTier === "free" ? 3 : business.planTier === "pro" ? 10 : reviews.length).map((review, index) => (
+                          <div key={review._id || index} className="border-b border-border pb-6 last:border-b-0 last:pb-0">
+                            <div className="flex items-start gap-4">
+                              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                <Users className="w-6 h-6 text-primary" />
                               </div>
-                              <span className="text-sm text-muted-foreground">• 2 weeks ago</span>
-                            </div>
-                            <p className="text-muted-foreground leading-relaxed">
-                              "Excellent service! They arrived on time and quickly diagnosed our AC unit issue. The technician was very professional and explained everything clearly. Fair pricing and they even cleaned up after themselves. Highly recommend!"
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Review 2 */}
-                      <div className="border-b border-border pb-6 last:border-b-0 last:pb-0">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                            <Users className="w-6 h-6 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold text-foreground">Mike R.</h4>
-                              <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className="w-4 h-4 fill-amber-400 text-amber-400"
-                                  />
-                                ))}
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h4 className="font-semibold text-foreground">{review.userName}</h4>
+                                  <div className="flex items-center gap-1">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        className={cn(
+                                          "w-4 h-4",
+                                          i < review.rating
+                                            ? "fill-amber-400 text-amber-400"
+                                            : "text-gray-300"
+                                        )}
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-sm text-muted-foreground">
+                                    • {formatReviewDate(review.createdAt)}
+                                  </span>
+                                </div>
+                                <p className="text-muted-foreground leading-relaxed">
+                                  "{review.comment}"
+                                </p>
+                                {review.reply && (
+                                  <div className="mt-3 pl-4 border-l-2 border-primary/20">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <Building2 className="w-4 h-4 text-primary" />
+                                      <span className="text-sm font-medium text-primary">Business Response</span>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                      {review.reply.text}
+                                    </p>
+                                  </div>
+                                )}
                               </div>
-                              <span className="text-sm text-muted-foreground">• 1 month ago</span>
                             </div>
-                            <p className="text-muted-foreground leading-relaxed">
-                              "Had an emergency heating repair needed on a weekend. They responded quickly and had it fixed the same day. The technician was knowledgeable and the pricing was very reasonable. Great customer service!"
-                            </p>
                           </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8">
+                          <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                          <h4 className="font-semibold text-foreground mb-2">No reviews yet</h4>
+                          <p className="text-muted-foreground">Be the first to leave a review for this business!</p>
                         </div>
-                      </div>
-
-                      {/* Review 3 */}
-                      <div className="border-b border-border pb-6 last:border-b-0 last:pb-0">
-                        <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                            <Users className="w-6 h-6 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold text-foreground">Jennifer L.</h4>
-                              <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className="w-4 h-4 fill-amber-400 text-amber-400"
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-sm text-muted-foreground">• 3 weeks ago</span>
-                            </div>
-                            <p className="text-muted-foreground leading-relaxed">
-                              "Professional installation of our new HVAC system. The team was efficient, clean, and took time to explain how to maintain the system. Everything works perfectly and our energy bills have decreased significantly."
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      )}
                     </div>
                       
                     {/* Upgrade Message */}

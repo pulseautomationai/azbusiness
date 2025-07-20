@@ -5,15 +5,15 @@ interface Business {
   name: string;
   description: string;
   phone: string;
-  email: string;
+  email?: string;
   website?: string;
   address: string;
   city: string;
   state: string;
   zip: string;
   coordinates?: { lat: number; lng: number };
-  category?: { name: string; slug: string };
-  hours: Record<string, string>;
+  category?: { name: string; icon?: string; slug: string } | null;
+  hours?: Record<string, string> | { monday?: string; tuesday?: string; wednesday?: string; thursday?: string; friday?: string; saturday?: string; sunday?: string; } | null;
   rating: number;
   reviewCount: number;
   socialLinks?: {
@@ -27,10 +27,12 @@ interface Business {
 }
 
 export function generateBusinessStructuredData(business: Business, businessContent?: any) {
-  const baseUrl = process.env.FRONTEND_URL || "https://azbusiness.com";
+  const baseUrl = typeof window !== 'undefined' 
+    ? window.location.origin 
+    : (import.meta.env.VITE_FRONTEND_URL || "https://azbusiness.services");
   
   // Convert hours to schema.org format
-  const openingHours = Object.entries(business.hours)
+  const openingHours = business.hours ? Object.entries(business.hours)
     .filter(([_, hours]) => hours && hours.toLowerCase() !== 'closed')
     .map(([day, hours]) => {
       const dayMapping: Record<string, string> = {
@@ -49,7 +51,7 @@ export function generateBusinessStructuredData(business: Business, businessConte
       );
       
       return `${dayMapping[day]} ${timeRange}`;
-    });
+    }) : [];
 
   // Generate aggregate rating
   const aggregateRating = business.reviewCount > 0 ? {
@@ -160,7 +162,7 @@ export function generateBusinessStructuredData(business: Business, businessConte
       'government': 'GovernmentOffice'
     };
 
-    const businessType = categoryToBusinessType[business.category.slug] || 'LocalBusiness';
+    const businessType = categoryToBusinessType[business.category?.slug || ''] || 'LocalBusiness';
     structuredData["@type"] = businessType;
   }
 
@@ -168,7 +170,9 @@ export function generateBusinessStructuredData(business: Business, businessConte
 }
 
 export function generateWebsiteStructuredData() {
-  const baseUrl = process.env.FRONTEND_URL || "https://azbusiness.com";
+  const baseUrl = typeof window !== 'undefined' 
+    ? window.location.origin 
+    : (import.meta.env.VITE_FRONTEND_URL || "https://azbusiness.services");
   
   return {
     "@context": "https://schema.org",
@@ -194,7 +198,9 @@ export function generateWebsiteStructuredData() {
 }
 
 export function generateOrganizationStructuredData() {
-  const baseUrl = process.env.FRONTEND_URL || "https://azbusiness.com";
+  const baseUrl = typeof window !== 'undefined' 
+    ? window.location.origin 
+    : (import.meta.env.VITE_FRONTEND_URL || "https://azbusiness.services");
   
   return {
     "@context": "https://schema.org",
@@ -228,7 +234,9 @@ export function generateOrganizationStructuredData() {
 }
 
 export function generateBreadcrumbStructuredData(breadcrumbs: Array<{ name: string; url: string }>) {
-  const baseUrl = process.env.FRONTEND_URL || "https://azbusiness.com";
+  const baseUrl = typeof window !== 'undefined' 
+    ? window.location.origin 
+    : (import.meta.env.VITE_FRONTEND_URL || "https://azbusiness.services");
   
   return {
     "@context": "https://schema.org",

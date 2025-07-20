@@ -2,31 +2,31 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Main pages sitemap -->
   <sitemap>
-    <loc>https://azbusiness.services/sitemap-pages.xml</loc>
-    <lastmod>2025-07-15T00:11:22.421Z</lastmod>
+    <loc>http://localhost:5173/sitemap-pages.xml</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
   </sitemap>
   
   <!-- Businesses sitemap -->
   <sitemap>
-    <loc>https://azbusiness.services/sitemap-businesses.xml</loc>
-    <lastmod>2025-07-15T00:11:22.421Z</lastmod>
+    <loc>http://localhost:5173/sitemap-businesses.xml</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
   </sitemap>
   
   <!-- Categories sitemap -->
   <sitemap>
-    <loc>https://azbusiness.services/sitemap-categories.xml</loc>
-    <lastmod>2025-07-15T00:11:22.421Z</lastmod>
+    <loc>http://localhost:5173/sitemap-categories.xml</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
   </sitemap>
   
   <!-- Cities sitemap -->
   <sitemap>
-    <loc>https://azbusiness.services/sitemap-cities.xml</loc>
-    <lastmod>2025-07-15T00:11:22.421Z</lastmod>
+    <loc>http://localhost:5173/sitemap-cities.xml</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
   </sitemap>
   
   <!-- Category+City combinations sitemap -->
   <sitemap>
-    <loc>https://azbusiness.services/sitemap-category-cities.xml</loc>
-    <lastmod>2025-07-15T00:11:22.421Z</lastmod>
+    <loc>http://localhost:5173/sitemap-category-cities.xml</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
   </sitemap>
 </sitemapindex>

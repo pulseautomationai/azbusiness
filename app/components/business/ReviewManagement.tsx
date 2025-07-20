@@ -24,6 +24,10 @@ interface Review {
     text: string;
     createdAt: number;
   };
+  reply?: {
+    text: string;
+    createdAt: number;
+  };
   source: "google" | "facebook" | "direct" | "yelp";
   flagged?: boolean;
 }
@@ -64,6 +68,27 @@ export function ReviewManagement({
   const [sortBy, setSortBy] = useState<string>("newest");
   const [replyText, setReplyText] = useState<string>("");
   const [selectedReviewId, setSelectedReviewId] = useState<string>("");
+
+  // Helper functions for review sources
+  const getSourceIcon = (source: string) => {
+    switch (source) {
+      case "google": return "🔗";
+      case "facebook": return "📘";
+      case "yelp": return "🟡";
+      case "direct": return "💬";
+      default: return "📄";
+    }
+  };
+
+  const getSourceLabel = (source: string) => {
+    switch (source) {
+      case "google": return "Google";
+      case "facebook": return "Facebook";
+      case "yelp": return "Yelp";
+      case "direct": return "Direct";
+      default: return source;
+    }
+  };
 
   // Filter reviews based on selected criteria
   const filteredReviews = reviews
@@ -127,7 +152,7 @@ export function ReviewManagement({
       positive: totalReviews > 0 ? Math.round((positiveReviews / totalReviews) * 100) : 0,
       neutral: totalReviews > 0 ? Math.round((neutralReviews / totalReviews) * 100) : 0,
       negative: totalReviews > 0 ? Math.round((negativeReviews / totalReviews) * 100) : 0,
-      responseRate: reviews.filter(r => r.response).length / totalReviews * 100
+      responseRate: reviews.filter(r => r.reply).length / totalReviews * 100
     };
   };
 
@@ -302,7 +327,7 @@ export function ReviewManagement({
             <Tabs defaultValue="all" className="space-y-4">
               <TabsList>
                 <TabsTrigger value="all">All Reviews ({filteredReviews.length})</TabsTrigger>
-                <TabsTrigger value="pending">Need Response ({filteredReviews.filter(r => !r.response).length})</TabsTrigger>
+                <TabsTrigger value="pending">Need Response ({filteredReviews.filter(r => !r.reply).length})</TabsTrigger>
                 <TabsTrigger value="negative">Negative ({filteredReviews.filter(r => r.rating <= 2).length})</TabsTrigger>
                 <TabsTrigger value="flagged">Flagged ({filteredReviews.filter(r => r.flagged).length})</TabsTrigger>
               </TabsList>
@@ -322,7 +347,8 @@ export function ReviewManagement({
                                   {renderStars(review.rating)}
                                 </div>
                                 <Badge className={getSourceBadgeColor(review.source)}>
-                                  {review.source}
+                                  <span className="mr-1">{getSourceIcon(review.source)}</span>
+                                  {getSourceLabel(review.source)}
                                 </Badge>
                                 {review.verified && (
                                   <Badge variant="outline">Verified</Badge>
@@ -449,7 +475,7 @@ export function ReviewManagement({
                   </AlertDescription>
                 </Alert>
                 <div className="space-y-4">
-                  {filteredReviews.filter(r => !r.response).map((review) => (
+                  {filteredReviews.filter(r => !r.reply).map((review) => (
                     <Card key={review._id} className="border-l-4 border-l-yellow-500">
                       <CardContent className="pt-4">
                         <div className="flex items-start justify-between">
@@ -460,7 +486,8 @@ export function ReviewManagement({
                                 {renderStars(review.rating)}
                               </div>
                               <Badge className={getSourceBadgeColor(review.source)}>
-                                {review.source}
+                                <span className="mr-1">{getSourceIcon(review.source)}</span>
+                                {getSourceLabel(review.source)}
                               </Badge>
                             </div>
                             <p className="text-sm">{review.comment}</p>
@@ -501,7 +528,8 @@ export function ReviewManagement({
                                 {renderStars(review.rating)}
                               </div>
                               <Badge className={getSourceBadgeColor(review.source)}>
-                                {review.source}
+                                <span className="mr-1">{getSourceIcon(review.source)}</span>
+                                {getSourceLabel(review.source)}
                               </Badge>
                               <Badge variant="destructive">Negative</Badge>
                             </div>

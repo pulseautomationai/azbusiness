@@ -19,6 +19,8 @@ const OAUTH_ENDPOINTS = {
   gmbAccounts: 'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
   gmbLocations: (accountId: string) => 
     `https://mybusinessbusinessinformation.googleapis.com/v1/accounts/${accountId}/locations`,
+  gmbReviews: (accountId: string, locationId: string) => 
+    `https://mybusinessaccountmanagement.googleapis.com/v1/accounts/${accountId}/locations/${locationId}/reviews`,
 };
 
 /**
@@ -82,6 +84,30 @@ export interface GMBLocation {
     mapsUri?: string;
     newReviewUri?: string;
   };
+}
+
+export interface GMBReview {
+  reviewId?: string;
+  reviewer?: {
+    profilePhotoUrl?: string;
+    displayName?: string;
+    isAnonymous?: boolean;
+  };
+  starRating?: 'ONE' | 'TWO' | 'THREE' | 'FOUR' | 'FIVE';
+  comment?: string;
+  createTime?: string; // RFC3339 timestamp
+  updateTime?: string;
+  reviewReply?: {
+    comment?: string;
+    updateTime?: string;
+  };
+}
+
+export interface GMBReviewsResponse {
+  reviews?: GMBReview[];
+  nextPageToken?: string;
+  totalReviewCount?: number;
+  averageRating?: number;
 }
 
 export interface GMBVerificationResult {
@@ -244,6 +270,61 @@ export async function getGMBLocations(accessToken: string, accountId: string): P
   
   const data = await response.json();
   return data.locations || [];
+}
+
+/**
+ * Get reviews for a specific GMB location
+ */
+export async function getGMBReviews(
+  accessToken: string, 
+  accountId: string, 
+  locationId: string,
+  pageToken?: string
+): Promise<GMBReviewsResponse> {
+  const url = new URL(OAUTH_ENDPOINTS.gmbReviews(accountId, locationId));
+  if (pageToken) {
+    url.searchParams.set('pageToken', pageToken);
+  }
+  
+  const response = await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to get GMB reviews: ${response.statusText}`);
+  }
+  
+  const data = await response.json();
+  return {
+    reviews: data.reviews || [],
+    nextPageToken: data.nextPageToken,
+    totalReviewCount: data.totalReviewCount || 0,
+    averageRating: data.averageRating || 0,
+  };
+}
+
+/**
+ * Convert GMB star rating to numeric value
+ */
+export function convertGMBRating(starRating: string): number {
+  const ratingMap: Record<string, number> = {
+    'ONE': 1,
+    'TWO': 2,
+    'THREE': 3,
+    'FOUR': 4,
+    'FIVE': 5,
+  };
+  return ratingMap[starRating] || 0;
+}
+
+/**
+ * Parse GMB timestamp to JavaScript Date
+ */
+export function parseGMBTimestamp(timestamp?: string): number {
+  if (!timestamp) return Date.now();
+  return new Date(timestamp).getTime();
 }
 
 /**
@@ -430,7 +511,9 @@ export const GMB_ERROR_TYPES = {
   OAUTH_DENIED: 'OAUTH_DENIED',
   API_ERROR: 'API_ERROR',
   INVALID_STATE: 'INVALID_STATE',
-  TOKEN_EXCHANGE_FAILED: 'TOKEN_EXCHANGE_FAILED'
+  TOKEN_EXCHANGE_FAILED: 'TOKEN_EXCHANGE_FAILED',
+  REVIEW_SYNC_FAILED: 'REVIEW_SYNC_FAILED',
+  RATE_LIMITED: 'RATE_LIMITED'
 } as const;
 
 export type GMBErrorType = typeof GMB_ERROR_TYPES[keyof typeof GMB_ERROR_TYPES];

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, MapPin, Phone, ExternalLink, Loader2 } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { cn } from "~/lib/utils";
+import { useQuery } from "convex/react";
+import { api } from "~/convex/_generated/api";
 
 interface PerformanceBadge {
   icon: string;
@@ -124,7 +126,8 @@ const badgeColors = {
   green: "bg-green-100 text-green-800 border-green-200",
   blue: "bg-blue-100 text-blue-800 border-blue-200", 
   purple: "bg-purple-100 text-purple-800 border-purple-200",
-  yellow: "bg-amber-100 text-amber-800 border-amber-200"
+  yellow: "bg-amber-100 text-amber-800 border-amber-200",
+  gray: "bg-gray-100 text-gray-800 border-gray-200"
 };
 
 const tierStyles = {
@@ -134,20 +137,61 @@ const tierStyles = {
 };
 
 export default function BusinessRankingsTable() {
-  const [selectedCity, setSelectedCity] = useState("Scottsdale");
-  const [selectedCategory, setSelectedCategory] = useState("HVAC & Air Conditioning");
+  const [selectedCity, setSelectedCity] = useState("Phoenix");
+  const [selectedCategory, setSelectedCategory] = useState("hvac-services");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Generate data key for mock data lookup
-  const dataKey = `${selectedCity.toLowerCase()}-${selectedCategory.toLowerCase().includes('hvac') ? 'hvac' : 'plumbing'}`;
-  const businesses = mockBusinessData[dataKey] || mockBusinessData["scottsdale-hvac"];
+  // Fetch dynamic data from backend
+  const citiesData = useQuery(api.cities.getCities);
+  const categoriesData = useQuery(api.categories.getCategories);
+  const businessesData = useQuery(api.businesses.getBusinesses, {
+    limit: 10,
+    citySlug: selectedCity.toLowerCase(),
+    categorySlug: selectedCategory,
+  });
+
+  // Format data for display
+  const cities = citiesData?.map(city => city.name) || ["Phoenix", "Scottsdale", "Tempe", "Mesa"];
+  const categories = categoriesData?.map(cat => ({ value: cat.slug, label: cat.name })) || [
+    { value: "hvac-services", label: "HVAC Services" },
+    { value: "plumbing", label: "Plumbing" }
+  ];
+
+  // Format businesses data
+  const businesses = businessesData?.map((business, index) => ({
+    id: business._id,
+    rank: index + 1,
+    name: business.name,
+    experience: "Licensed & Insured Professional", // TODO: Add to backend data
+    coverage: `📍 Serving ${business.city} Area`,
+    rating: business.rating || 0,
+    reviewCount: business.reviewCount || 0,
+    tier: (business.planTier?.toUpperCase() || "STARTER") as "POWER" | "PRO" | "STARTER",
+    performanceBadges: [] as PerformanceBadge[], // TODO: Add performance badges
+    slug: business.urlPath || business.slug,
+    lastUpdated: business.updatedAt || business._creationTime,
+  })) || [];
 
   const handleUpdateRankings = () => {
     setIsLoading(true);
-    // Simulate API call
+    // Real-time update would trigger re-fetch of businessesData
     setTimeout(() => {
       setIsLoading(false);
+      // In a real implementation, this would trigger a refetch
     }, 800);
+  };
+
+  // Format last updated timestamp
+  const formatLastUpdated = (timestamp?: number) => {
+    if (!timestamp) return "Just updated";
+    const now = Date.now();
+    const diff = now - timestamp;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor(diff / (1000 * 60));
+    
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return "Just updated";
   };
 
   const getRankBadgeClass = (rank: number) => {
@@ -205,7 +249,7 @@ export default function BusinessRankingsTable() {
                 className="w-full border border-prickly-pear-pink/30 rounded-lg px-3 py-2 text-ironwood-charcoal focus:outline-none focus:ring-2 focus:ring-ocotillo-red focus:border-transparent"
               >
                 {categories.map((category) => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category.value} value={category.value}>{category.label}</option>
                 ))}
               </select>
             </div>
@@ -234,7 +278,7 @@ export default function BusinessRankingsTable() {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6">
           <div>
             <h3 className="text-xl font-semibold text-ironwood-charcoal mb-1">
-              Top {selectedCategory} in {selectedCity}
+              Top {categories.find(cat => cat.value === selectedCategory)?.label || "Services"} in {selectedCity}
             </h3>
             <p className="text-sm text-ironwood-charcoal/60">
               Ranked by AI analysis of {businesses.reduce((sum, b) => sum + b.reviewCount, 0).toLocaleString()} customer reviews
@@ -242,14 +286,14 @@ export default function BusinessRankingsTable() {
           </div>
           <div className="mt-2 lg:mt-0">
             <p className="text-xs text-ironwood-charcoal/50">
-              Updated: 2 hours ago
+              Updated: {formatLastUpdated(businesses[0]?.lastUpdated)}
             </p>
           </div>
         </div>
 
         {/* Main Rankings Table */}
         <div className="bg-white border border-prickly-pear-pink/30 rounded-xl overflow-hidden">
-          {isLoading ? (
+          {isLoading || businessesData === undefined ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-ocotillo-red" />
               <span className="ml-3 text-ironwood-charcoal">Loading rankings...</span>
@@ -338,7 +382,7 @@ export default function BusinessRankingsTable() {
                                 key={badgeIndex}
                                 className={cn(
                                   "inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium border shadow-sm",
-                                  badgeColors[badge.color],
+                                  badgeColors[badge.color] || badgeColors.gray,
                                   "min-h-[28px]"
                                 )}
                                 style={{ fontSize: '12px', minWidth: 'fit-content' }}
@@ -363,7 +407,7 @@ export default function BusinessRankingsTable() {
                               Get Quote
                             </Button>
                             <Button asChild size="sm" variant="ghost" className="w-full text-ocotillo-red hover:text-ocotillo-red/80 text-xs">
-                              <Link to={business.slug}>
+                              <Link to={business.slug} className="flex items-center justify-center">
                                 <ExternalLink className="mr-1 h-3 w-3" />
                                 View Details
                               </Link>
@@ -437,7 +481,7 @@ export default function BusinessRankingsTable() {
                           key={badgeIndex}
                           className={cn(
                             "inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium border shadow-sm mr-2",
-                            badgeColors[badge.color],
+                            badgeColors[badge.color] || badgeColors.gray,
                             "min-h-[28px]"
                           )}
                         >

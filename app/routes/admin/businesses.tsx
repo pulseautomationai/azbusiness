@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
@@ -12,7 +12,7 @@ import { Badge } from "~/components/ui/badge";
 import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "~/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff, Plus, ChevronDown, Trash, Settings, MoreHorizontal, Download, Copy } from "lucide-react";
+import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff, Plus, ChevronDown, Trash, Settings, MoreHorizontal, Download, Copy, Database } from "lucide-react";
 import { toast } from "~/hooks/use-toast";
 import { Link, useNavigate } from "react-router";
 import { SlugGenerator } from "~/utils/slug-generator";
@@ -20,15 +20,40 @@ import { SlugGenerator } from "~/utils/slug-generator";
 export default function AdminBusinesses() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [planFilter, setPlanFilter] = useState<"all" | "free" | "pro" | "power">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [zipcodeFilter, setZipcodeFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<"all" | "gmb_api" | "admin_import" | "user_manual" | "system">("all");
+  const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "month">("all");
   
   // Bulk selection state
   const [selectedBusinesses, setSelectedBusinesses] = useState<Set<Id<"businesses">>>(new Set());
   const [isAllSelected, setIsAllSelected] = useState(false);
+  
+  // Column visibility state
+  const [visibleColumns, setVisibleColumns] = useState({
+    business: true,
+    category: true,
+    city: true,
+    zip: true,
+    plan: true,
+    dataSource: true,
+    placeId: true, // Add place_id column
+    status: true,
+    featured: true,
+  });
+
+  // Debounce search to prevent excessive API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Get filter options
   const categories = useQuery(api.categories.getAllCategoriesForAdmin);
@@ -37,12 +62,17 @@ export default function AdminBusinesses() {
 
   // Get businesses for admin view
   const businesses = useQuery(api.businesses.getBusinessesForAdmin, {
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     planTier: planFilter === "all" ? undefined : planFilter,
     active: statusFilter === "all" ? undefined : statusFilter === "active",
     city: cityFilter === "all" ? undefined : cityFilter,
     zipcode: zipcodeFilter === "all" ? undefined : zipcodeFilter,
     categoryId: categoryFilter === "all" ? undefined : categoryFilter as Id<"categories">,
+    dataSource: sourceFilter === "all" ? undefined : sourceFilter,
+    createdAfter: dateFilter === "all" ? undefined : 
+      dateFilter === "today" ? Date.now() - (24 * 60 * 60 * 1000) :
+      dateFilter === "week" ? Date.now() - (7 * 24 * 60 * 60 * 1000) :
+      dateFilter === "month" ? Date.now() - (30 * 24 * 60 * 60 * 1000) : undefined,
     limit: 100,
   });
 
@@ -50,6 +80,14 @@ export default function AdminBusinesses() {
   const updateBusiness = useMutation(api.businesses.updateBusiness);
   const deleteBusiness = useMutation(api.businesses.deleteBusiness);
   const deleteMultipleBusinesses = useMutation(api.businesses.deleteMultipleBusinesses);
+
+  // Column visibility toggle
+  const toggleColumn = (columnKey: keyof typeof visibleColumns) => {
+    setVisibleColumns(prev => ({
+      ...prev,
+      [columnKey]: !prev[columnKey]
+    }));
+  };
 
   const handleStatusToggle = async (businessId: Id<"businesses">, currentStatus: boolean) => {
     try {
@@ -163,17 +201,36 @@ export default function AdminBusinesses() {
     }
     
     try {
-      await deleteMultipleBusinesses({ businessIds: Array.from(selectedBusinesses) });
+      const result = await deleteMultipleBusinesses({ businessIds: Array.from(selectedBusinesses) });
       setSelectedBusinesses(new Set());
       setIsAllSelected(false);
-      toast({
-        title: "Businesses deleted",
-        description: `${selectedCount} businesses have been permanently deleted`,
-      });
+      
+      // Check if any deletions failed
+      if (result && result.results) {
+        const failedCount = result.results.filter(r => !r.success).length;
+        if (failedCount > 0) {
+          toast({
+            title: "Partial deletion completed",
+            description: `${result.successCount} businesses deleted, ${failedCount} failed`,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Businesses deleted",
+            description: `${selectedCount} businesses have been permanently deleted`,
+          });
+        }
+      } else {
+        toast({
+          title: "Businesses deleted",
+          description: `${selectedCount} businesses have been permanently deleted`,
+        });
+      }
     } catch (error) {
+      console.error("Bulk delete error:", error);
       toast({
         title: "Error",
-        description: "Failed to delete some businesses",
+        description: error instanceof Error ? error.message : "Failed to delete some businesses",
         variant: "destructive",
       });
     }
@@ -280,6 +337,11 @@ export default function AdminBusinesses() {
         featured: business.featured,
         rating: business.rating,
         reviewCount: business.reviewCount,
+        // GMB Identifiers
+        placeId: business.placeId,
+        gmbUrl: business.gmbUrl,
+        cid: business.cid,
+        gmbClaimed: business.gmbClaimed,
         exportedAt: new Date().toISOString(),
       };
       
@@ -320,7 +382,20 @@ export default function AdminBusinesses() {
     }
   };
 
-  if (!businesses) {
+  const getSourceBadge = (source: string) => {
+    switch (source) {
+      case "gmb_api":
+        return { icon: "🔗", label: "GMB API", color: "bg-blue-100 text-blue-800" };
+      case "admin_import":
+        return { icon: "📥", label: "Admin Import", color: "bg-green-100 text-green-800" };
+      case "user_manual":
+        return { icon: "✏️", label: "Manual", color: "bg-purple-100 text-purple-800" };
+      default:
+        return { icon: "⚙️", label: "System", color: "bg-gray-100 text-gray-800" };
+    }
+  };
+
+  if (!businesses || !categories) {
     return (
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
         <div className="flex items-center justify-center h-full">
@@ -406,9 +481,9 @@ export default function AdminBusinesses() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Plan Tier</label>
-              <Select value={planFilter} onValueChange={(value: any) => setPlanFilter(value)}>
+              <Select value={planFilter || "all"} onValueChange={(value: any) => setPlanFilter(value)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="All Plans" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Plans</SelectItem>
@@ -420,9 +495,9 @@ export default function AdminBusinesses() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Status</label>
-              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+              <Select value={statusFilter || "all"} onValueChange={(value: any) => setStatusFilter(value)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
@@ -433,13 +508,13 @@ export default function AdminBusinesses() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">City</label>
-              <Select value={cityFilter} onValueChange={setCityFilter}>
+              <Select value={cityFilter || "all"} onValueChange={setCityFilter}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="All Cities" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Cities</SelectItem>
-                  {cities?.map((city) => (
+                  {cities?.filter(city => city && city.trim() !== '').map((city) => (
                     <SelectItem key={city} value={city}>
                       {city}
                     </SelectItem>
@@ -449,13 +524,13 @@ export default function AdminBusinesses() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Zipcode</label>
-              <Select value={zipcodeFilter} onValueChange={setZipcodeFilter}>
+              <Select value={zipcodeFilter || "all"} onValueChange={setZipcodeFilter}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="All Zipcodes" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Zipcodes</SelectItem>
-                  {zipcodes?.map((zipcode) => (
+                  {zipcodes?.filter(zipcode => zipcode && zipcode.trim() !== '').map((zipcode) => (
                     <SelectItem key={zipcode} value={zipcode}>
                       {zipcode}
                     </SelectItem>
@@ -465,9 +540,9 @@ export default function AdminBusinesses() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Category</label>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <Select value={categoryFilter || "all"} onValueChange={setCategoryFilter}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
@@ -479,9 +554,79 @@ export default function AdminBusinesses() {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Data Source</label>
+              <Select value={sourceFilter || "all"} onValueChange={(value: any) => setSourceFilter(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Sources" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sources</SelectItem>
+                  <SelectItem value="admin_import">Admin Import (CSV & Manual)</SelectItem>
+                  <SelectItem value="gmb_api">GMB API</SelectItem>
+                  <SelectItem value="user_manual">User Manual</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Created</label>
+              <Select value={dateFilter || "all"} onValueChange={(value: any) => setDateFilter(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Time" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Time</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Column Settings */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">
+            Showing {businesses?.length || 0} businesses
+          </span>
+        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Settings className="h-4 w-4 mr-2" />
+              Columns
+              <ChevronDown className="h-4 w-4 ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="px-2 py-1.5 text-sm font-semibold">
+              Visible Columns
+            </div>
+            <DropdownMenuSeparator />
+            {Object.entries(visibleColumns).map(([key, isVisible]) => (
+              <DropdownMenuItem
+                key={key}
+                onClick={() => toggleColumn(key as keyof typeof visibleColumns)}
+                className="flex items-center justify-between"
+              >
+                <span className="capitalize">
+                  {key === 'placeId' ? 'Place ID' : key.replace(/([A-Z])/g, ' $1')}
+                </span>
+                <Checkbox 
+                  checked={isVisible}
+                  onChange={() => {}}
+                  className="pointer-events-none"
+                />
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       {/* Business Table */}
       <Card>
@@ -496,13 +641,15 @@ export default function AdminBusinesses() {
                     aria-label="Select all businesses"
                   />
                 </TableHead>
-                <TableHead>Business</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>ZIP</TableHead>
-                <TableHead>Plan</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Featured</TableHead>
+                {visibleColumns.business && <TableHead>Business</TableHead>}
+                {visibleColumns.category && <TableHead>Category</TableHead>}
+                {visibleColumns.city && <TableHead>City</TableHead>}
+                {visibleColumns.zip && <TableHead>ZIP</TableHead>}
+                {visibleColumns.plan && <TableHead>Plan</TableHead>}
+                {visibleColumns.dataSource && <TableHead>Data Source</TableHead>}
+                {visibleColumns.placeId && <TableHead>Place ID</TableHead>}
+                {visibleColumns.status && <TableHead>Status</TableHead>}
+                {visibleColumns.featured && <TableHead>Featured</TableHead>}
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -516,69 +663,121 @@ export default function AdminBusinesses() {
                       aria-label={`Select ${business.name}`}
                     />
                   </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{business.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {business.address}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {business.category?.name || "Uncategorized"}
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <p className="font-medium">{business.city}</p>
-                      <p className="text-muted-foreground">{business.state}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm font-mono">{business.zip}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={business.planTier}
-                      onValueChange={(value) => handlePlanChange(business._id, value)}
-                    >
-                      <SelectTrigger className="w-24">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="free">Free</SelectItem>
-                        <SelectItem value="pro">Pro</SelectItem>
-                        <SelectItem value="power">Power</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleStatusToggle(business._id, business.active)}
-                      className={business.active ? "text-green-600" : "text-red-600"}
-                    >
-                      {business.active ? (
-                        <CheckCircle className="h-4 w-4" />
+                  {visibleColumns.business && (
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{business.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {business.address}
+                        </p>
+                      </div>
+                    </TableCell>
+                  )}
+                  {visibleColumns.category && (
+                    <TableCell>
+                      {business.category?.name || "Uncategorized"}
+                    </TableCell>
+                  )}
+                  {visibleColumns.city && (
+                    <TableCell>
+                      <div className="text-sm">
+                        <p className="font-medium">{business.city}</p>
+                      </div>
+                    </TableCell>
+                  )}
+                  {visibleColumns.zip && (
+                    <TableCell>
+                      <span className="text-sm font-mono">{business.zip}</span>
+                    </TableCell>
+                  )}
+                  {visibleColumns.plan && (
+                    <TableCell>
+                      <Select
+                        key={`plan-${business._id}`}
+                        value={business.planTier && business.planTier.trim() !== '' ? business.planTier : "free"}
+                        onValueChange={(value) => handlePlanChange(business._id, value)}
+                      >
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder="Free" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="free">Free</SelectItem>
+                          <SelectItem value="pro">Pro</SelectItem>
+                          <SelectItem value="power">Power</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                  )}
+                  {visibleColumns.dataSource && (
+                    <TableCell>
+                      {business.dataSource?.primary ? (
+                        <div className="flex items-center gap-2">
+                          <Badge className={`text-xs ${getSourceBadge(business.dataSource.primary).color}`}>
+                            <span className="mr-1">{getSourceBadge(business.dataSource.primary).icon}</span>
+                            {getSourceBadge(business.dataSource.primary).label}
+                          </Badge>
+                          {business.dataSource.lastSyncedAt && (
+                            <div className="flex items-center gap-1">
+                              <Database className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(business.dataSource.lastSyncedAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       ) : (
-                        <XCircle className="h-4 w-4" />
+                        <Badge className="text-xs bg-gray-100 text-gray-800">
+                          <span className="mr-1">⚙️</span>
+                          System
+                        </Badge>
                       )}
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleFeatureToggle(business._id, business.featured)}
-                      className={business.featured ? "text-yellow-600" : "text-gray-400"}
-                    >
-                      {business.featured ? (
-                        <Star className="h-4 w-4 fill-current" />
+                    </TableCell>
+                  )}
+                  {visibleColumns.placeId && (
+                    <TableCell>
+                      {business.placeId ? (
+                        <div className="text-xs font-mono max-w-32">
+                          <span className="text-muted-foreground block truncate" title={business.placeId}>
+                            {business.placeId}
+                          </span>
+                        </div>
                       ) : (
-                        <StarOff className="h-4 w-4" />
+                        <span className="text-xs text-muted-foreground">—</span>
                       )}
-                    </Button>
-                  </TableCell>
+                    </TableCell>
+                  )}
+                  {visibleColumns.status && (
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStatusToggle(business._id, business.active)}
+                        className={business.active ? "text-green-600" : "text-red-600"}
+                      >
+                        {business.active ? (
+                          <CheckCircle className="h-4 w-4" />
+                        ) : (
+                          <XCircle className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableCell>
+                  )}
+                  {visibleColumns.featured && (
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleFeatureToggle(business._id, business.featured)}
+                        className={business.featured ? "text-yellow-600" : "text-gray-400"}
+                      >
+                        {business.featured ? (
+                          <Star className="h-4 w-4 fill-current" />
+                        ) : (
+                          <StarOff className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TableCell>
+                  )}
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger>
@@ -621,6 +820,12 @@ export default function AdminBusinesses() {
                         <DropdownMenuItem onClick={() => handleExportBusiness(business._id, business.name)}>
                           <Download className="h-4 w-4 mr-2" />
                           Export Data
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          window.open(`/admin/imports?business=${business._id}`, '_blank');
+                        }}>
+                          <Database className="h-4 w-4 mr-2" />
+                          View Data Sources
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

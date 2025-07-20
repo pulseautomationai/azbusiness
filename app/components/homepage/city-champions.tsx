@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { Star, MapPin, ChevronRight } from "lucide-react";
+import { Star, MapPin, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useQuery } from "convex/react";
+import { api } from "~/convex/_generated/api";
 
 interface Champion {
   category: string;
@@ -205,8 +207,56 @@ const cityChampions: Record<string, CityData> = {
 const cities = ["Scottsdale", "Phoenix", "Tempe", "Mesa"];
 
 export default function CityChampions() {
-  const [selectedCity, setSelectedCity] = useState("scottsdale");
-  const currentCityData = cityChampions[selectedCity.toLowerCase()];
+  const [selectedCity, setSelectedCity] = useState("Scottsdale");
+  
+  // Fetch real data
+  const citiesData = useQuery(api.cities.getCities);
+  const cityChampionsData = useQuery(api.businesses.getBusinesses, {
+    citySlug: selectedCity.toLowerCase(),
+    limit: 4,
+  });
+
+  // Get top cities for dropdown
+  const topCities = citiesData?.slice(0, 8) || [];
+  
+  // Format champions data with fallback
+  const champions = cityChampionsData?.map((business, index) => {
+    const categoryEmojis: Record<string, string> = {
+      "HVAC Services": "🔥",
+      "Plumbing": "💧", 
+      "Landscaping": "🌵",
+      "Cleaning Services": "✨",
+      "Electrical": "⚡",
+      "Handyman": "🔧",
+      "Pool & Spa Services": "🏊",
+      "Roofing & Gutters": "🏠",
+    };
+
+    const championTitles = [
+      `${selectedCity}'s Speed Champion`,
+      `${selectedCity}'s Most Trusted`,
+      `${selectedCity}'s Customer Favorite`,
+      `${selectedCity}'s Detail Master`,
+    ];
+
+    return {
+      category: business.category?.name || "Services",
+      emoji: categoryEmojis[business.category?.name || ""] || "⭐",
+      businessName: business.name,
+      championTitle: championTitles[index] || `${selectedCity}'s Professional`,
+      communityDetail: `Serving ${selectedCity} • ${business.reviewCount} reviews`,
+      rating: business.rating,
+      reviewCount: business.reviewCount,
+      slug: business.slug,
+    };
+  }) || [];
+
+  // Use fallback data if no champions available
+  const fallbackData = cityChampions[selectedCity.toLowerCase()];
+  const currentCityData = {
+    city: selectedCity,
+    champions: champions.length > 0 ? champions : (fallbackData?.champions || []),
+  };
 
   return (
     <section className="city-champions py-16 bg-white">
@@ -225,11 +275,11 @@ export default function CityChampions() {
             <select 
               className="border border-prickly-pear-pink/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ocotillo-red focus:border-transparent"
               value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value.toLowerCase())}
+              onChange={(e) => setSelectedCity(e.target.value)}
             >
-              {cities.map((city) => (
-                <option key={city} value={city.toLowerCase()}>
-                  {city}, AZ
+              {topCities.map((city) => (
+                <option key={city.slug} value={city.name}>
+                  {city.name}, AZ
                 </option>
               ))}
             </select>
@@ -237,9 +287,15 @@ export default function CityChampions() {
         </div>
 
         {/* Mobile: Horizontal scroll, Desktop: Grid */}
-        <div className="overflow-x-auto lg:overflow-visible mb-8">
-          <div className="flex gap-4 lg:grid lg:grid-cols-4 lg:gap-6 min-w-max lg:min-w-0">
-            {currentCityData.champions.map((champion, index) => (
+        {cityChampionsData === undefined ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-ocotillo-red" />
+            <span className="ml-3 text-ironwood-charcoal">Loading champions...</span>
+          </div>
+        ) : (
+          <div className="overflow-x-auto lg:overflow-visible mb-8">
+            <div className="flex gap-4 lg:grid lg:grid-cols-4 lg:gap-6 min-w-max lg:min-w-0">
+              {currentCityData.champions.map((champion, index) => (
               <div 
                 key={index}
                 className="bg-white border border-prickly-pear-pink/15 rounded-lg p-4 text-center hover:shadow-md hover:border-prickly-pear-pink/30 transition-all duration-300 min-w-[240px] lg:min-w-0 flex-shrink-0"
@@ -295,9 +351,10 @@ export default function CityChampions() {
                   View Profile
                 </Link>
               </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="text-center">
           <Link

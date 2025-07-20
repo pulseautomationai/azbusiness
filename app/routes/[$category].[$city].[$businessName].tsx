@@ -112,10 +112,20 @@ export default function BusinessDetailPage() {
   ) : "";
 
   // Try to fetch business by the reconstructed slug - always call the hook
-  const business = useQuery(
+  const businessBySlug = useQuery(
     api.businesses.getBusinessBySlug, 
     fullSlug ? { slug: fullSlug } : "skip"
   );
+  
+  // If slug lookup fails, try URL path format
+  const urlPath = category && city && businessName ? `/${category}/${city}/${businessName}` : "";
+  const businessByUrlPath = useQuery(
+    api.businesses.getBusinessByUrlPath,
+    businessBySlug === null && urlPath ? { urlPath: urlPath } : "skip"
+  );
+  
+  // Use whichever business lookup succeeded
+  const business = businessBySlug || businessByUrlPath;
   
   // Get related businesses if we have the business data - always call the hook
   const expectedCategorySlug = business?.category?.name ? SlugGenerator.generateCategorySlug(business.category.name) : '';
@@ -130,13 +140,19 @@ export default function BusinessDetailPage() {
     } : "skip"
   );
   
+  // Get reviews for this business
+  const reviews = useQuery(
+    api.businesses.getBusinessReviews,
+    business ? { businessId: business._id } : "skip"
+  );
+  
   // Validate URL parameters - after all hooks
   if (!category || !city || !businessName) {
     return <Navigate to="/categories" replace />;
   }
 
-  // If business query is undefined, we're still loading
-  const isLoading = business === undefined;
+  // If business queries are undefined, we're still loading
+  const isLoading = businessBySlug === undefined || (businessBySlug === null && businessByUrlPath === undefined);
   
   // If business is null (not found), try alternative slug formats or redirect
   if (!isLoading && !business) {
@@ -171,7 +187,7 @@ export default function BusinessDetailPage() {
         <SinglePageBusinessProfile 
           business={business}
           relatedBusinesses={filteredRelatedBusinesses}
-          reviews={[]} // Placeholder for now
+          reviews={reviews || []}
           isOwner={isOwner}
         />
       </ComponentErrorBoundary>

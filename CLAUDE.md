@@ -154,12 +154,12 @@ Let me know if you’d like a PDF export of this or want to train an assistant f
 - **✅ Phase 8**: Business Claiming + Signup Flow Integration (100% Complete)
 
 **Recent Major Updates (Current Session):**
-- **Business Claiming Integration**: Complete claim → plan selection → onboarding flow
-- **Smart Duplicate Detection**: Prevents duplicate business creation with fuzzy matching
-- **Enhanced User Experience**: Progress indicators, status-based messaging, plan previews
-- **Seamless Authentication**: "Create Account & Claim Business" integration
-- **Database Enhancements**: Duplicate checking, claim-to-subscription linking
-- **Post-Claim Onboarding**: Welcome screens, business info display, next steps guidance
+- **Import QA & Validation System**: Comprehensive post-import quality assurance with 6-category validation
+- **Automated Testing Framework**: Validates database integrity, data quality, SEO compliance at scale
+- **Real-time Validation UI**: Integrated validation panels in Import Manager with progress tracking
+- **Import History Enhancement**: Validation status badges, scores, and quick QA triggers
+- **Detailed Validation Reports**: Export functionality with JSON/CSV support and actionable insights
+- **Performance Monitoring**: Validation scoring system (0-100) with weighted category assessments
 
 **Total Value Delivered**: $1,800+/month equivalent in SaaS tools and services
 
@@ -187,6 +187,9 @@ npm run import-csv        # Import single CSV file
 npm run import-all-csv    # Import all CSV files in data/imports/
 npm run migrate-urls      # Migrate business URL structure
 npm run featured-businesses  # Manage featured business listings
+
+# Import QA & Validation
+npm run validate-import   # List imports and validate specific batches
 ```
 
 ### Important Development Notes
@@ -250,9 +253,9 @@ app/
 
 ## Database Schema (Convex)
 
-### Core Tables (Production Ready)
+### Core Tables (Production Ready) - With Multi-Source Architecture
 ```typescript
-// Main business listings
+// Main business listings with source tracking
 businesses: {
   name: string,
   slug: string,
@@ -264,7 +267,98 @@ businesses: {
   claimed: boolean,
   verified: boolean,
   active: boolean,
+  
+  // Multi-Source Data Tracking (NEW)
+  dataSource: {
+    primary: "gmb_api" | "admin_import" | "user_manual" | "system",
+    lastSyncedAt?: number,
+    syncStatus?: "synced" | "pending" | "failed",
+    gmbLocationId?: string,
+  },
   // ... 25+ additional fields
+}
+
+// Multi-source reviews with sentiment analysis
+reviews: {
+  businessId: Id<"businesses">,
+  reviewId: string,         // External ID for deduplication
+  userName: string,
+  rating: number,
+  comment: string,
+  verified: boolean,
+  
+  // Source Tracking (ENHANCED)
+  source: "gmb_api" | "gmb_import" | "facebook" | "yelp" | "direct",
+  originalCreateTime?: string,
+  originalUpdateTime?: string,
+  syncedAt?: number,
+  importBatchId?: Id<"importBatches">,
+  
+  // AI Enhancement (Power tier)
+  sentiment?: {
+    score: number,
+    magnitude: number,
+    classification: "positive" | "neutral" | "negative",
+  },
+  keywords?: string[],
+  topics?: string[],
+  
+  createdAt: number,
+}
+
+// Field-level source tracking (NEW)
+businessDataSources: {
+  businessId: Id<"businesses">,
+  fieldName: string,        // "name", "phone", "address", etc.
+  source: "gmb_api" | "admin_import" | "user_manual" | "system",
+  value: any,               // The field value from this source
+  confidence?: number,      // Data quality score 0-100
+  verified: boolean,
+  isActive: boolean,        // Currently used value
+  locked?: boolean,         // Prevent auto-updates
+  preferredSource?: string, // Override priority
+  createdAt: number,
+  updatedAt: number,
+}
+
+// Import batch tracking with validation support
+importBatches: {
+  importType: "csv_import" | "gmb_sync" | "gmb_review_sync",
+  importedBy: Id<"users">,
+  status: "pending" | "processing" | "completed" | "failed",
+  businessCount: number,
+  reviewCount: number,
+  source: "gmb_api" | "admin_import" | "csv_file",
+  results?: {
+    created: number,
+    updated: number,
+    failed: number,
+    duplicates: number,
+  },
+  errors?: string[],
+  createdAt: number,
+  completedAt?: number,
+}
+
+// Import validation results (NEW)
+importValidationResults: {
+  batchId: Id<"importBatches">,
+  status: "running" | "completed" | "failed",
+  overallScore: number, // 0-100
+  categories: {
+    databaseIntegrity: CategoryResult,
+    dataQuality: CategoryResult,
+    seoCompliance: CategoryResult,
+    sitemapIntegration: CategoryResult,
+    functionalSystems: CategoryResult,
+    performance: CategoryResult,
+  },
+  sampleBusinesses: Business[], // Random samples for testing
+  recommendations: string[],
+  errors: ValidationError[],
+  statistics: ImportStatistics,
+  startedAt: number,
+  completedAt?: number,
 }
 
 // AI-enhanced content
@@ -309,6 +403,13 @@ analyticsEvents: {
 - `businessModerationQueue` - Business claim verification
 - `platformMetrics` - Platform-wide analytics
 - `adminActions` - Audit trail for admin activities
+
+### Multi-Source Data Management (NEW)
+- `businessDataSources` - Field-level source tracking for all business data
+- `importBatches` - Complete audit trail for bulk operations and GMB sync
+- **Priority System**: GMB API > Admin Import > Manual Entry > System Generated
+- **Conflict Resolution**: Field-level preferences, locking, and confidence scoring
+- **Data Provenance**: Full history tracking without database bloat
 
 ## Feature Implementation Status
 
@@ -397,6 +498,11 @@ analyticsEvents: {
 - **`app/components/FeatureGate.tsx`** - Plan-based component visibility
 - **`app/hooks/usePlanFeatures.ts`** - Feature detection hook
 - **`LISTING_PAGE_ENHANCEMENT_PLAN.md`** - Complete project roadmap and progress
+- **`IMPORT_QA_README.md`** - Import validation system documentation
+- **`convex/importValidation.ts`** - Core validation logic and checks
+- **`app/components/admin/ImportValidation.tsx`** - Validation results UI
+- **`app/components/admin/ImportManager.tsx`** - Import UI with validation integration
+- **`scripts/validate-import.ts`** - CLI validation tool
 
 ### Testing & Validation
 - **TypeScript**: All phases compile successfully

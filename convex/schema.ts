@@ -78,6 +78,33 @@ export default defineSchema({
       lat: v.number(),
       lng: v.number(),
     })),
+
+    // AI Ranking System Fields (NEW)
+    // Review Import Limits by Tier
+    maxReviewImport: v.optional(v.number()), // 15, 25, 40, 100 based on tier
+    maxReviewDisplay: v.optional(v.number()), // 3, 8, 15, unlimited based on tier
+    
+    // Performance Scores (cached for fast access)
+    speedScore: v.optional(v.number()),      // 0-10 score from AI analysis
+    valueScore: v.optional(v.number()),      // 0-10 score from AI analysis
+    qualityScore: v.optional(v.number()),    // 0-10 score from AI analysis
+    reliabilityScore: v.optional(v.number()), // 0-10 score from AI analysis
+    overallScore: v.optional(v.number()),    // Weighted composite score
+    
+    // Ranking Positions (cached for performance)
+    cityRanking: v.optional(v.number()),     // Position within city
+    categoryRanking: v.optional(v.number()), // Position within category
+    lastRankingUpdate: v.optional(v.number()), // When rankings were last calculated
+    
+    // Tier-Based Features
+    canRespondToReviews: v.optional(v.boolean()),
+    hasAdvancedAnalytics: v.optional(v.boolean()),
+    hasRealTimeUpdates: v.optional(v.boolean()),
+    hasBasicAnalytics: v.optional(v.boolean()),
+    hasEmailAlerts: v.optional(v.boolean()),
+    hasCompetitorInsights: v.optional(v.boolean()),
+    hasAdvancedAI: v.optional(v.boolean()),
+    hasPrioritySupport: v.optional(v.boolean()),
     socialLinks: v.optional(v.object({
       facebook: v.optional(v.string()),
       instagram: v.optional(v.string()),
@@ -108,6 +135,22 @@ export default defineSchema({
     verified: v.boolean(),
     active: v.boolean(),
     
+    // Data Source Tracking
+    dataSource: v.object({
+      primary: v.union(
+        v.literal("gmb_api"),      // Via GMB OAuth
+        v.literal("admin_import"), // Admin scraped/imported
+        v.literal("user_manual"),  // User manually added
+        v.literal("system")        // System generated
+      ),
+      lastSyncedAt: v.optional(v.number()),
+      syncStatus: v.optional(v.string()), // "synced", "pending", "failed"
+      gmbLocationId: v.optional(v.string()), // If GMB connected
+    }),
+    
+    // Track which fields have been manually edited
+    editedFields: v.optional(v.array(v.string())), // ["description", "hours"]
+    
     // Additional Google My Business Data
     imageUrl: v.optional(v.string()),
     favicon: v.optional(v.string()),
@@ -116,6 +159,12 @@ export default defineSchema({
     fromTheBusiness: v.optional(v.string()),
     offerings: v.optional(v.string()),
     planning: v.optional(v.string()),
+    
+    // GMB Identifiers for Review Matching
+    placeId: v.optional(v.string()),        // Google Place ID (primary key for review matching)
+    gmbUrl: v.optional(v.string()),         // Google My Business profile URL  
+    cid: v.optional(v.string()),            // Google Customer ID / Citation ID
+    gmbClaimed: v.optional(v.boolean()),    // Whether business is claimed on GMB
     
     // Ratings
     rating: v.number(),
@@ -132,6 +181,8 @@ export default defineSchema({
     .index("by_owner", ["ownerId"])
     .index("by_plan", ["planTier"])
     .index("by_name", ["name"])
+    .index("by_placeId", ["placeId"])     // For GMB review matching
+    .index("by_cid", ["cid"])             // For secondary review matching
     .searchIndex("search_businesses", {
       searchField: "name",
       filterFields: ["city", "categoryId", "active"],
@@ -163,17 +214,107 @@ export default defineSchema({
     
   reviews: defineTable({
     businessId: v.id("businesses"),
+    
+    // Review content
+    reviewId: v.string(), // External ID (GMB, Yelp, etc)
     userId: v.optional(v.string()),
     userName: v.string(),
+    authorPhotoUrl: v.optional(v.string()),
     rating: v.number(),
     comment: v.string(),
     verified: v.boolean(),
     helpful: v.number(),
+    
+    // Source tracking
+    source: v.union(
+      v.literal("gmb_api"),      // Live from GMB
+      v.literal("gmb_import"),   // Scraped GMB
+      v.literal("yelp_import"),  // Scraped Yelp
+      v.literal("facebook_import"), // Scraped Facebook
+      v.literal("direct"),       // Platform review
+      v.literal("manual")        // Admin added
+    ),
+    sourceUrl: v.optional(v.string()),
+    importBatchId: v.optional(v.string()),
+    
+    // Review metadata
+    originalCreateTime: v.optional(v.string()), // ISO string from source
+    originalUpdateTime: v.optional(v.string()),
+    
+    // Business reply (if any)
+    reply: v.optional(v.object({
+      text: v.string(),
+      createdAt: v.number(),
+      authorName: v.optional(v.string()),
+    })),
+    
+    // AI Analysis Results (pre-computed for performance)
+    sentiment: v.optional(v.object({
+      score: v.number(),    // -1 to 1
+      magnitude: v.number(), // 0 to 1
+      classification: v.optional(v.union(
+        v.literal("positive"),
+        v.literal("neutral"), 
+        v.literal("negative")
+      )),
+    })),
+    
+    // Performance Mention Analysis
+    speedMentions: v.optional(v.object({
+      hasSpeedMention: v.boolean(),
+      responseTime: v.optional(v.string()), // "12 minutes", "same day"
+      urgencyLevel: v.optional(v.union(
+        v.literal("low"),
+        v.literal("medium"),
+        v.literal("high")
+      )),
+    })),
+    
+    valueMentions: v.optional(v.object({
+      hasValueMention: v.boolean(),
+      pricePerception: v.optional(v.union(
+        v.literal("expensive"),
+        v.literal("fair"),
+        v.literal("cheap")
+      )),
+      valueScore: v.optional(v.number()), // 0-10
+    })),
+    
+    qualityMentions: v.optional(v.object({
+      hasQualityMention: v.boolean(),
+      workmanshipScore: v.optional(v.number()), // 0-10
+      detailOriented: v.optional(v.boolean()),
+    })),
+    
+    reliabilityMentions: v.optional(v.object({
+      hasReliabilityMention: v.boolean(),
+      consistencyScore: v.optional(v.number()), // 0-10
+      followThrough: v.optional(v.boolean()),
+    })),
+    
+    // Display Controls for Tier System
+    visibleToTier: v.optional(v.union(
+      v.literal("free"),
+      v.literal("starter"),
+      v.literal("pro"),
+      v.literal("power")
+    )),
+    isDisplayed: v.optional(v.boolean()),
+    displayPriority: v.optional(v.number()), // Higher priority reviews shown first
+    
+    keywords: v.optional(v.array(v.string())),
+    flagged: v.optional(v.boolean()),
+    
+    // Timestamps
     createdAt: v.number(),
+    syncedAt: v.optional(v.number()),
   })
     .index("by_business", ["businessId"])
     .index("by_user", ["userId"])
-    .index("by_created", ["createdAt"]),
+    .index("by_created", ["createdAt"])
+    .index("by_business_source", ["businessId", "source"])
+    .index("by_review_id", ["reviewId"])
+    .index("by_import_batch", ["importBatchId"]),
     
   leads: defineTable({
     businessId: v.id("businesses"),
@@ -404,6 +545,70 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_status", ["status"]),
     
+  // Multi-source data tracking table
+  businessDataSources: defineTable({
+    businessId: v.id("businesses"),
+    fieldName: v.string(), // "name", "phone", "address", etc.
+    
+    // Current active value (what's shown)
+    currentValue: v.any(),
+    currentSource: v.string(), // "gmb_api", "admin_import", "user_manual"
+    currentUpdatedAt: v.number(),
+    
+    // All available values from different sources
+    sources: v.array(v.object({
+      source: v.string(),
+      value: v.any(),
+      updatedAt: v.number(),
+      confidence: v.optional(v.number()), // 0-100 for imported data
+      metadata: v.optional(v.any()), // Import batch ID, GMB sync ID, etc.
+    })),
+    
+    // Override settings
+    locked: v.optional(v.boolean()), // Prevent auto-updates
+    preferredSource: v.optional(v.string()), // Override default priority
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_field", ["fieldName"])
+    .index("by_business_field", ["businessId", "fieldName"]),
+    
+  // Import tracking table
+  importBatches: defineTable({
+    importType: v.string(), // "gmb_scrape", "csv_upload", "manual"
+    importedBy: v.optional(v.id("users")),
+    importedAt: v.number(),
+    
+    status: v.string(), // "pending", "processing", "completed", "failed"
+    
+    // What was imported
+    businessCount: v.number(),
+    reviewCount: v.optional(v.number()),
+    
+    // Import metadata
+    source: v.string(), // "gmb_places_api", "manual_scrape", etc.
+    sourceMetadata: v.optional(v.any()), // Search parameters, CSV filename, etc.
+    
+    // Results
+    results: v.optional(v.object({
+      created: v.number(),
+      updated: v.number(),
+      failed: v.number(),
+      duplicates: v.number(),
+    })),
+    
+    errors: v.optional(v.array(v.string())),
+    
+    createdAt: v.number(),
+    completedAt: v.optional(v.number()),
+  })
+    .index("by_status", ["status"])
+    .index("by_imported_by", ["importedBy"])
+    .index("by_type", ["importType"])
+    .index("by_created", ["createdAt"]),
+    
   // Business claims with multiple verification methods
   businessClaims: defineTable({
     businessId: v.id("businesses"),
@@ -485,4 +690,183 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_verification_method", ["verification_method"])
     .index("by_submitted_at", ["submittedAt"]),
+    
+  // Import validation results table
+  importValidationResults: defineTable({
+    batchId: v.id("importBatches"),
+    status: v.string(), // "running", "completed", "failed"
+    startedAt: v.number(),
+    completedAt: v.optional(v.number()),
+    overallScore: v.number(), // 0-100%
+    
+    // Validation categories with detailed results
+    categories: v.object({
+      databaseIntegrity: v.object({
+        passed: v.boolean(),
+        score: v.number(),
+        checks: v.array(v.object({
+          name: v.string(),
+          passed: v.boolean(),
+          message: v.string(),
+          details: v.optional(v.any()),
+        })),
+        duration: v.number(),
+      }),
+      dataQuality: v.object({
+        passed: v.boolean(),
+        score: v.number(),
+        checks: v.array(v.object({
+          name: v.string(),
+          passed: v.boolean(),
+          message: v.string(),
+          details: v.optional(v.any()),
+        })),
+        duration: v.number(),
+      }),
+      seoCompliance: v.object({
+        passed: v.boolean(),
+        score: v.number(),
+        checks: v.array(v.object({
+          name: v.string(),
+          passed: v.boolean(),
+          message: v.string(),
+          details: v.optional(v.any()),
+        })),
+        duration: v.number(),
+      }),
+      sitemapIntegration: v.object({
+        passed: v.boolean(),
+        score: v.number(),
+        checks: v.array(v.object({
+          name: v.string(),
+          passed: v.boolean(),
+          message: v.string(),
+          details: v.optional(v.any()),
+        })),
+        duration: v.number(),
+      }),
+      functionalSystems: v.object({
+        passed: v.boolean(),
+        score: v.number(),
+        checks: v.array(v.object({
+          name: v.string(),
+          passed: v.boolean(),
+          message: v.string(),
+          details: v.optional(v.any()),
+        })),
+        duration: v.number(),
+      }),
+      performance: v.object({
+        passed: v.boolean(),
+        score: v.number(),
+        checks: v.array(v.object({
+          name: v.string(),
+          passed: v.boolean(),
+          message: v.string(),
+          details: v.optional(v.any()),
+        })),
+        duration: v.number(),
+      }),
+    }),
+    
+    // Sample businesses for testing
+    sampleBusinesses: v.array(v.object({
+      _id: v.id("businesses"),
+      name: v.string(),
+      urlPath: v.string(),
+      city: v.string(),
+      category: v.string(),
+    })),
+    
+    recommendations: v.array(v.string()),
+    
+    errors: v.array(v.object({
+      category: v.string(),
+      businessId: v.optional(v.id("businesses")),
+      message: v.string(),
+      severity: v.string(), // "error", "warning", "info"
+    })),
+    
+    statistics: v.object({
+      totalBusinesses: v.number(),
+      expectedBusinesses: v.number(),
+      successfulCreated: v.number(),
+      failedCreated: v.number(),
+      duplicatesSkipped: v.number(),
+    }),
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_batch", ["batchId"])
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
+
+  // AI Ranking System Tables (NEW)
+  
+  // Performance metrics cache for efficient ranking calculations
+  performanceMetrics: defineTable({
+    businessId: v.id("businesses"),
+    
+    // Speed Metrics
+    avgResponseMentions: v.optional(v.number()),
+    emergencyAvailability: v.optional(v.boolean()),
+    speedRanking: v.optional(v.number()),
+    
+    // Value Metrics  
+    priceRanking: v.optional(v.number()),
+    valuePerceptionScore: v.optional(v.number()),
+    transparencyScore: v.optional(v.number()),
+    
+    // Quality Metrics
+    qualityRanking: v.optional(v.number()),
+    craftsmanshipScore: v.optional(v.number()),
+    detailScore: v.optional(v.number()),
+    
+    // Reliability Metrics
+    reliabilityRanking: v.optional(v.number()),
+    consistencyScore: v.optional(v.number()),
+    communicationScore: v.optional(v.number()),
+    
+    // Metadata
+    lastUpdated: v.number(),
+    totalReviewsAnalyzed: v.number(),
+    confidenceLevel: v.optional(v.number()), // 0-100% based on data quality
+    
+    createdAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_last_updated", ["lastUpdated"])
+    .index("by_confidence", ["confidenceLevel"]),
+
+  // Ranking cache for fast homepage and category lookups
+  rankingCache: defineTable({
+    cacheKey: v.string(), // "scottsdale-hvac-speed", "phoenix-plumbing-overall"
+    
+    rankings: v.array(v.object({
+      businessId: v.id("businesses"),
+      rank: v.number(),
+      score: v.number(),
+      performanceBadges: v.array(v.string()),
+    })),
+    
+    lastUpdated: v.number(),
+    expiresAt: v.number(),
+    city: v.string(),
+    category: v.string(),
+    rankingType: v.union(
+      v.literal("speed"),
+      v.literal("value"), 
+      v.literal("quality"),
+      v.literal("reliability"),
+      v.literal("overall")
+    ),
+    
+    createdAt: v.number(),
+  })
+    .index("by_cache_key", ["cacheKey"])
+    .index("by_city_category", ["city", "category"])
+    .index("by_ranking_type", ["rankingType"])
+    .index("by_expires_at", ["expiresAt"])
+    .index("by_last_updated", ["lastUpdated"]),
 });

@@ -66,6 +66,11 @@ interface BusinessProfileProps {
       twitter?: string;
       linkedin?: string;
     };
+    // GMB Identifiers
+    placeId?: string;
+    gmbUrl?: string;
+    cid?: string;
+    gmbClaimed?: boolean;
     rating: number;
     reviewCount: number;
     createdAt: number;
@@ -454,6 +459,17 @@ function EnhancedBusinessProfile({
                         <p>{business.city}, {business.state} {business.zip}</p>
                       </div>
                     </div>
+                    
+                    {/* Google Place ID - only show to business owners */}
+                    {isOwner && business.placeId && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <Globe className="h-4 w-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">Google Place ID</p>
+                          <p className="font-mono text-xs">{business.placeId}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <Separator />

@@ -18,13 +18,18 @@ import type * as businessContent from "../businessContent.js";
 import type * as businesses from "../businesses.js";
 import type * as categories from "../categories.js";
 import type * as cities from "../cities.js";
+import type * as dataSourceManager from "../dataSourceManager.js";
 import type * as emails from "../emails.js";
+import type * as facebookReviews from "../facebookReviews.js";
 import type * as http_sitemap from "../http/sitemap.js";
 import type * as http from "../http.js";
 import type * as leads from "../leads.js";
 import type * as makeAdmin from "../makeAdmin.js";
 import type * as moderation from "../moderation.js";
+import type * as ownerAccess from "../ownerAccess.js";
 import type * as rateLimit from "../rateLimit.js";
+import type * as reviewDeduplication from "../reviewDeduplication.js";
+import type * as reviewImport from "../reviewImport.js";
 import type * as schema_backup_complex from "../schema_backup_complex.js";
 import type * as seed from "../seed.js";
 import type * as seedBusinesses from "../seedBusinesses.js";
@@ -34,6 +39,7 @@ import type * as sitemaps from "../sitemaps.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
 import type * as verification from "../verification.js";
+import type * as yelpReviews from "../yelpReviews.js";
 
 import type {
   ApiFromModules,
@@ -60,13 +66,18 @@ declare const fullApi: ApiFromModules<{
   businesses: typeof businesses;
   categories: typeof categories;
   cities: typeof cities;
+  dataSourceManager: typeof dataSourceManager;
   emails: typeof emails;
+  facebookReviews: typeof facebookReviews;
   "http/sitemap": typeof http_sitemap;
   http: typeof http;
   leads: typeof leads;
   makeAdmin: typeof makeAdmin;
   moderation: typeof moderation;
+  ownerAccess: typeof ownerAccess;
   rateLimit: typeof rateLimit;
+  reviewDeduplication: typeof reviewDeduplication;
+  reviewImport: typeof reviewImport;
   schema_backup_complex: typeof schema_backup_complex;
   seed: typeof seed;
   seedBusinesses: typeof seedBusinesses;
@@ -76,6 +87,7 @@ declare const fullApi: ApiFromModules<{
   subscriptions: typeof subscriptions;
   users: typeof users;
   verification: typeof verification;
+  yelpReviews: typeof yelpReviews;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

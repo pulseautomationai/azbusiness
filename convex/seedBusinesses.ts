@@ -40,6 +40,12 @@ export const seedSampleBusinesses = mutation({
         claimed: true,
         ownerId: undefined,
         socialLinks: undefined,
+        dataSource: {
+          primary: "system",
+          lastSyncedAt: Date.now(),
+          syncStatus: "synced",
+          gmbLocationId: undefined,
+        },
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -100,6 +106,12 @@ export const seedSampleBusinesses = mutation({
             heroImage: undefined,
             coordinates: undefined,
             socialLinks: undefined,
+            dataSource: {
+              primary: "system" as const,
+              lastSyncedAt: Date.now(),
+              syncStatus: "synced",
+              gmbLocationId: undefined,
+            },
             createdAt: Date.now(),
             updatedAt: Date.now(),
           };

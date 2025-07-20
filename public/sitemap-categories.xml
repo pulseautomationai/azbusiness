@@ -1,236 +1,236 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://azbusiness.services/hvac-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/hvac-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/plumbing</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/plumbing</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/electrical</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/electrical</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/cleaning-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/cleaning-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/landscaping</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/landscaping</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/handyman</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/handyman</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/pest-control</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/pest-control</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/home-security</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/home-security</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/roofing-gutters</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/roofing-gutters</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/flooring</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/flooring</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/painting</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/painting</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/pool-spa-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/pool-spa-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/garage-door-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/garage-door-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/appliance-repair</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/appliance-repair</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/locksmith-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/locksmith-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/tree-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/tree-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/junk-removal</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/junk-removal</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/moving-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/moving-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/solar-installation</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/solar-installation</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/home-inspection</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/home-inspection</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/mobile-detailing</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/mobile-detailing</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/pressure-washing</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/pressure-washing</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/concrete-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/concrete-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/fencing</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/fencing</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/deck-patio-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/deck-patio-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/chimney-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/chimney-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/septic-sewer-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/septic-sewer-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/foundation-repair</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/foundation-repair</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/mobile-mechanics</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/mobile-mechanics</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/mobile-tire-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/mobile-tire-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/mobile-pet-grooming</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/mobile-pet-grooming</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/window-tinting</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/window-tinting</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/gutter-guards</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/gutter-guards</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/outdoor-lighting</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/outdoor-lighting</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/fire-water-damage-restoration</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/fire-water-damage-restoration</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/mold-remediation</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/mold-remediation</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/insulation-services</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/insulation-services</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/smart-home-installation</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/smart-home-installation</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/real-estate</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/real-estate</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

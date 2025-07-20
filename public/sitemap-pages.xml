@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://azbusiness.services/</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/about</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/about</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/contact</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/contact</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/privacy</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/privacy</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/terms</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/terms</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/add-business</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/add-business</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/sign-up</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/sign-up</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/sign-in</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/sign-in</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/pricing</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/pricing</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/categories</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/categories</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://azbusiness.services/cities</loc>
-    <lastmod>2025-07-15T00:11:22.422Z</lastmod>
+    <loc>http://localhost:5173/cities</loc>
+    <lastmod>2025-07-19T18:39:41.905Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

@@ -40,6 +40,7 @@ class CSVImporter {
   private categoryDetector: CategoryDetector;
   private configManager: ImportConfigManager;
   private stats: ImportStats;
+  private currentBatchId?: string;
 
   constructor() {
     // Initialize Convex client
@@ -65,7 +66,7 @@ class CSVImporter {
   }
 
   /**
-   * Main import function
+   * Main import function with multi-source tracking
    */
   async import(csvFilePath: string): Promise<ImportStats> {
     try {
@@ -79,19 +80,38 @@ class CSVImporter {
         throw new Error('No data found in CSV file');
       }
 
-      // Step 2: Auto-detect field mapping
+      // Step 2: Auto-detect field mapping and CSV source
       const headers = Object.keys(rows[0]);
-      const csvType = FieldMappingDetector.detectCSVType(headers);
+      const csvType = FieldMappingDetector.detectBusinessCSVType(headers);
       const fieldMapping = FieldMappingDetector.getMappingByType(csvType);
       
       console.log(`📊 Detected CSV type: ${csvType}`);
       console.log(`📋 Processing ${rows.length} rows with ${headers.length} columns`);
 
-      // Step 3: Get category mappings from database
+      // Step 3: Create import batch record for tracking
+      const fileName = csvFilePath.split('/').pop() || 'unknown.csv';
+      this.currentBatchId = await this.convex.mutation(api.batchImport.createImportBatch, {
+        importType: "csv_import",
+        importedBy: "j97aew6htjzrn1btw4edmxjq2s7ka8n9" as any, // John Schulenburg's user ID
+        source: csvType === "google_my_business" ? "gmb_scraped" : "csv_upload",
+        sourceMetadata: {
+          fileName,
+          csvType,
+          filePath: csvFilePath,
+          totalRows: rows.length,
+          headers: headers
+        },
+        businessCount: rows.length,
+        reviewCount: 0,
+      });
+
+      console.log(`📦 Created import batch: ${this.currentBatchId}`);
+
+      // Step 4: Get category mappings from database
       const categories = await this.convex.query(api.categories.getCategories);
       const categoryMap = new Map(categories.map(cat => [cat.slug, cat._id]));
 
-      // Step 4: Process rows in batches
+      // Step 5: Process rows in batches
       const batchSize = this.configManager.getBatchSize();
       const processedBusinesses: any[] = [];
 
@@ -106,14 +126,29 @@ class CSVImporter {
         this.updateProgress(i + batch.length);
       }
 
-      // Step 5: Import to database
+      // Step 6: Import to database with source tracking
       if (processedBusinesses.length > 0) {
         console.log(`💾 Importing ${processedBusinesses.length} businesses to database...`);
-        await this.importToDatabase(processedBusinesses);
+        await this.importToDatabase(processedBusinesses, csvType, fileName);
       }
 
-      // Step 6: Generate final stats
+      // Step 7: Update import batch status and generate final stats
       this.stats.successRate = (this.stats.processedRows / this.stats.totalRows) * 100;
+      
+      // Update batch with final results
+      if (this.currentBatchId) {
+        await this.convex.mutation(api.batchImport.updateImportBatch, {
+          batchId: this.currentBatchId,
+          status: "completed",
+          results: {
+            created: this.stats.processedRows,
+            updated: 0,
+            failed: this.stats.errorRows,
+            duplicates: this.stats.skippedRows,
+          },
+          errors: this.stats.errorDetails.slice(0, 10).map(e => e.errors.join(', ')), // First 10 errors
+        });
+      }
       
       console.log(`✅ Import completed successfully!`);
       this.printStats();
@@ -121,6 +156,20 @@ class CSVImporter {
       return this.stats;
     } catch (error) {
       console.error('❌ Import failed:', error);
+      
+      // Update batch status to failed
+      if (this.currentBatchId) {
+        try {
+          await this.convex.mutation(api.batchImport.updateImportBatch, {
+            batchId: this.currentBatchId,
+            status: "failed",
+            errors: [String(error)],
+          });
+        } catch (updateError) {
+          console.error('Failed to update batch status:', updateError);
+        }
+      }
+      
       throw error;
     }
   }
@@ -243,9 +292,9 @@ class CSVImporter {
   }
 
   /**
-   * Import businesses to database
+   * Import businesses to database with multi-source tracking
    */
-  private async importToDatabase(businesses: any[]): Promise<void> {
+  private async importToDatabase(businesses: any[], csvType: string, fileName: string): Promise<void> {
     try {
       // Use batch import function for better performance
       const batchSize = 50;
@@ -253,12 +302,23 @@ class CSVImporter {
       let totalFailed = 0;
       let totalSkipped = 0;
 
+      // Determine import source based on CSV type
+      const importSource = csvType === "google_my_business" ? "admin_import" : "admin_import";
+
       for (let i = 0; i < businesses.length; i += batchSize) {
         const batch = businesses.slice(i, i + batchSize);
         
         const result = await this.convex.mutation(api.batchImport.batchImportBusinesses, {
           businesses: batch,
-          skipDuplicates: this.configManager.shouldSkipDuplicates()
+          skipDuplicates: this.configManager.shouldSkipDuplicates(),
+          // Multi-source tracking parameters
+          importSource: importSource,
+          importBatchId: this.currentBatchId as any,
+          sourceMetadata: {
+            fileName,
+            csvType,
+            batchNumber: Math.floor(i / batchSize) + 1,
+          },
         });
 
         totalSuccessful += result.successful;
@@ -271,6 +331,16 @@ class CSVImporter {
         }
 
         console.log(`📊 Batch ${Math.floor(i / batchSize) + 1}: ${result.successful} successful, ${result.failed} failed, ${result.skipped} skipped`);
+        
+        // DEBUG: Log what we're actually sending
+        if (batch.length > 0) {
+          console.log('🔍 DEBUG: First business in batch:', {
+            name: batch[0].name,
+            address: batch[0].address,
+            city: batch[0].city,
+            phone: batch[0].phone
+          });
+        }
       }
 
       console.log(`\n✅ Import Summary:`);
