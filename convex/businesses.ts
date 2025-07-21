@@ -1410,10 +1410,14 @@ export const getBusinessReviews = query({
     const reviews = await ctx.db
       .query("reviews")
       .withIndex("by_business", (q) => q.eq("businessId", args.businessId))
-      .order("desc")
-      .take(limit);
+      .collect();
     
-    return reviews;
+    // Sort by createdAt in descending order and take the limit
+    const sortedReviews = reviews
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, limit);
+    
+    return sortedReviews;
   },
 });
 
