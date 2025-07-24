@@ -1,6 +1,6 @@
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
-import BusinessProfile from "~/components/business/business-profile";
+import TierBasedBusinessProfile from "~/components/business/tier-based-business-profile";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import type { Route } from "./+types/demo.business";
 
@@ -55,7 +55,7 @@ export function meta() {
 //       saturday: "8:00 AM - 4:00 PM",
 //       sunday: "Emergency Only"
 //     },
-//     planTier: "pro" as const,
+//     planTier: "free" as const,
 //     featured: true,
 //     priority: 10,
 //     ownerId: undefined,
@@ -220,7 +220,7 @@ export default function DemoBusinessPage() {
       saturday: "8:00 AM - 4:00 PM",
       sunday: "Emergency Only"
     },
-    planTier: "pro" as const,
+    planTier: "free" as const,
     featured: true,
     priority: 10,
     ownerId: undefined,
@@ -345,7 +345,7 @@ export default function DemoBusinessPage() {
     <>
       <Header />
       <ComponentErrorBoundary componentName="Business Profile">
-        <BusinessProfile 
+        <TierBasedBusinessProfile 
           business={loaderData.business}
           relatedBusinesses={loaderData.relatedBusinesses}
           reviews={loaderData.reviews}

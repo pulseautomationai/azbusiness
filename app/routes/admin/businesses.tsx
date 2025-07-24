@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -12,7 +12,7 @@ import { Badge } from "~/components/ui/badge";
 import { Checkbox } from "~/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "~/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff, Plus, ChevronDown, Trash, Settings, MoreHorizontal, Download, Copy, Database } from "lucide-react";
+import { Building, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Star, StarOff, Plus, ChevronDown, Trash, Settings, MoreHorizontal, Download, Copy, Database, RefreshCw, Clock, AlertCircle, Brain, Sparkles } from "lucide-react";
 import { toast } from "~/hooks/use-toast";
 import { Link, useNavigate } from "react-router";
 import { SlugGenerator } from "~/utils/slug-generator";
@@ -21,8 +21,10 @@ export default function AdminBusinesses() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [planFilter, setPlanFilter] = useState<"all" | "free" | "pro" | "power">("all");
+  const [planFilter, setPlanFilter] = useState<"all" | "free" | "starter" | "pro" | "power">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [verificationFilter, setVerificationFilter] = useState<"all" | "verified" | "unverified">("all");
+  const [reviewCountFilter, setReviewCountFilter] = useState<"all" | "none" | "few" | "moderate" | "many" | "lots">("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [zipcodeFilter, setZipcodeFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -33,18 +35,43 @@ export default function AdminBusinesses() {
   const [selectedBusinesses, setSelectedBusinesses] = useState<Set<Id<"businesses">>>(new Set());
   const [isAllSelected, setIsAllSelected] = useState(false);
   
-  // Column visibility state
-  const [visibleColumns, setVisibleColumns] = useState({
+  // Column visibility state - check localStorage for saved preferences
+  const savedColumns = typeof window !== 'undefined' ? localStorage.getItem('adminBusinessColumns') : null;
+  const defaultColumns = {
     business: true,
     category: true,
     city: true,
     zip: true,
     plan: true,
+    reviews: true,
+    verification: true,
     dataSource: true,
     placeId: true, // Add place_id column
+    reviewSync: true, // Add review sync column
+    aiInsights: true, // Add AI insights column
     status: true,
     featured: true,
-  });
+  };
+  
+  // Parse saved columns and ensure all default columns are present
+  let initialColumns = defaultColumns;
+  if (savedColumns) {
+    try {
+      const parsed = JSON.parse(savedColumns);
+      // Merge with defaults to ensure new columns are included
+      initialColumns = { ...defaultColumns };
+      // Only override with saved values for columns that exist in saved data
+      Object.keys(defaultColumns).forEach(key => {
+        if (key in parsed) {
+          initialColumns[key] = parsed[key];
+        }
+      });
+    } catch (e) {
+      console.error('Failed to parse saved columns:', e);
+    }
+  }
+  
+  const [visibleColumns, setVisibleColumns] = useState(initialColumns);
 
   // Debounce search to prevent excessive API calls
   useEffect(() => {
@@ -60,11 +87,13 @@ export default function AdminBusinesses() {
   const cities = useQuery(api.businesses.getUniqueCities);
   const zipcodes = useQuery(api.businesses.getUniqueZipcodes);
 
-  // Get businesses for admin view
+  // Get businesses for admin view - reduced limit due to memory constraints
   const businesses = useQuery(api.businesses.getBusinessesForAdmin, {
     search: debouncedSearch || undefined,
     planTier: planFilter === "all" ? undefined : planFilter,
     active: statusFilter === "all" ? undefined : statusFilter === "active",
+    verificationStatus: verificationFilter === "all" ? undefined : verificationFilter,
+    reviewCountFilter: reviewCountFilter === "all" ? undefined : reviewCountFilter,
     city: cityFilter === "all" ? undefined : cityFilter,
     zipcode: zipcodeFilter === "all" ? undefined : zipcodeFilter,
     categoryId: categoryFilter === "all" ? undefined : categoryFilter as Id<"categories">,
@@ -73,20 +102,31 @@ export default function AdminBusinesses() {
       dateFilter === "today" ? Date.now() - (24 * 60 * 60 * 1000) :
       dateFilter === "week" ? Date.now() - (7 * 24 * 60 * 60 * 1000) :
       dateFilter === "month" ? Date.now() - (30 * 24 * 60 * 60 * 1000) : undefined,
-    limit: 100,
+    limit: 25, // Reduced from 100 to 25 for memory efficiency
   });
 
   const updateBusinessStatus = useMutation(api.businesses.updateBusinessStatus);
   const updateBusiness = useMutation(api.businesses.updateBusiness);
   const deleteBusiness = useMutation(api.businesses.deleteBusiness);
   const deleteMultipleBusinesses = useMutation(api.businesses.deleteMultipleBusinesses);
+  const syncBusinessReviews = useAction(api.reviewSync.syncBusinessReviews);
+  const bulkAddToQueue = useMutation(api.geoScraperQueue.bulkAddToQueue);
+  const processQueue = useAction(api.geoScraperProcessor.processQueue);
+  const processBusinessReviews = useAction(api.aiAnalysisIntegration.processBusinessReviews);
 
   // Column visibility toggle
   const toggleColumn = (columnKey: keyof typeof visibleColumns) => {
-    setVisibleColumns(prev => ({
-      ...prev,
-      [columnKey]: !prev[columnKey]
-    }));
+    setVisibleColumns(prev => {
+      const newColumns = {
+        ...prev,
+        [columnKey]: !prev[columnKey]
+      };
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('adminBusinessColumns', JSON.stringify(newColumns));
+      }
+      return newColumns;
+    });
   };
 
   const handleStatusToggle = async (businessId: Id<"businesses">, currentStatus: boolean) => {
@@ -95,10 +135,7 @@ export default function AdminBusinesses() {
         businessId,
         action: currentStatus ? "deactivate" : "activate",
       });
-      toast({
-        title: currentStatus ? "Business deactivated" : "Business activated",
-        description: "Business status updated successfully",
-      });
+      // Success - no toast notification needed
     } catch (error) {
       toast({
         title: "Error",
@@ -114,10 +151,7 @@ export default function AdminBusinesses() {
         businessId,
         action: currentFeatured ? "unfeature" : "feature",
       });
-      toast({
-        title: currentFeatured ? "Business unfeatured" : "Business featured",
-        description: "Featured status updated successfully",
-      });
+      // Success - no toast notification needed
     } catch (error) {
       toast({
         title: "Error",
@@ -135,14 +169,27 @@ export default function AdminBusinesses() {
           planTier: newPlan,
         },
       });
-      toast({
-        title: "Plan updated",
-        description: `Business plan changed to ${newPlan}`,
-      });
+      // Success - no toast notification needed
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update plan",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleVerificationToggle = async (businessId: Id<"businesses">, currentlyVerified: boolean) => {
+    try {
+      await updateBusinessStatus({
+        businessId,
+        action: currentlyVerified ? "unverify" : "verify",
+      });
+      // Success - no toast notification needed
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update verification status",
         variant: "destructive",
       });
     }
@@ -155,10 +202,7 @@ export default function AdminBusinesses() {
     
     try {
       await deleteBusiness({ businessId });
-      toast({
-        title: "Business deleted",
-        description: `${businessName} has been permanently deleted`,
-      });
+      // Success - no toast notification needed
     } catch (error) {
       toast({
         title: "Error",
@@ -215,16 +259,10 @@ export default function AdminBusinesses() {
             variant: "destructive",
           });
         } else {
-          toast({
-            title: "Businesses deleted",
-            description: `${selectedCount} businesses have been permanently deleted`,
-          });
+          // Success - no toast notification needed
         }
       } else {
-        toast({
-          title: "Businesses deleted",
-          description: `${selectedCount} businesses have been permanently deleted`,
-        });
+        // Success - no toast notification needed
       }
     } catch (error) {
       console.error("Bulk delete error:", error);
@@ -280,10 +318,7 @@ export default function AdminBusinesses() {
       
       setSelectedBusinesses(new Set());
       setIsAllSelected(false);
-      toast({
-        title: "Plans updated",
-        description: `${selectedCount} businesses updated to ${newPlan} plan`,
-      });
+      // Success - no toast notification needed
     } catch (error) {
       toast({
         title: "Error",
@@ -306,6 +341,120 @@ export default function AdminBusinesses() {
       toast({
         title: "Error",
         description: "Failed to clone business",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSyncReviews = async (businessId: Id<"businesses">, businessName: string, placeId?: string) => {
+    if (!placeId) {
+      toast({
+        title: "Cannot sync reviews",
+        description: "This business has no Google Place ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      toast({
+        title: "Syncing reviews...",
+        description: `Starting review sync for ${businessName}`,
+      });
+
+      const result = await syncBusinessReviews({ businessId });
+
+      if (result.success) {
+        toast({
+          title: "Reviews synced successfully",
+          description: `Imported ${result.imported} new reviews (${result.fetched} fetched, ${result.duplicates} duplicates)`,
+        });
+      } else {
+        toast({
+          title: "Sync failed",
+          description: result.error || "Unknown error occurred",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Sync error:", error);
+      toast({
+        title: "Sync error",
+        description: "Failed to sync reviews. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBulkSync = async () => {
+    const selectedCount = selectedBusinesses.size;
+    if (selectedCount === 0) return;
+
+    try {
+      // Get businesses with place IDs
+      const businessesToSync = businesses
+        ?.filter(b => selectedBusinesses.has(b._id) && b.placeId)
+        .map(b => ({ businessId: b._id, placeId: b.placeId! })) || [];
+
+      if (businessesToSync.length === 0) {
+        toast({
+          title: "No businesses to sync",
+          description: "None of the selected businesses have Place IDs",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Add businesses to queue
+      await bulkAddToQueue({
+        businesses: businessesToSync,
+        priority: 5,
+      });
+
+      // Start processing the queue
+      const processResult = await processQueue({ maxItems: 10 });
+
+      // No success toast - user can see progress in Recent Activity
+      setSelectedBusinesses(new Set());
+      setIsAllSelected(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to queue businesses for sync",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRegenerateAIInsights = async (businessId: Id<"businesses">, businessName: string) => {
+    try {
+      toast({
+        title: "Generating AI insights...",
+        description: `Processing reviews for ${businessName}`,
+      });
+
+      const result = await processBusinessReviews({ 
+        businessId,
+        skipExisting: false // Force regeneration
+      });
+
+      if (result.success) {
+        toast({
+          title: "AI insights generated",
+          description: result.message,
+        });
+      } else {
+        toast({
+          title: "Generation failed",
+          description: result.message || "Unknown error occurred",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("AI generation error:", error);
+      toast({
+        title: "Generation error",
+        description: "Failed to generate AI insights. Please try again.",
         variant: "destructive",
       });
     }
@@ -375,6 +524,8 @@ export default function AdminBusinesses() {
         return "bg-purple-100 text-purple-800 border-purple-200";
       case "pro":
         return "bg-blue-100 text-blue-800 border-blue-200";
+      case "starter":
+        return "bg-green-100 text-green-800 border-green-200";
       case "free":
         return "bg-gray-100 text-gray-800 border-gray-200";
       default:
@@ -437,6 +588,10 @@ export default function AdminBusinesses() {
                   <Badge className="h-4 w-4 mr-2" />
                   Set to Free Plan
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkPlanUpdate("starter")}>
+                  <Badge className="h-4 w-4 mr-2" />
+                  Set to Starter Plan
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleBulkPlanUpdate("pro")}>
                   <Badge className="h-4 w-4 mr-2" />
                   Set to Pro Plan
@@ -445,6 +600,61 @@ export default function AdminBusinesses() {
                   <Badge className="h-4 w-4 mr-2" />
                   Set to Power Plan
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleBulkSync}>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Sync Reviews
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={async () => {
+                  const selectedCount = selectedBusinesses.size;
+                  if (selectedCount === 0) return;
+                  
+                  const eligibleBusinesses = businesses
+                    ?.filter(b => selectedBusinesses.has(b._id) && b.reviewCount && b.reviewCount >= 5) || [];
+                  
+                  if (eligibleBusinesses.length === 0) {
+                    toast({
+                      title: "No eligible businesses",
+                      description: "Selected businesses need at least 5 reviews for AI analysis",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  
+                  toast({
+                    title: "Processing AI insights...",
+                    description: `Analyzing ${eligibleBusinesses.length} businesses`,
+                  });
+                  
+                  let successCount = 0;
+                  let errorCount = 0;
+                  
+                  for (const business of eligibleBusinesses) {
+                    try {
+                      await processBusinessReviews({ 
+                        businessId: business._id,
+                        skipExisting: false
+                      });
+                      successCount++;
+                    } catch (error) {
+                      errorCount++;
+                      console.error(`Failed to process ${business.name}:`, error);
+                    }
+                  }
+                  
+                  setSelectedBusinesses(new Set());
+                  setIsAllSelected(false);
+                  
+                  toast({
+                    title: "AI insights completed",
+                    description: `Successfully processed ${successCount} businesses${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
+                    variant: errorCount > 0 ? "destructive" : "default",
+                  });
+                }}>
+                  <Brain className="h-4 w-4 mr-2" />
+                  Generate AI Insights
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onClick={handleBulkDelete}
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -488,6 +698,7 @@ export default function AdminBusinesses() {
                 <SelectContent>
                   <SelectItem value="all">All Plans</SelectItem>
                   <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="starter">Starter</SelectItem>
                   <SelectItem value="pro">Pro</SelectItem>
                   <SelectItem value="power">Power</SelectItem>
                 </SelectContent>
@@ -503,6 +714,35 @@ export default function AdminBusinesses() {
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Verification</label>
+              <Select value={verificationFilter || "all"} onValueChange={(value: any) => setVerificationFilter(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Verification" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="unverified">Unverified</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">Reviews</label>
+              <Select value={reviewCountFilter || "all"} onValueChange={(value: any) => setReviewCountFilter(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Review Counts" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="none">No Reviews (0)</SelectItem>
+                  <SelectItem value="few">Few (1-10)</SelectItem>
+                  <SelectItem value="moderate">Moderate (11-50)</SelectItem>
+                  <SelectItem value="many">Many (51-100)</SelectItem>
+                  <SelectItem value="lots">Lots (100+)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -591,7 +831,10 @@ export default function AdminBusinesses() {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">
-            Showing {businesses?.length || 0} businesses
+            Showing {businesses?.length || 0} businesses (max 25 per query)
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Use filters to narrow results
           </span>
         </div>
         
@@ -615,7 +858,9 @@ export default function AdminBusinesses() {
                 className="flex items-center justify-between"
               >
                 <span className="capitalize">
-                  {key === 'placeId' ? 'Place ID' : key.replace(/([A-Z])/g, ' $1')}
+                  {key === 'placeId' ? 'Place ID' : 
+                   key === 'aiInsights' ? 'AI Insights' :
+                   key.replace(/([A-Z])/g, ' $1')}
                 </span>
                 <Checkbox 
                   checked={isVisible}
@@ -646,8 +891,12 @@ export default function AdminBusinesses() {
                 {visibleColumns.city && <TableHead>City</TableHead>}
                 {visibleColumns.zip && <TableHead>ZIP</TableHead>}
                 {visibleColumns.plan && <TableHead>Plan</TableHead>}
+                {visibleColumns.reviews && <TableHead>Reviews</TableHead>}
+                {visibleColumns.verification && <TableHead>Verification</TableHead>}
                 {visibleColumns.dataSource && <TableHead>Data Source</TableHead>}
                 {visibleColumns.placeId && <TableHead>Place ID</TableHead>}
+                {visibleColumns.reviewSync && <TableHead>Review Sync</TableHead>}
+                {visibleColumns.aiInsights && <TableHead>AI Insights</TableHead>}
                 {visibleColumns.status && <TableHead>Status</TableHead>}
                 {visibleColumns.featured && <TableHead>Featured</TableHead>}
                 <TableHead className="text-right">Actions</TableHead>
@@ -702,10 +951,48 @@ export default function AdminBusinesses() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="free">Free</SelectItem>
+                          <SelectItem value="starter">Starter</SelectItem>
                           <SelectItem value="pro">Pro</SelectItem>
                           <SelectItem value="power">Power</SelectItem>
                         </SelectContent>
                       </Select>
+                    </TableCell>
+                  )}
+                  {visibleColumns.reviews && (
+                    <TableCell>
+                      <div className="text-center">
+                        <span className={`inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full ${
+                          business.reviewCount === 0 ? 'bg-gray-100 text-gray-700' :
+                          business.reviewCount <= 10 ? 'bg-blue-100 text-blue-700' :
+                          business.reviewCount <= 50 ? 'bg-green-100 text-green-700' :
+                          business.reviewCount <= 100 ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-purple-100 text-purple-700'
+                        }`}>
+                          {business.reviewCount || 0}
+                        </span>
+                      </div>
+                    </TableCell>
+                  )}
+                  {visibleColumns.verification && (
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleVerificationToggle(business._id, business.verified)}
+                        className={business.verified ? "text-green-600" : "text-gray-400"}
+                      >
+                        {business.verified ? (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            <span className="text-xs">Verified</span>
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="h-4 w-4 mr-1" />
+                            <span className="text-xs">Unverified</span>
+                          </>
+                        )}
+                      </Button>
                     </TableCell>
                   )}
                   {visibleColumns.dataSource && (
@@ -743,6 +1030,96 @@ export default function AdminBusinesses() {
                         </div>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                  )}
+                  {visibleColumns.reviewSync && (
+                    <TableCell>
+                      {business.placeId ? (
+                        <div className="flex items-center gap-2">
+                          {business.syncStatus === "syncing" ? (
+                            <Badge className="text-xs bg-blue-100 text-blue-800">
+                              <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                              Syncing...
+                            </Badge>
+                          ) : business.syncStatus === "error" ? (
+                            <Badge className="text-xs bg-red-100 text-red-800">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              Error
+                            </Badge>
+                          ) : business.lastReviewSync ? (
+                            <div className="flex items-center gap-1">
+                              {Date.now() - business.lastReviewSync < 24 * 60 * 60 * 1000 ? (
+                                <div className="w-2 h-2 bg-green-500 rounded-full" title="Synced recently" />
+                              ) : Date.now() - business.lastReviewSync < 7 * 24 * 60 * 60 * 1000 ? (
+                                <div className="w-2 h-2 bg-yellow-500 rounded-full" title="Synced this week" />
+                              ) : (
+                                <div className="w-2 h-2 bg-red-500 rounded-full" title="Sync needed" />
+                              )}
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(business.lastReviewSync).toLocaleDateString()}
+                              </span>
+                            </div>
+                          ) : (
+                            <Badge className="text-xs bg-gray-100 text-gray-800">
+                              <Clock className="h-3 w-3 mr-1" />
+                              Never
+                            </Badge>
+                          )}
+                          {business.placeId && business.syncStatus !== "syncing" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleSyncReviews(business._id, business.name, business.placeId)}
+                              className="h-6 px-2"
+                            >
+                              <RefreshCw className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No Place ID</span>
+                      )}
+                    </TableCell>
+                  )}
+                  {visibleColumns.aiInsights && (
+                    <TableCell>
+                      {business.overallScore && business.overallScore > 0 ? (
+                        <div className="flex items-center gap-2">
+                          <Badge className="text-xs bg-green-100 text-green-800">
+                            <Brain className="h-3 w-3 mr-1" />
+                            {business.overallScore.toFixed(1)}/100
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRegenerateAIInsights(business._id, business.name)}
+                            className="h-6 px-2"
+                            title="Regenerate AI insights"
+                          >
+                            <RefreshCw className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : business.reviewCount && business.reviewCount >= 5 ? (
+                        <div className="flex items-center gap-2">
+                          <Badge className="text-xs bg-gray-100 text-gray-800">
+                            <AlertCircle className="h-3 w-3 mr-1" />
+                            Not analyzed
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRegenerateAIInsights(business._id, business.name)}
+                            className="h-6 px-2 text-blue-600 hover:text-blue-700"
+                            title="Generate AI insights"
+                          >
+                            <Sparkles className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          {business.reviewCount || 0} reviews (min 5)
+                        </span>
                       )}
                     </TableCell>
                   )}
@@ -827,6 +1204,18 @@ export default function AdminBusinesses() {
                           <Database className="h-4 w-4 mr-2" />
                           View Data Sources
                         </DropdownMenuItem>
+                        {business.placeId && (
+                          <DropdownMenuItem onClick={() => handleSyncReviews(business._id, business.name, business.placeId)}>
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Sync Reviews
+                          </DropdownMenuItem>
+                        )}
+                        {business.reviewCount && business.reviewCount >= 5 && (
+                          <DropdownMenuItem onClick={() => handleRegenerateAIInsights(business._id, business.name)}>
+                            <Brain className="h-4 w-4 mr-2" />
+                            {business.overallScore && business.overallScore > 0 ? 'Regenerate' : 'Generate'} AI Insights
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => handleDeleteBusiness(business._id, business.name)}

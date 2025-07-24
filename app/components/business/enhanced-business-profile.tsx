@@ -57,7 +57,7 @@ interface BusinessProfileProps {
     featured: boolean;
     priority: number;
     ownerId?: string;
-    claimed: boolean;
+    verified: boolean;
     verified: boolean;
     active: boolean;
     socialLinks?: {
@@ -92,7 +92,7 @@ function EnhancedBusinessProfile({
   
   const { canAccess } = usePlanFeatures({ 
     planTier: business.planTier,
-    isClaimed: business.claimed 
+    isVerified: business.verified 
   });
   
   // Get business content for enhanced features
@@ -322,7 +322,7 @@ function EnhancedBusinessProfile({
                 </>
               )}
               
-              {!business.claimed && !isOwner && (
+              {!business.verified && !isOwner && (
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/claim-business">
                     <Award className="mr-2 h-4 w-4" />
@@ -335,8 +335,8 @@ function EnhancedBusinessProfile({
         </div>
       </section>
 
-      {/* Claim Banner for Unclaimed Businesses */}
-      {!business.claimed && (
+      {/* Claim Banner for Unverified Businesses */}
+      {!business.verified && (
         <section className="py-4">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <ClaimBanner business={business} />
@@ -633,7 +633,7 @@ function EnhancedBusinessProfile({
           </div>
 
           {/* Claim Business CTA */}
-          {!business.claimed && !isOwner && (
+          {!business.verified && !isOwner && (
             <div className="mt-12">
               <ClaimBusinessCTA businessName={business.name} />
             </div>

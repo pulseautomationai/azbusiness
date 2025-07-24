@@ -101,7 +101,7 @@ export default function SearchWidget() {
       {/* Subtle desert background texture */}
       <div className="absolute inset-0 overflow-hidden opacity-3">
         <svg
-          className="absolute top-4 left-8 w-24 h-16 text-prickly-pear-pink"
+          className="absolute top-4 left-8 w-24 h-16 text-desert-marigold"
           viewBox="0 0 100 60"
           fill="currentColor"
         >
@@ -109,7 +109,7 @@ export default function SearchWidget() {
           <path d="M0 40 Q25 20 50 35 T100 30 L100 60 L0 60 Z" />
         </svg>
         <svg
-          className="absolute top-8 right-12 w-20 h-12 text-cholla-green"
+          className="absolute top-8 right-12 w-20 h-12 text-turquoise-sky"
           viewBox="0 0 80 48"
           fill="currentColor"
         >
@@ -117,7 +117,7 @@ export default function SearchWidget() {
           <path d="M0 35 Q20 25 40 30 Q60 35 80 25 L80 48 L0 48 Z" />
         </svg>
         <svg
-          className="absolute bottom-6 left-1/4 w-16 h-10 text-desert-sky-blue"
+          className="absolute bottom-6 left-1/4 w-16 h-10 text-ocotillo-red"
           viewBox="0 0 64 40"
           fill="currentColor"
         >
@@ -132,7 +132,7 @@ export default function SearchWidget() {
           {/* Service Input */}
           <div className="relative flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cholla-green" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-turquoise-sky" />
               <Input
                 type="text"
                 placeholder="What service do you need?"
@@ -144,7 +144,7 @@ export default function SearchWidget() {
                 onFocus={() => setShowServiceSuggestions(service.length > 0)}
                 onBlur={() => setTimeout(() => setShowServiceSuggestions(false), 200)}
                 onKeyPress={handleKeyPress}
-                className="pl-10 pr-4 py-3 text-base bg-white border-desert-sky-blue focus:ring-2 focus:ring-ocotillo-red focus:border-ocotillo-red rounded-lg focus-ring-enhanced"
+                className="pl-10 pr-4 py-3 text-base bg-white border-gray-200 focus:ring-2 focus:ring-turquoise-sky focus:border-turquoise-sky rounded-lg focus-ring-enhanced"
               />
             </div>
             
@@ -167,7 +167,7 @@ export default function SearchWidget() {
           {/* Zipcode Input */}
           <div className="relative md:w-48">
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cholla-green" />
+              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-turquoise-sky" />
               <Input
                 type="text"
                 placeholder="ZIP Code"
@@ -180,7 +180,7 @@ export default function SearchWidget() {
                 onFocus={() => setShowZipcodeSuggestions(zipcode.length > 0)}
                 onBlur={() => setTimeout(() => setShowZipcodeSuggestions(false), 200)}
                 onKeyPress={handleKeyPress}
-                className={`pl-10 pr-4 py-3 text-base bg-white border-desert-sky-blue focus:ring-2 focus:ring-ocotillo-red focus:border-ocotillo-red rounded-lg focus-ring-enhanced ${
+                className={`pl-10 pr-4 py-3 text-base bg-white border-gray-200 focus:ring-2 focus:ring-turquoise-sky focus:border-turquoise-sky rounded-lg focus-ring-enhanced ${
                   zipcode && !validateZipcode(zipcode) ? 'border-red-300' : ''
                 }`}
                 maxLength={5}
@@ -226,31 +226,31 @@ export default function SearchWidget() {
           <span className="text-sm font-medium text-ironwood-charcoal/80 mr-2">Popular:</span>
           <a 
             href="/hvac-services/phoenix"
-            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-gray-200 hover:bg-desert-marigold hover:text-white hover:border-desert-marigold shadow-sm hover:shadow-md"
           >
             HVAC in Phoenix
           </a>
           <a 
             href="/plumbing/mesa"
-            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-gray-200 hover:bg-desert-marigold hover:text-white hover:border-desert-marigold shadow-sm hover:shadow-md"
           >
             Plumbing in Mesa
           </a>
           <a 
             href="/electrical/chandler"
-            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-gray-200 hover:bg-desert-marigold hover:text-white hover:border-desert-marigold shadow-sm hover:shadow-md"
           >
             Electricians in Chandler
           </a>
           <a 
             href="/roofing-gutters/scottsdale"
-            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-gray-200 hover:bg-desert-marigold hover:text-white hover:border-desert-marigold shadow-sm hover:shadow-md"
           >
             Roofing in Scottsdale
           </a>
           <a 
             href="/landscaping/tempe"
-            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-prickly-pear-pink/30 hover:bg-ocotillo-red hover:text-white hover:border-ocotillo-red shadow-sm hover:shadow-md"
+            className="popular-link-pill inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-ironwood-charcoal bg-white/80 border border-gray-200 hover:bg-desert-marigold hover:text-white hover:border-desert-marigold shadow-sm hover:shadow-md"
           >
             Landscaping in Tempe
           </a>

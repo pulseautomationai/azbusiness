@@ -10,16 +10,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-ocotillo-red text-primary-foreground shadow-xs hover:bg-ocotillo-red/90 hover:shadow-sm transition-all duration-200",
+          "bg-ocotillo-red text-white shadow-xs hover:bg-ocotillo-red/90 hover:shadow-sm transition-all duration-200",
         destructive:
           "bg-ocotillo-red text-white shadow-xs hover:bg-ocotillo-red/90 focus-visible:ring-ocotillo-red/20 dark:focus-visible:ring-ocotillo-red/40",
         outline:
-          "border border-ironwood-charcoal bg-background shadow-xs hover:bg-prickly-pear-pink hover:text-ironwood-charcoal dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border border-gray-200 bg-white text-ironwood-charcoal shadow-xs hover:bg-agave-cream hover:border-turquoise-sky hover:text-turquoise-sky dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-prickly-pear-pink text-ironwood-charcoal shadow-xs hover:bg-prickly-pear-pink/80",
+          "bg-desert-marigold text-white shadow-xs hover:bg-desert-marigold/90",
         ghost:
-          "hover:bg-prickly-pear-pink hover:text-ironwood-charcoal dark:hover:bg-accent/50",
-        link: "text-ocotillo-red underline-offset-4 hover:underline hover:text-desert-sky-blue",
+          "hover:bg-agave-cream hover:text-ironwood-charcoal dark:hover:bg-accent/50",
+        link: "text-turquoise-sky underline-offset-4 hover:underline hover:text-turquoise-sky/90",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

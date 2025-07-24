@@ -13,6 +13,10 @@ export type RouteType =
   | "business"
   | "category"
   | "city"
+  | "category-rankings"
+  | "city-rankings"
+  | "category-city-rankings"
+  | "rankings"
   | "blog"
   | "pricing"
   | "contact"
@@ -54,6 +58,18 @@ export function generateSEOForRoute(
 
     case "city":
       return generateCitySEO(params, data);
+
+    case "category-rankings":
+      return generateCategoryRankingsSEO(params, data);
+
+    case "city-rankings":
+      return generateCityRankingsSEO(params, data);
+
+    case "category-city-rankings":
+      return generateCategoryCityRankingsSEO(params, data);
+
+    case "rankings":
+      return generateRankingsSEO();
 
     case "blog":
       return generateBlogSEO(params, data);
@@ -360,4 +376,217 @@ export function validateSEO(seo: SEOMetadata): string[] {
   if (seo.description.length > 160) errors.push("Description is too long (max 160 characters)");
 
   return errors;
+}
+
+function generateCategoryRankingsSEO(params: RouteParams, data: RouteData): SEOMetadata {
+  const { category } = params;
+  
+  if (!category) {
+    return SEOGenerator.generateHomepageSEO();
+  }
+
+  const categoryFormatted = SlugGenerator.generateCategoryFromSlug(category);
+  
+  const title = `Best ${categoryFormatted} in Arizona 2025 - Top Ranked Professionals`;
+  const description = `Find the highest-rated ${categoryFormatted.toLowerCase()} professionals in Arizona. AI-powered rankings based on customer satisfaction, updated hourly. Compare top providers by quality score.`;
+  
+  return {
+    title,
+    description,
+    keywords: `best ${categoryFormatted.toLowerCase()} Arizona, top rated ${categoryFormatted.toLowerCase()}, ${categoryFormatted.toLowerCase()} rankings, Arizona service providers, quality rankings`,
+    canonical: `https://azbusiness.services/${category}`,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `https://azbusiness.services/${category}`,
+      image: "/logo.png",
+      siteName: "AZ Business Services",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      image: "/logo.png",
+      site: "@azbusiness",
+    },
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      description,
+      url: `https://azbusiness.services/${category}`,
+      isPartOf: {
+        "@type": "WebSite",
+        name: "AZ Business Services",
+        url: "https://azbusiness.services"
+      },
+      about: {
+        "@type": "CategoryCode",
+        name: categoryFormatted,
+        inCodeSet: {
+          "@type": "CategoryCodeSet",
+          name: "Arizona Service Categories"
+        }
+      }
+    }
+  };
+}
+
+function generateCityRankingsSEO(params: RouteParams, data: RouteData): SEOMetadata {
+  const { slug } = params;
+  const city = slug;
+  
+  if (!city) {
+    return SEOGenerator.generateHomepageSEO();
+  }
+
+  const cityFormatted = SlugGenerator.generateCityFromSlug(city);
+  
+  const title = `${cityFormatted} Business Rankings 2025 - Top Service Providers`;
+  const description = `Discover the highest-rated businesses in ${cityFormatted}, Arizona. Quality-focused rankings updated hourly. Find trusted professionals across all service categories.`;
+  
+  return {
+    title,
+    description,
+    keywords: `${cityFormatted} business rankings, best businesses ${cityFormatted}, ${cityFormatted} service providers, top rated ${cityFormatted}, Arizona businesses`,
+    canonical: `https://azbusiness.services/${city}`,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `https://azbusiness.services/${city}`,
+      image: "/logo.png",
+      siteName: "AZ Business Services",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      image: "/logo.png",
+      site: "@azbusiness",
+    },
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      description,
+      url: `https://azbusiness.services/${city}`,
+      isPartOf: {
+        "@type": "WebSite",
+        name: "AZ Business Services",
+        url: "https://azbusiness.services"
+      },
+      about: {
+        "@type": "City",
+        name: cityFormatted,
+        containedInPlace: {
+          "@type": "State",
+          name: "Arizona"
+        }
+      }
+    }
+  };
+}
+
+function generateCategoryCityRankingsSEO(params: RouteParams, data: RouteData): SEOMetadata {
+  const { category, city } = params;
+  
+  if (!category || !city) {
+    return SEOGenerator.generateHomepageSEO();
+  }
+
+  const categoryFormatted = SlugGenerator.generateCategoryFromSlug(category);
+  const cityFormatted = SlugGenerator.generateCityFromSlug(city);
+  
+  const title = `Best ${categoryFormatted} in ${cityFormatted} 2025 - Top Ranked Professionals`;
+  const description = `Find the highest-rated ${categoryFormatted.toLowerCase()} professionals in ${cityFormatted}, Arizona. Compare quality scores, read reviews, and connect with top-ranked providers.`;
+  
+  return {
+    title,
+    description,
+    keywords: `best ${categoryFormatted.toLowerCase()} ${cityFormatted}, ${cityFormatted} ${categoryFormatted.toLowerCase()}, top rated ${categoryFormatted.toLowerCase()} ${cityFormatted}, Arizona`,
+    canonical: `https://azbusiness.services/${category}/${city}`,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `https://azbusiness.services/${category}/${city}`,
+      image: "/logo.png",
+      siteName: "AZ Business Services",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      image: "/logo.png",
+      site: "@azbusiness",
+    },
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: title,
+      description,
+      url: `https://azbusiness.services/${category}/${city}`,
+      isPartOf: {
+        "@type": "WebSite",
+        name: "AZ Business Services",
+        url: "https://azbusiness.services"
+      },
+      about: [
+        {
+          "@type": "CategoryCode",
+          name: categoryFormatted,
+          inCodeSet: {
+            "@type": "CategoryCodeSet",
+            name: "Arizona Service Categories"
+          }
+        },
+        {
+          "@type": "City",
+          name: cityFormatted,
+          containedInPlace: {
+            "@type": "State",
+            name: "Arizona"
+          }
+        }
+      ]
+    }
+  };
+}
+
+function generateRankingsSEO(): SEOMetadata {
+  return {
+    title: "Arizona Business Rankings 2025 - Top Service Providers",
+    description: "AI-powered quality rankings for Arizona's service providers. Updated hourly based on customer satisfaction and service excellence. Find top-rated businesses.",
+    keywords: "Arizona business rankings, top service providers, best businesses Arizona, quality rankings, customer satisfaction",
+    canonical: "https://azbusiness.services/rankings",
+    openGraph: {
+      title: "Arizona Business Rankings 2025 - Top Service Providers",
+      description: "AI-powered quality rankings for Arizona's service providers. Updated hourly based on customer satisfaction and service excellence. Find top-rated businesses.",
+      type: "website",
+      url: "https://azbusiness.services/rankings",
+      image: "/logo.png",
+      siteName: "AZ Business Services",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Arizona Business Rankings 2025 - Top Service Providers",
+      description: "AI-powered quality rankings for Arizona's service providers. Updated hourly based on customer satisfaction and service excellence. Find top-rated businesses.",
+      image: "/logo.png",
+      site: "@azbusiness",
+    },
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Arizona Business Rankings 2025",
+      description: "AI-powered quality rankings for Arizona's service providers. Updated hourly based on customer satisfaction and service excellence.",
+      url: "https://azbusiness.services/rankings",
+      isPartOf: {
+        "@type": "WebSite",
+        name: "AZ Business Services",
+        url: "https://azbusiness.services"
+      }
+    }
+  };
 }

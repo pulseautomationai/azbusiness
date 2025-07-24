@@ -1,10 +1,24 @@
 import { httpRouter } from "convex/server";
 import { paymentWebhook, testWebhookEndpoint } from "./subscriptions";
 import { httpAction } from "./_generated/server";
-import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+// Removed OpenAI imports as we're no longer using OpenAI
+// import { openai } from "@ai-sdk/openai";
+// import { streamText } from "ai";
 import { internal } from "./_generated/api";
 
+// Chat endpoint disabled - OpenAI has been removed from the system
+export const chat = httpAction(async (ctx, req) => {
+  return new Response(JSON.stringify({ 
+    error: "Chat endpoint disabled", 
+    message: "OpenAI integration has been removed. Please use Gemini or the mock analyzer instead." 
+  }), {
+    status: 501,
+    headers: { "Content-Type": "application/json" }
+  });
+});
+
+// Original chat implementation commented out:
+/*
 export const chat = httpAction(async (ctx, req) => {
   try {
     // Check if OpenAI API key is configured
@@ -83,6 +97,7 @@ export const chat = httpAction(async (ctx, req) => {
     });
   }
 });
+*/
 
 const http = httpRouter();
 

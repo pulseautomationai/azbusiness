@@ -209,6 +209,33 @@ class CSVImporter {
           continue;
         }
 
+        // Clean business name by removing city suffix if present
+        if (data.name && data.city) {
+          const cityVariations = [
+            data.city,
+            data.city.toLowerCase(),
+            data.city.toUpperCase(),
+            data.city.charAt(0).toUpperCase() + data.city.slice(1).toLowerCase()
+          ];
+          
+          for (const cityVariation of cityVariations) {
+            const patterns = [
+              new RegExp(`\\s*[-–]\\s*${cityVariation}$`, 'i'),
+              new RegExp(`\\s+${cityVariation}$`, 'i'),
+              new RegExp(`\\s*,\\s*${cityVariation}$`, 'i')
+            ];
+            
+            for (const pattern of patterns) {
+              if (pattern.test(data.name)) {
+                const cleanedName = data.name.replace(pattern, '').trim();
+                console.log(`🧹 Cleaned business name: "${data.name}" → "${cleanedName}" (removed city: ${cityVariation})`);
+                data.name = cleanedName;
+                break;
+              }
+            }
+          }
+        }
+
         // Step 3: Auto-detect category
         const detectedCategory = this.categoryDetector.detectCategory(
           data.name,
@@ -231,7 +258,7 @@ class CSVImporter {
 
         // Step 4: Generate slug and URL path
         const categoryName = this.categoryDetector.getCategoryName(detectedCategory) || detectedCategory;
-        const businessSlug = SlugGenerator.generateFullBusinessSlug(data.name, data.city, categoryName);
+        const businessSlug = SlugGenerator.generateBusinessNameSlug(data.name);
         const urlPath = SlugGenerator.generateURLPath(data.name, data.city, categoryName);
 
         // Step 5: Generate services and hours

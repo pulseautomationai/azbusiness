@@ -65,8 +65,8 @@ export const submitClaimRequest = mutation({
       throw new Error("Business not found");
     }
 
-    if (business.claimed) {
-      throw new Error("This business has already been claimed");
+    if (business.verified) {
+      throw new Error("This business has already been verified");
     }
 
     // Check for existing pending claims by this user for this business
@@ -243,13 +243,12 @@ export const processGMBVerification = internalMutation({
       status = "approved";
       verified = true;
       
-      // Auto-approve: update business as claimed and verified
+      // Auto-approve: update business as verified
       await ctx.db.patch(claim.businessId, {
-        claimed: true,
         verified: true,
         claimedByUserId: claim.userId,
-        claimedAt: Date.now(),
-        planTier: "pro" // Upgrade to Pro tier on successful claim
+        claimedAt: Date.now()
+        // NOTE: Plan tier upgrade is handled separately - verification does not automatically upgrade plan
       });
     } else if (matchResult.confidence >= MANUAL_REVIEW_THRESHOLD) {
       status = "pending";
@@ -667,13 +666,12 @@ export const approveClaimManually = mutation({
       ] : claim.admin_notes
     });
 
-    // Update business as claimed and verified
+    // Update business as verified
     await ctx.db.patch(claim.businessId, {
-      claimed: true,
       verified: true,
       claimedByUserId: claim.userId,
-      claimedAt: Date.now(),
-      planTier: "pro" // Upgrade to Pro tier on successful claim
+      claimedAt: Date.now()
+      // NOTE: Plan tier upgrade is handled separately - verification does not automatically upgrade plan
     });
 
     return { success: true };

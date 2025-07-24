@@ -332,3 +332,240 @@ export const cleanupOldAnalytics = mutation({
     };
   },
 });
+
+// Get revenue history for the dashboard
+export const getRevenueHistory = query({
+  args: {},
+  handler: async (ctx) => {
+    const businesses = await ctx.db.query("businesses").collect();
+    
+    // Group by month and calculate revenue
+    const now = new Date();
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+    
+    const monthlyData = [];
+    for (let i = 0; i < 6; i++) {
+      const monthDate = new Date(sixMonthsAgo.getFullYear(), sixMonthsAgo.getMonth() + i, 1);
+      const monthName = monthDate.toLocaleDateString('en-US', { month: 'short' });
+      
+      // Calculate revenue for this month based on plan tiers
+      const monthlyRevenue = businesses.reduce((sum, business) => {
+        // Only count businesses created before or during this month
+        const businessCreatedAt = new Date(business._creationTime);
+        if (businessCreatedAt <= monthDate) {
+          if (business.planTier === 'pro') return sum + 29;
+          if (business.planTier === 'power') return sum + 97;
+        }
+        return sum;
+      }, 0);
+      
+      const subscriptions = businesses.filter(b => 
+        b.planTier === 'pro' || b.planTier === 'power'
+      ).length;
+      
+      monthlyData.push({
+        month: monthName,
+        revenue: monthlyRevenue,
+        subscriptions: subscriptions
+      });
+    }
+    
+    return monthlyData;
+  },
+});
+
+// Get real-time metrics for the dashboard
+export const getRealTimeMetrics = query({
+  args: {},
+  handler: async (ctx) => {
+    const businesses = await ctx.db.query("businesses").collect();
+    const users = await ctx.db.query("users").collect();
+    const reviews = await ctx.db.query("reviews").collect();
+    
+    // Calculate metrics
+    const totalBusinesses = businesses.length;
+    const claimedBusinesses = businesses.filter(b => b.claimedAt).length;
+    const verifiedBusinesses = businesses.filter(b => b.verified).length;
+    
+    // Calculate today's activity (using creation time)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
+    
+    const todayBusinesses = businesses.filter(b => b._creationTime >= todayTime).length;
+    const todayReviews = reviews.filter(r => r._creationTime >= todayTime).length;
+    const todayUsers = users.filter(u => u._creationTime >= todayTime).length;
+    
+    // Calculate revenue
+    const totalRevenue = businesses.reduce((sum, business) => {
+      if (business.planTier === 'pro') return sum + 29;
+      if (business.planTier === 'power') return sum + 97;
+      return sum;
+    }, 0);
+    
+    return {
+      businesses: {
+        total: totalBusinesses,
+        claimed: claimedBusinesses,
+        verified: verifiedBusinesses,
+        todayNew: todayBusinesses,
+      },
+      users: {
+        total: users.length,
+        todayNew: todayUsers,
+      },
+      reviews: {
+        total: reviews.length,
+        todayNew: todayReviews,
+      },
+      revenue: {
+        total: totalRevenue,
+        mrr: totalRevenue, // Monthly recurring revenue
+      },
+      subscriptions: {
+        free: businesses.filter(b => !b.planTier || b.planTier === 'free').length,
+        starter: businesses.filter(b => b.planTier === 'starter').length,
+        pro: businesses.filter(b => b.planTier === 'pro').length,
+        power: businesses.filter(b => b.planTier === 'power').length,
+      }
+    };
+  },
+});
+
+// Get plan distribution data for pie chart
+export const getPlanDistribution = query({
+  args: {},
+  handler: async (ctx) => {
+    const businesses = await ctx.db.query("businesses").collect();
+    const total = businesses.length || 1; // Avoid division by zero
+    
+    const distribution = [
+      {
+        name: 'Free',
+        value: Math.round((businesses.filter(b => !b.planTier || b.planTier === 'free').length / total) * 100),
+        count: businesses.filter(b => !b.planTier || b.planTier === 'free').length,
+        color: '#94a3b8'
+      },
+      {
+        name: 'Starter',
+        value: Math.round((businesses.filter(b => b.planTier === 'starter').length / total) * 100),
+        count: businesses.filter(b => b.planTier === 'starter').length,
+        color: '#3b82f6'
+      },
+      {
+        name: 'Pro',
+        value: Math.round((businesses.filter(b => b.planTier === 'pro').length / total) * 100),
+        count: businesses.filter(b => b.planTier === 'pro').length,
+        color: '#10b981'
+      },
+      {
+        name: 'Power',
+        value: Math.round((businesses.filter(b => b.planTier === 'power').length / total) * 100),
+        count: businesses.filter(b => b.planTier === 'power').length,
+        color: '#f59e0b'
+      }
+    ];
+    
+    return distribution;
+  },
+});
+
+// Get recent activity for live feed
+export const getRecentActivity = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, { limit = 20 }) => {
+    // Get recent businesses
+    const recentBusinesses = await ctx.db
+      .query("businesses")
+      .order("desc")
+      .take(limit);
+    
+    // Get recent reviews
+    const recentReviews = await ctx.db
+      .query("reviews")
+      .order("desc")
+      .take(limit);
+    
+    // Get recent users
+    const recentUsers = await ctx.db
+      .query("users")
+      .order("desc")
+      .take(limit);
+    
+    // Combine and sort by creation time
+    const activities = [];
+    
+    // Add business claims
+    for (const business of recentBusinesses) {
+      if (business.claimedAt) {
+        activities.push({
+          id: business._id,
+          type: 'claim' as const,
+          user: 'Business Owner',
+          business: business.name,
+          timestamp: business._creationTime,
+          _creationTime: business._creationTime,
+        });
+      }
+    }
+    
+    // Add reviews
+    for (const review of recentReviews) {
+      const business = await ctx.db.get(review.businessId);
+      activities.push({
+        id: review._id,
+        type: 'review' as const,
+        user: review.userName || 'Anonymous',
+        business: business?.name || 'Unknown Business',
+        rating: review.rating,
+        timestamp: review._creationTime,
+        _creationTime: review._creationTime,
+      });
+    }
+    
+    // Add user signups
+    for (const user of recentUsers) {
+      activities.push({
+        id: user._id,
+        type: 'signup' as const,
+        user: user.name || 'New User',
+        timestamp: user._creationTime,
+        _creationTime: user._creationTime,
+      });
+    }
+    
+    // Sort by creation time and return most recent
+    return activities
+      .sort((a, b) => b._creationTime - a._creationTime)
+      .slice(0, limit)
+      .map(({ _creationTime, ...activity }) => activity);
+  },
+});
+
+// Get conversion funnel data
+export const getConversionFunnel = query({
+  args: {},
+  handler: async (ctx) => {
+    const businesses = await ctx.db.query("businesses").collect();
+    const users = await ctx.db.query("users").collect();
+    
+    // For now, we'll estimate visitors (in production, this would come from PostHog)
+    const estimatedVisitors = users.length * 10; // Rough estimate
+    const signups = users.length;
+    const claimed = businesses.filter(b => b.claimedAt).length;
+    const subscribed = businesses.filter(b => b.planTier === 'pro' || b.planTier === 'power').length;
+    
+    return {
+      visitors: estimatedVisitors,
+      signups,
+      claimed,
+      subscribed,
+      rates: {
+        visitorToSignup: signups > 0 ? (signups / estimatedVisitors) * 100 : 0,
+        signupToClaim: signups > 0 ? (claimed / signups) * 100 : 0,
+        claimToSubscription: claimed > 0 ? (subscribed / claimed) * 100 : 0,
+        overall: estimatedVisitors > 0 ? (subscribed / estimatedVisitors) * 100 : 0,
+      }
+    };
+  },
+});

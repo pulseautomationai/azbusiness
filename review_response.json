@@ -1,0 +1,507 @@
+[CONVEX ?(geoScraperAPI:testGeoScraperConnection)] [LOG] '🚀 Testing GEOscraper API with Place ID: ChIJwa42GjGtK4cRElGqKAS1OF8'
+[CONVEX ?(geoScraperAPI:testGeoScraperConnection)] [LOG] '✅ Successfully fetched data for ChIJwa42GjGtK4cRElGqKAS1OF8'
+[CONVEX ?(geoScraperAPI:testGeoScraperConnection)] [LOG] '📊 Response structure:' {
+  totalReviews: 11,
+  hasToken: false,
+  firstReview: {
+    rating: 5,
+    date: '5 days ago',
+    hasText: false,
+    hasOwnerResponse: false
+  }
+}
+{
+  "placeId": "ChIJwa42GjGtK4cRElGqKAS1OF8",
+  "reviewCount": 11,
+  "reviews": [
+    {
+      "date": "5 days ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-16 02:42:47",
+      "lastEditedAtDate_timestamp": 1752633767340440,
+      "owner_response": {
+        "owner_response_date": null,
+        "owner_response_date_timestamp": null,
+        "owner_response_edited_date": null,
+        "owner_response_edited_date_timestamp": null,
+        "owner_response_text": null,
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-16 02:42:47",
+      "publishedAtDate_timestamp": 1752633767340440,
+      "rating": 5,
+      "reviewContext": null,
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2tSYWFYUlNNbkpHVFMxc1gweDZZbkZ5VFVFdFpIYxAB",
+      "snippet": null,
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 113108900906536800000,
+        "link": "https://www.google.com/maps/contrib/113108900906536792597?hl=en",
+        "local_guide_level": 3,
+        "name": "Joseph Benedetto",
+        "photos": 1,
+        "reviews": 14,
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjXOmZcxgIhuxLGCTFhpG31ULfhErwsHscR8RSzEBBls8e-u4Hq9=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "6 days ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-15 02:51:21",
+      "lastEditedAtDate_timestamp": 1752547881581941,
+      "owner_response": {
+        "owner_response_date": null,
+        "owner_response_date_timestamp": null,
+        "owner_response_edited_date": null,
+        "owner_response_edited_date_timestamp": null,
+        "owner_response_text": null,
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-15 02:51:21",
+      "publishedAtDate_timestamp": 1752547881581941,
+      "rating": 5,
+      "reviewContext": null,
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT2xwaVJVdDBjRVZFUjI4elZUWktMWGRxY1RVNE9WRRAB",
+      "snippet": "Excellent service. Joe, the tech provided pics and explained the compinents of theA/C  system.  He provided a side by side reading  next to the manufactor's range.\nHe rinsed off the outside unit.\nI had NOT seen this type of service in AZ period.\n5 STARS to Thomas  Home Services",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 105593448588374430000,
+        "link": "https://www.google.com/maps/contrib/105593448588374428005?hl=en",
+        "local_guide_level": 3,
+        "name": "MIKEL PERRY",
+        "photos": 0,
+        "reviews": 6,
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocKKPAdT8cri56-kfvOau8akrfL6tonmsJ1ZGelOZKBZm7DOIg=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "Edited a week ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-14 20:33:40",
+      "lastEditedAtDate_timestamp": 1752525220487437,
+      "owner_response": {
+        "owner_response_date": "2023-10-13 19:04:14",
+        "owner_response_date_timestamp": 1697223854000000,
+        "owner_response_edited_date": "2025-07-14 22:21:13",
+        "owner_response_edited_date_timestamp": 1752531673000000,
+        "owner_response_text": "Hi Audrey,\nThank you so much for taking the time to leave this kind review—and for being a loyal member of the Thomas Home Services family! We're thrilled to hear that Jeff took great care of you and kept you in the loop every step of the way. We'll make sure Mandy gets your thanks, too! 😊\nWe're always here whenever your A/C needs some TLC. See you next time!\n\n—The Thomas Team 💙❤️",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2023-03-22 22:38:07",
+      "publishedAtDate_timestamp": 1679524687672944,
+      "rating": 5,
+      "reviewContext": [
+        {
+          "aspects": [
+            "LOCAL_SERVICES_JOB_TYPES"
+          ],
+          "name": "Which services did you get?",
+          "rating": null
+        },
+        {
+          "aspects": [
+            "LEGACY_SERVICES_POSITIVE_ASPECTS"
+          ],
+          "name": "What do you like about this business?",
+          "rating": null
+        },
+        {
+          "aspects": [
+            "LOCAL_SERVICES_PRICE_QUALITY"
+          ],
+          "name": "How would you describe the price you paid?",
+          "rating": null
+        },
+        {
+          "aspects": [
+            "LEGACY_SERVICES_USER_JOURNEY"
+          ],
+          "name": "Did you use this business?",
+          "rating": null
+        }
+      ],
+      "review_id": "ChZDSUhNMG9nS0VJQ0FnSUNSa0xYcEVnEAE",
+      "snippet": "Excellent service done by Jeff. He was on time, friendly and kept me informed. Thank you Jeff & Mandy for the great service.",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 114326813710742490000,
+        "link": "https://www.google.com/maps/contrib/114326813710742488588?hl=en",
+        "local_guide_level": 3,
+        "name": "Audrey Cook",
+        "photos": 0,
+        "reviews": 9,
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjVqTZBbp224Bpbmcs7mMtxuXuTj5ei8sBTuVT-fSQbj7F_Ay0B_=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "a week ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-11 04:54:39",
+      "lastEditedAtDate_timestamp": 1752209679180975,
+      "owner_response": {
+        "owner_response_date": "2025-07-14 22:23:33",
+        "owner_response_date_timestamp": 1752531813000000,
+        "owner_response_edited_date": "2025-07-14 22:23:33",
+        "owner_response_edited_date_timestamp": 1752531813000000,
+        "owner_response_text": "What are the odds?! A Thomas helped by Thomas! 😄\nWe’re so glad you had a great experience—honest service with no upsell is what we’re all about. Thomas will be thrilled to hear your shoutout, and we can’t wait to be your go-to team whenever you need us again. Thanks for choosing us!\n\n—The Thomas Home Services Team 🔧💙",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-11 04:54:39",
+      "publishedAtDate_timestamp": 1752209679180975,
+      "rating": 5,
+      "reviewContext": null,
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25KUmEwOUxhV0ZJTTFodWVFMWFjV3RyVVRWUFdHYxAB",
+      "snippet": "Thomas from Thomas 😀 did a great job, stated the facts with no upsell.  Will definitely use again.",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 117730463682948610000,
+        "link": "https://www.google.com/maps/contrib/117730463682948614269?hl=en",
+        "local_guide_level": 4,
+        "name": "Captain Learjet",
+        "photos": 1,
+        "reviews": 21,
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjWa6kHksQ00VjgZF08XemYgNqLFZpvf4VNV5IDWoZSOyCMeoCA1=s120-c-rp-mo-ba2-br100"
+      }
+    },
+    {
+      "date": "a week ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-10 23:45:20",
+      "lastEditedAtDate_timestamp": 1752191120893123,
+      "owner_response": {
+        "owner_response_date": "2025-07-14 22:24:15",
+        "owner_response_date_timestamp": 1752531855000000,
+        "owner_response_edited_date": "2025-07-14 22:24:15",
+        "owner_response_edited_date_timestamp": 1752531855000000,
+        "owner_response_text": "Hi David,\nThank you so much for the awesome review! It means a lot to hear that both our front-end and back-end teams made your experience a smooth one from start to finish. We’re big believers in teamwork around here, and your kind words just made everyone’s day. We appreciate the recommendation and look forward to helping you again soon!\n\n—All of us at Thomas Home Services 💙🔧",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-10 23:45:20",
+      "publishedAtDate_timestamp": 1752191120893123,
+      "rating": 5,
+      "reviewContext": null,
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT201V1pFcEZlR2xvVTA4MlVGaHBjUzFDT1d0VFZVRRAB",
+      "snippet": "My experience was great from start to finish. The back end team was just as a pleasure to work with as the front end team. Highly recommend! Thanks you guys!",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 101946736260456070000,
+        "link": "https://www.google.com/maps/contrib/101946736260456072724?hl=en",
+        "local_guide_level": 2,
+        "name": "David Spears",
+        "photos": 0,
+        "reviews": 1,
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocKrKNmHieQobAr8MTe9RFNKoquqS969kgqhw61cSK2vTKtEEQ=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "a week ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": "Great price",
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-09 19:47:01",
+      "lastEditedAtDate_timestamp": 1752090421376940,
+      "owner_response": {
+        "owner_response_date": "2025-07-14 22:25:21",
+        "owner_response_date_timestamp": 1752531921000000,
+        "owner_response_edited_date": "2025-07-14 22:25:21",
+        "owner_response_edited_date_timestamp": 1752531921000000,
+        "owner_response_text": "Hi Sam,\nWow—thank you for such a thoughtful and generous review! We’re thrilled to hear Thomas delivered the kind of service we strive for: professional, patient, and done right the first time. Fixing that dryer heating issue quickly and thoroughly is exactly the level of care we aim to provide every time.\n\nIt means the world to us that you noticed our values in action. We’d be honored to welcome you into the Thomas Loyalty Club, and we’re here whenever you need us—appliance, HVAC, or plumbing. Thanks again for the kind words and the trust!\n\n—The Thomas Home Services Team 💙🔧",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-09 19:47:01",
+      "publishedAtDate_timestamp": 1752090421376940,
+      "rating": 5,
+      "reviewContext": [
+        {
+          "aspects": [
+            "LOCAL_SERVICES_JOB_TYPES"
+          ],
+          "name": "Which services did you get?",
+          "rating": null
+        },
+        {
+          "aspects": [
+            "LOCAL_SERVICES_PRICE_QUALITY"
+          ],
+          "name": "How would you describe the price you paid?",
+          "rating": null
+        }
+      ],
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25FMWIxSnBVMHRaZERkUlFVMUlWMmQxY2xSbU1GRRAB",
+      "snippet": "We had an excellent experience with Thomas Home Services. Thomas, the technician, was incredibly professional, patient, and friendly as he worked to fix our dryer’s heating issue. He quickly diagnosed the problem, took the time to go get the part he needed, and returned within the hour to complete the repair flawlessly.\n\nWe’ve been looking for a company with strong ethics, a clear mission, and a genuine commitment to customer care — and we found that here. We’re definitely looking to become loyalty members and will trust Thomas Home Services for all our future appliance needs. Highly recommend!",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 108378364897790030000,
+        "link": "https://www.google.com/maps/contrib/108378364897790039151?hl=en",
+        "local_guide_level": 3,
+        "name": "sam ans",
+        "photos": 0,
+        "reviews": 5,
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjUGVHQDGfTHY8CxbYjxP5ZQtIgQrJKsKWZKAKqnJNCTCEKiegwh=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "a week ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": "Great price",
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-08 23:53:41",
+      "lastEditedAtDate_timestamp": 1752018821600184,
+      "owner_response": {
+        "owner_response_date": "2025-07-14 22:26:12",
+        "owner_response_date_timestamp": 1752531972000000,
+        "owner_response_edited_date": "2025-07-14 22:26:12",
+        "owner_response_edited_date_timestamp": 1752531972000000,
+        "owner_response_text": "Hi John,\nThank you so much for the amazing review! Joe and Riley will be thrilled to hear your kind words. Working through 110-degree heat without a single complaint says a lot about their dedication—and we’re proud to have techs who not only know their craft but genuinely care about people.\n\nWe’re so glad we could help get your A/C back up and running and make the process a little easier with a payment plan. You’re absolutely right: great service starts with great people. We appreciate your trust and recommendation more than you know!\n\n—The Thomas Home Services Team 💙❄️",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-08 23:53:41",
+      "publishedAtDate_timestamp": 1752018821600184,
+      "rating": 5,
+      "reviewContext": [
+        {
+          "aspects": [
+            "LOCAL_SERVICES_JOB_TYPES"
+          ],
+          "name": "Which services did you get?",
+          "rating": null
+        },
+        {
+          "aspects": [
+            "LOCAL_SERVICES_PRICE_QUALITY"
+          ],
+          "name": "How would you describe the price you paid?",
+          "rating": null
+        }
+      ],
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25wMWNYWnZMV2xWV0ZKa1dWSlJTMjVoV0ZSalRHYxAB",
+      "snippet": "Joe and Riley were incredible. Not only were they professional, but they were caring and kind as well. They spent over 7 hours helping us with our AC in 110 degree weather without a single complaint. They even went above and beyond and helped us with a payment plan. Great people, Great service. I high recommend this company. Thank you!",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 113970567874432910000,
+        "link": "https://www.google.com/maps/contrib/113970567874432917141?hl=en",
+        "local_guide_level": 2,
+        "name": "John Brown",
+        "photos": 0,
+        "reviews": 1,
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocJxWuGMHk9ijBr1aLNoLqiUsviE8nuMqJ0gXIBRWm8U-ilWGg=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "Edited a week ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-08 17:32:00",
+      "lastEditedAtDate_timestamp": 1751995920656774,
+      "owner_response": {
+        "owner_response_date": "2023-11-14 17:10:48",
+        "owner_response_date_timestamp": 1699981848000000,
+        "owner_response_edited_date": "2025-07-14 22:29:00",
+        "owner_response_edited_date_timestamp": 1752532140000000,
+        "owner_response_text": "Hi Michele,\nIt’s always such a pleasure working with you—thank you for trusting us time and time again! We truly appreciate you calling on us over the years, and we're so glad this last visit went smoothly. Quick diagnosis, clean fix, and done right—just the way we like it.\n\nThanks again for being part of the Thomas family. We’re always here whenever you need us!\n\n—Your friends at Thomas Home Services 💙🔧",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2023-11-14 01:16:31",
+      "publishedAtDate_timestamp": 1699924591042190,
+      "rating": 5,
+      "reviewContext": [
+        {
+          "aspects": [
+            "LEGACY_SERVICES_POSITIVE_ASPECTS"
+          ],
+          "name": "What do you like about this business?",
+          "rating": null
+        }
+      ],
+      "review_id": "ChdDSUhNMG9nS0VJQ0FnSUNsLUxtZGt3RRAB",
+      "snippet": "Their service is the best. Knowledgeable technician who came out knew immediately what was wrong and fixed it. This is the 5th time we used them on a variety of problems we had. I would highly recommend them.",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 116248039623994380000,
+        "link": "https://www.google.com/maps/contrib/116248039623994384329?hl=en",
+        "local_guide_level": 3,
+        "name": "Michele Milewski",
+        "photos": 0,
+        "reviews": 10,
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocIg25aq_2hMrjPjtrQAUJMnpsGx3dtnvAXt80ZWpfqEzteH1w=s120-c-rp-mo-br100"
+      }
+    },
+    {
+      "date": "Edited 2 weeks ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": "Great price",
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": null,
+      "lastEditedAtDate": "2025-07-07 19:05:00",
+      "lastEditedAtDate_timestamp": 1751915100879294,
+      "owner_response": {
+        "owner_response_date": "2023-06-26 15:52:42",
+        "owner_response_date_timestamp": 1687794762000000,
+        "owner_response_edited_date": "2025-07-14 22:30:29",
+        "owner_response_edited_date_timestamp": 1752532229000000,
+        "owner_response_text": "Hi Elizabeth,\nIt’s always a treat to visit you—and this time, getting to help out sweet Raider made it extra special. 🐾 We're so glad Thomas was able to get your washing machine running again quickly, and even more glad he passed the dog vibe check!\n\nThank you for continuing to trust us. We’re here anytime you or your pups need us!\n\n—The Thomas Home Services Team 💙🐶🔧",
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2023-06-23 20:18:18",
+      "publishedAtDate_timestamp": 1687551498238561,
+      "rating": 5,
+      "reviewContext": [
+        {
+          "aspects": [
+            "LOCAL_SERVICES_JOB_TYPES"
+          ],
+          "name": "Which services did you get?",
+          "rating": null
+        },
+        {
+          "aspects": [
+            "LOCAL_SERVICES_PRICE_QUALITY"
+          ],
+          "name": "How would you describe the price you paid?",
+          "rating": null
+        }
+      ],
+      "review_id": "ChdDSUhNMG9nS0VJQ0FnSUNKNHJMZnJnRRAB",
+      "snippet": "Thomas came to replace a part in my washing machine. He was quick, polite, professional and cool with my dogs. He even helped Raider who's elderly and can't walk very well.",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 114019740451953120000,
+        "link": "https://www.google.com/maps/contrib/114019740451953123111?hl=en",
+        "local_guide_level": 6,
+        "name": "Elizabeth Valdez-Duenas",
+        "photos": 1,
+        "reviews": 121,
+        "thumbnail": "https://lh3.googleusercontent.com/a-/ALV-UjUkuU4KkToIXfXuVBjCQYgKq0hHh2jmoNAyIuaZY5Jp86_P3PTf=s120-c-rp-mo-ba4-br100"
+      }
+    },
+    {
+      "date": "2 weeks ago",
+      "details": {
+        "atmosphere": null,
+        "food": null,
+        "meal_type": null,
+        "mode": null,
+        "price_range": null,
+        "recommended_dish_one": null,
+        "service": null
+      },
+      "images": [
+        "https://lh3.googleusercontent.com/geougc-cs/AB3l90DMzLLqRb0c1wHk9KIVA0PiSwZ6av9G5rE8FHXPxjD3t-IaPJsiYVFQ7NonILum2AeOAiKnrvGQlMqz-YLdkYnd5pXDlrTnvMF5WYvAaaKu7bQ6sZQZjfai9cRLhBtGsHI6-i022ITo2eTF"
+      ],
+      "lastEditedAtDate": "2025-07-05 13:57:58",
+      "lastEditedAtDate_timestamp": 1751723878522586,
+      "owner_response": {
+        "owner_response_date": null,
+        "owner_response_date_timestamp": null,
+        "owner_response_edited_date": null,
+        "owner_response_edited_date_timestamp": null,
+        "owner_response_text": null,
+        "owner_response_translated_text": null
+      },
+      "publishedAtDate": "2025-07-05 13:57:58",
+      "publishedAtDate_timestamp": 1751723878522586,
+      "rating": 1,
+      "reviewContext": null,
+      "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25ObGFHWlVaMkUxVW1kMFp6VnBaM1ZoWVVvM04xRRAB",
+      "snippet": "I joined the Thomas Loyalty program just over a year ago. I own and manage three short-term rental properties, so having a reliable company on call for any mishaps is critical to my business—and I was willing to pay a premium for peace of mind. Unfortunately, my experience with Thomas has been consistently disappointing.\n\nOn three separate occasions, they went to the wrong property, disturbing my guests. Even more concerning is their inability to communicate effectively, fix issues, or schedule appointments in a timely manner. For example, an urgent electrical problem was canceled the same day, with the earliest reschedule offered three days later—despite their supposed 24-hour guarantee.\n\nWhen they do come out, 80% of the time it takes multiple visits to resolve an issue. I am currently still trying to get them to repair the top oven of a double oven for the fourth time (due to repeated diagnostic errors and incorrect parts). Similarly, they've been to my home three times to fix a shower that only gets hot, each time arriving unprepared and uninformed despite clear notes from prior visits. The high employee turnover doesn’t help, either.\n\nI've tried to be patient because their technicians and staff are friendly, but it’s been problem after problem. Running Airbnbs means I have tight windows to get repairs done, and Thomas has been unresponsive to my attempts to schedule service since June 17. When I asked to cancel my loyalty membership so I could find a company that actually delivers, I was told I’m locked into a one-year contract—paying for a service that doesn’t respond or fix the issues it’s hired to handle.\n\nThomas does not stand by their guarantees, and I would not recommend them to anyone, especially not to those managing STRs where time and reliability are paramount.",
+      "source": "Google",
+      "translated_snippet": null,
+      "user": {
+        "contributor_id": 110575238473853670000,
+        "link": "https://www.google.com/maps/contrib/110575238473853659848?hl=en",
+        "local_guide_level": 4,
+        "name": "Jaclyn Baudhuin",
+        "photos": 16,
+        "reviews": 13,
+        "thumbnail": "https://lh3.googleusercontent.com/a/ACg8ocIz94NiMMV4FTTI1JU2fGMkfg2icMrQ3oHoRNPNqiY2aA5bSw=s120-c-rp-mo-ba2-br100"
+      }
+    },
+    {
+      "next_page_token": "CAESY0NBRVFDaHBFUTJwRlNVRlNTWEJEWjI5QlVEY3lSMmRzU0hSbFJsOWZSV2hETUdOMFVIbEJXbWxvVEdWNGNucHFkMEZCUVVGQlIyZHVPVEpSWTBOaFExVmxNVFJWV1VGRFNVRQ=="
+    }
+  ],
+  "success": true,
+  "token": null
+}

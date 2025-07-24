@@ -380,7 +380,7 @@ export default function AdminModeration() {
                         <div>
                           <span className="font-medium text-gray-700">Current Status:</span>
                           <div className="text-gray-600">
-                            {claim.business.claimed ? "Claimed" : "Unclaimed"} | 
+                            {claim.business.verified ? "Verified" : "Unverified"} | 
                             {claim.business.verified ? " Verified" : " Unverified"}
                           </div>
                         </div>

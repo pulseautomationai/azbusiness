@@ -3,9 +3,12 @@ import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import HeroSection from "~/components/homepage/hero";
 import TopPerformers from "~/components/homepage/top-performers";
+import TopPerformersRanked from "~/components/homepage/top-performers-ranked";
 import BusinessRankingsTable from "~/components/homepage/business-rankings-table";
 import HowItWorks from "~/components/homepage/how-it-works";
 import CityChampions from "~/components/homepage/city-champions";
+import CityChampionsRanked from "~/components/homepage/city-champions-ranked";
+import CategoryBest from "~/components/homepage/category-best";
 import SmartRecommendations from "~/components/homepage/smart-recommendations";
 import SuccessStories from "~/components/homepage/success-stories";
 import SocialProof from "~/components/homepage/social-proof";
@@ -109,16 +112,19 @@ export default function Home() {
         <HeroSection />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="Top Performers">
-        <TopPerformers />
+        <TopPerformersRanked />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="Category Best">
+        <CategoryBest />
+      </ComponentErrorBoundary>
+      <ComponentErrorBoundary componentName="City Champions">
+        <CityChampionsRanked />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="Business Rankings Table">
         <BusinessRankingsTable />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="How It Works">
         <HowItWorks />
-      </ComponentErrorBoundary>
-      <ComponentErrorBoundary componentName="City Champions">
-        <CityChampions />
       </ComponentErrorBoundary>
       <ComponentErrorBoundary componentName="Smart Recommendations">
         <SmartRecommendations />

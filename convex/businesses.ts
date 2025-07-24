@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalQuery } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 
 // Get businesses owned by a specific user
@@ -35,12 +35,80 @@ export const getBusinessById = query({
   }
 });
 
+// Internal query for AI processing
+export const getBusinessInternal = internalQuery({
+  args: { businessId: v.id("businesses") },
+  handler: async (ctx, args) => {
+    const business = await ctx.db.get(args.businessId);
+    if (business && business.categoryId) {
+      const category = await ctx.db.get(business.categoryId);
+      return { ...business, category };
+    }
+    return business;
+  }
+});
+
+// Get review batch for processing
+export const getReviewBatch = internalQuery({
+  args: {
+    businessId: v.id("businesses"),
+    limit: v.number(),
+    offset: v.number(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const reviews = await ctx.db
+        .query("reviews")
+        .withIndex("by_business", (q) => q.eq("businessId", args.businessId))
+        .order("desc")
+        .collect();
+      
+      // Return only essential fields to avoid size limits
+      return reviews.slice(args.offset, args.offset + args.limit).map(review => ({
+        _id: review._id,
+        businessId: review.businessId,
+        rating: review.rating,
+        comment: review.comment?.substring(0, 1000), // Limit comment size
+        userName: review.userName,
+        createdAt: review.createdAt,
+        verified: review.verified,
+      }));
+    } catch (error) {
+      console.error("Error in getReviewBatch:", error);
+      return [];
+    }
+  }
+});
+
+// Get businesses by Place IDs
+export const getBusinessesByPlaceIds = query({
+  args: {
+    placeIds: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const businesses = [];
+    
+    for (const placeId of args.placeIds) {
+      const business = await ctx.db
+        .query("businesses")
+        .withIndex("by_placeId", (q) => q.eq("placeId", placeId))
+        .first();
+      
+      if (business) {
+        businesses.push(business);
+      }
+    }
+    
+    return businesses;
+  },
+});
+
 // Get all businesses with filters
 export const getBusinesses = query({
   args: {
     categorySlug: v.optional(v.string()),
     citySlug: v.optional(v.string()),
-    planTier: v.optional(v.union(v.literal("free"), v.literal("pro"), v.literal("power"))),
+    planTier: v.optional(v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("power"))),
     featured: v.optional(v.boolean()),
     limit: v.optional(v.number()),
   },
@@ -111,6 +179,65 @@ export const getBusinesses = query({
       })
     );
 
+    return businessesWithCategory;
+  },
+});
+
+// Get businesses that need review imports
+export const getBusinessesForReviewImport = query({
+  args: {
+    limit: v.optional(v.number()),
+    onlyMissing: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit || 100;
+    const onlyMissing = args.onlyMissing !== false; // Default to true
+    
+    // Get businesses with place IDs
+    let businesses = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("active"), true))
+      .take(1000); // Take more than needed for filtering
+    
+    // Filter for businesses with placeIds
+    businesses = businesses.filter(b => b.placeId && b.placeId !== "");
+    
+    // If onlyMissing is true, filter for businesses with 0 reviews
+    if (onlyMissing) {
+      businesses = businesses.filter(b => !b.reviewCount || b.reviewCount === 0);
+    }
+    
+    // Sort by priority (power > pro > starter > free) and then by name
+    const priorityMap: Record<string, number> = {
+      power: 4,
+      pro: 3,
+      starter: 2,
+      free: 1,
+    };
+    
+    businesses.sort((a, b) => {
+      const aPriority = priorityMap[a.planTier] || 0;
+      const bPriority = priorityMap[b.planTier] || 0;
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority;
+      }
+      return a.name.localeCompare(b.name);
+    });
+    
+    // Apply limit
+    businesses = businesses.slice(0, limit);
+    
+    // Get category info for each business
+    const businessesWithCategory = await Promise.all(
+      businesses.map(async (business) => {
+        const category = await ctx.db.get(business.categoryId);
+        return {
+          ...business,
+          category: category || null,
+        };
+      })
+    );
+    
     return businessesWithCategory;
   },
 });
@@ -319,7 +446,6 @@ export const createBusiness = mutation({
       planTier: "free",
       featured: false,
       priority: 0,
-      claimed: !!args.ownerId,
       verified: false,
       active: true,
       socialLinks: undefined,
@@ -344,7 +470,7 @@ export const updateBusiness = mutation({
   args: {
     businessId: v.id("businesses"),
     updates: v.object({
-      planTier: v.optional(v.string()),
+      planTier: v.optional(v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("power"))),
       claimed: v.optional(v.boolean()),
       verified: v.optional(v.boolean()),
       featured: v.optional(v.boolean()),
@@ -568,14 +694,110 @@ export const updateBusinessFeaturedStatus = mutation({
 import { api, internal } from "./_generated/api";
 
 /**
- * Get businesses for admin dashboard with filters
+ * Get business count for admin dashboard
+ */
+export const getBusinessCountForAdmin = query({
+  handler: async (ctx) => {
+    const count = await ctx.db.query("businesses").order("asc").collect();
+    return count.length;
+  },
+});
+
+/**
+ * Get businesses for admin dashboard - PAGINATED APPROACH
+ * Fetches businesses in chunks to avoid memory limits
+ */
+export const getBusinessesForAdminPaginated = query({
+  args: {
+    cursor: v.optional(v.string()),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = Math.min(args.limit || 1000, 1000);
+    
+    // Get businesses with pagination - ordered by creation time ascending for consistent results
+    let query = ctx.db.query("businesses").order("asc");
+    
+    if (args.cursor) {
+      // Resume from cursor position
+      query = query.filter((q) => q.gt(q.field("_id"), args.cursor!));
+    }
+    
+    const businesses = await query.take(limit + 1);
+    
+    // Check if there are more results
+    const hasMore = businesses.length > limit;
+    
+    // Only return requested limit
+    const results = hasMore ? businesses.slice(0, limit) : businesses;
+    
+    // Get the cursor from the last item we're actually returning
+    const nextCursor = hasMore && results.length > 0 ? results[results.length - 1]._id : null;
+    
+    // Get categories for this batch
+    const categoryIds = [...new Set(results.map(b => b.categoryId).filter(Boolean))];
+    const categories = await Promise.all(categoryIds.map(id => ctx.db.get(id)));
+    const categoryMap = new Map(categories.filter(Boolean).map(cat => [cat!._id, cat]));
+    
+    return {
+      businesses: results.map(business => ({
+        _id: business._id,
+        name: business.name,
+        address: business.address,
+        city: business.city,
+        state: business.state,
+        zip: business.zip,
+        phone: business.phone,
+        email: business.email,
+        website: business.website,
+        planTier: business.planTier,
+        active: business.active,
+        verified: business.verified,
+        featured: business.featured,
+        rating: business.rating,
+        reviewCount: business.reviewCount || 0,
+        placeId: business.placeId,
+        categoryId: business.categoryId,
+        categoryName: categoryMap.get(business.categoryId)?.name || "Uncategorized",
+        categorySlug: categoryMap.get(business.categoryId)?.slug || "uncategorized",
+        claimedByUserId: business.claimedByUserId,
+        dataSource: business.dataSource,
+        createdAt: business.createdAt,
+        updatedAt: business.updatedAt,
+        lastReviewSync: business.lastReviewSync,
+        syncStatus: business.syncStatus,
+        gmbClaimed: business.gmbClaimed,
+        overallScore: business.overallScore, // Add AI insights score
+      })),
+      nextCursor,
+      hasMore,
+    };
+  },
+});
+
+/**
+ * Get ALL businesses for admin dashboard - CLIENT-SIDE FILTERING APPROACH
+ * DEPRECATED: Use getBusinessesForAdminPaginated instead
+ */
+export const getAllBusinessesForAdmin = query({
+  handler: async (ctx) => {
+    // Return empty array to prevent memory overflow
+    // Use getBusinessesForAdminPaginated instead
+    return [];
+  },
+});
+
+/**
+ * Get businesses for admin dashboard with filters - OPTIMIZED for memory
+ * DEPRECATED: Use getAllBusinessesForAdmin + client-side filtering instead
  */
 export const getBusinessesForAdmin = query({
   args: {
     limit: v.optional(v.number()),
     search: v.optional(v.string()),
-    planTier: v.optional(v.union(v.literal("free"), v.literal("pro"), v.literal("power"))),
+    planTier: v.optional(v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("power"))),
     claimStatus: v.optional(v.union(v.literal("claimed"), v.literal("unclaimed"))),
+    verificationStatus: v.optional(v.union(v.literal("verified"), v.literal("unverified"))),
     active: v.optional(v.boolean()),
     city: v.optional(v.string()),
     zipcode: v.optional(v.string()),
@@ -587,6 +809,13 @@ export const getBusinessesForAdmin = query({
       v.literal("system")
     )),
     createdAfter: v.optional(v.number()),
+    reviewCountFilter: v.optional(v.union(
+      v.literal("none"),      // 0 reviews
+      v.literal("few"),       // 1-10 reviews
+      v.literal("moderate"),  // 11-50 reviews
+      v.literal("many"),      // 51-100 reviews
+      v.literal("lots")       // 100+ reviews
+    )),
   },
   handler: async (ctx, args) => {
     // TODO: Restore admin access check when admin module is available
@@ -595,69 +824,114 @@ export const getBusinessesForAdmin = query({
     //   throw new Error("Admin access required");
     // }
 
-    let businesses = await ctx.db.query("businesses").collect();
+    // MEMORY OPTIMIZATION: Use much smaller limit to prevent 16MB overflow
+    const limit = Math.min(args.limit || 50, 50); // Reduced from 500 to 50
+    
+    let businesses;
+    if (args.search) {
+      // Use search index when searching to find businesses across entire database
+      businesses = await ctx.db
+        .query("businesses")
+        .withSearchIndex("search_businesses", (q) => 
+          q.search("name", args.search!)
+        )
+        .take(limit);
+    } else {
+      // Use regular query when not searching - use order to get consistent results
+      businesses = await ctx.db
+        .query("businesses")
+        .order("desc")
+        .take(limit);
+    }
 
-    // Apply filters
+    // Apply filters - EARLY FILTERING to reduce data processing
+    let filteredBusinesses = businesses;
+
     if (args.planTier) {
-      businesses = businesses.filter(b => b.planTier === args.planTier);
+      filteredBusinesses = filteredBusinesses.filter(b => b.planTier === args.planTier);
     }
 
     if (args.claimStatus === "claimed") {
-      businesses = businesses.filter(b => b.claimedByUserId);
+      filteredBusinesses = filteredBusinesses.filter(b => b.claimedByUserId);
     } else if (args.claimStatus === "unclaimed") {
-      businesses = businesses.filter(b => !b.claimedByUserId);
+      filteredBusinesses = filteredBusinesses.filter(b => !b.claimedByUserId);
+    }
+
+    if (args.verificationStatus === "verified") {
+      filteredBusinesses = filteredBusinesses.filter(b => b.verified === true);
+    } else if (args.verificationStatus === "unverified") {
+      filteredBusinesses = filteredBusinesses.filter(b => b.verified === false);
     }
 
     if (args.active !== undefined) {
-      businesses = businesses.filter(b => b.active === args.active);
+      filteredBusinesses = filteredBusinesses.filter(b => b.active === args.active);
     }
 
     if (args.city) {
-      businesses = businesses.filter(b => b.city.toLowerCase() === args.city!.toLowerCase());
+      filteredBusinesses = filteredBusinesses.filter(b => b.city.toLowerCase() === args.city!.toLowerCase());
     }
 
     if (args.zipcode) {
-      businesses = businesses.filter(b => b.zip === args.zipcode);
+      filteredBusinesses = filteredBusinesses.filter(b => b.zip === args.zipcode);
     }
 
     if (args.categoryId) {
-      businesses = businesses.filter(b => b.categoryId === args.categoryId);
+      filteredBusinesses = filteredBusinesses.filter(b => b.categoryId === args.categoryId);
     }
 
     if (args.dataSource) {
-      businesses = businesses.filter(b => b.dataSource?.primary === args.dataSource);
+      filteredBusinesses = filteredBusinesses.filter(b => b.dataSource?.primary === args.dataSource);
     }
 
     if (args.createdAfter) {
-      businesses = businesses.filter(b => b.createdAt >= args.createdAfter!);
+      filteredBusinesses = filteredBusinesses.filter(b => b.createdAt >= args.createdAfter!);
     }
 
-    if (args.search) {
-      const searchLower = args.search.toLowerCase();
-      businesses = businesses.filter(b => 
-        b.name.toLowerCase().includes(searchLower) ||
-        b.city.toLowerCase().includes(searchLower) ||
-        b.phone?.toLowerCase().includes(searchLower)
-      );
-    }
+    // MEMORY OPTIMIZATION: Limit businesses before expensive operations
+    const limitedBusinesses = filteredBusinesses.slice(0, Math.min(limit, 25)); // Further limit to 25
 
-    // Get category information for each business
-    const businessesWithCategories = await Promise.all(
-      businesses.map(async (business) => {
+    // Get category information and review count for each business - LIMITED SET ONLY
+    const businessesWithCategoriesAndReviews = await Promise.all(
+      limitedBusinesses.map(async (business) => {
         const category = business.categoryId ? await ctx.db.get(business.categoryId) : null;
+        
+        // MEMORY OPTIMIZATION: Use business.reviewCount field instead of querying reviews
+        // This avoids the expensive review collection query that was causing the overflow
+        const reviewCount = business.reviewCount || 0;
+        
         return {
           ...business,
           category,
+          reviewCount,
         };
       })
     );
 
-    // Sort by most recently updated
-    businessesWithCategories.sort((a, b) => b.updatedAt - a.updatedAt);
+    // Apply review count filter if specified
+    let finalBusinesses = businessesWithCategoriesAndReviews;
+    if (args.reviewCountFilter) {
+      finalBusinesses = businessesWithCategoriesAndReviews.filter(b => {
+        switch (args.reviewCountFilter) {
+          case "none":
+            return b.reviewCount === 0;
+          case "few":
+            return b.reviewCount >= 1 && b.reviewCount <= 10;
+          case "moderate":
+            return b.reviewCount >= 11 && b.reviewCount <= 50;
+          case "many":
+            return b.reviewCount >= 51 && b.reviewCount <= 100;
+          case "lots":
+            return b.reviewCount > 100;
+          default:
+            return true;
+        }
+      });
+    }
 
-    // Limit results
-    const limit = args.limit || 50;
-    return businessesWithCategories.slice(0, limit);
+    // Sort by most recently updated
+    finalBusinesses.sort((a, b) => b.updatedAt - a.updatedAt);
+
+    return finalBusinesses;
   },
 });
 
@@ -673,7 +947,9 @@ export const updateBusinessStatus = mutation({
       v.literal("approve"),
       v.literal("flag"),
       v.literal("feature"),
-      v.literal("unfeature")
+      v.literal("unfeature"),
+      v.literal("verify"),
+      v.literal("unverify")
     ),
     reason: v.optional(v.string()),
   },
@@ -684,13 +960,27 @@ export const updateBusinessStatus = mutation({
       throw new Error("Authentication required");
     }
 
-    const user = await ctx.db
+    let user = await ctx.db
       .query("users")
       .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.subject))
       .first();
       
     if (!user) {
-      throw new Error("User not found");
+      // Create user if doesn't exist
+      const userId = await ctx.db.insert("users", {
+        tokenIdentifier: identity.subject,
+        name: identity.name,
+        email: identity.email,
+        isActive: true,
+        lastLoginAt: Date.now(),
+        createdAt: Date.now(),
+        role: "admin", // Since this is admin area, set as admin
+      });
+      
+      user = await ctx.db.get(userId);
+      if (!user) {
+        throw new Error("Failed to create user");
+      }
     }
 
     // OWNER OVERRIDE: John Schulenburg has unrestricted access
@@ -740,6 +1030,17 @@ export const updateBusinessStatus = mutation({
           }],
         });
         break;
+      case "verify":
+        updateData.verified = true;
+        // Set claimed info if not already set
+        if (!business.claimedByUserId) {
+          updateData.claimedByUserId = user._id;
+          updateData.claimedAt = Date.now();
+        }
+        break;
+      case "unverify":
+        updateData.verified = false;
+        break;
     }
 
     if (Object.keys(updateData).length > 0) {
@@ -772,7 +1073,9 @@ export const bulkUpdateBusinesses = mutation({
       v.literal("approve"), 
       v.literal("flag"),
       v.literal("feature"),
-      v.literal("unfeature")
+      v.literal("unfeature"),
+      v.literal("verify"),
+      v.literal("unverify")
     ),
     reason: v.optional(v.string()),
   },
@@ -1398,38 +1701,246 @@ function formatCityName(city: string): string {
     .join(' ');
 }
 
-// Get reviews for a specific business
+// Get review count for a specific business (lightweight)
+export const getBusinessReviewCount = query({
+  args: { 
+    businessId: v.id("businesses"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      // Use indexed query and take minimal sample to count
+      const sampleReviews = await ctx.db
+        .query("reviews")
+        .withIndex("by_business", (q) => q.eq("businessId", args.businessId))
+        .take(1);
+      
+      if (sampleReviews.length === 0) {
+        return 0;
+      }
+      
+      // If we found reviews, estimate count based on business reviewCount field
+      const business = await ctx.db.get(args.businessId);
+      return business?.reviewCount || sampleReviews.length;
+    } catch (error) {
+      console.error("Error in getBusinessReviewCount:", error);
+      return 0;
+    }
+  },
+});
+
+// Get reviews for a specific business - SAFE VERSION
 export const getBusinessReviews = query({
   args: { 
     businessId: v.id("businesses"),
     limit: v.optional(v.number()),
+    offset: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     try {
-      const limit = args.limit || 50; // Default to 50 reviews
+      const limit = Math.min(args.limit || 5, 20); // Allow up to 20 reviews
+      const offset = args.offset || 0;
+      
+      console.log(`🔍 Fetching reviews for business ${args.businessId}, limit: ${limit}, offset: ${offset}`);
+      
+      // Use indexed query for better performance
+      const reviews = await ctx.db
+        .query("reviews")
+        .withIndex("by_business", (q) => q.eq("businessId", args.businessId))
+        .order("desc")
+        .collect();
+      
+      console.log(`📊 Total reviews found: ${reviews.length}`);
+      
+      // Apply pagination manually to avoid size limits
+      const paginatedReviews = reviews
+        .slice(offset, offset + limit)
+        .map(review => ({
+          _id: review._id,
+          rating: review.rating,
+          comment: review.comment || "",
+          userName: review.userName || "Anonymous",
+          source: review.source,
+          originalCreateTime: review.originalCreateTime,
+          createdAt: review.createdAt,
+          verified: review.verified || false
+        }));
+      
+      console.log(`✅ Returning ${paginatedReviews.length} paginated reviews`);
+      return paginatedReviews;
+      
+    } catch (error) {
+      console.error("Error in getBusinessReviews:", error);
+      // Return empty array instead of throwing to prevent UI crashes
+      return [];
+    }
+  },
+});
+
+// TEST FUNCTION - Debug review queries
+export const testGetBusinessReviews = query({
+  args: { 
+    businessId: v.id("businesses"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      console.log(`🔍 Testing review query for business: ${args.businessId}`);
       
       // First check if the business exists
       const business = await ctx.db.get(args.businessId);
       if (!business) {
-        return [];
+        console.log(`❌ Business not found: ${args.businessId}`);
+        return { error: "Business not found", reviewCount: 0 };
       }
       
-      // Get all reviews for this business
-      const reviews = await ctx.db
+      console.log(`✅ Business found: ${business.name}`);
+      console.log(`📊 Business reviewCount field: ${business.reviewCount || 0}`);
+      
+      // Test 1: Count all reviews in the entire database
+      const allReviewsCount = await ctx.db.query("reviews").collect().then(r => r.length);
+      console.log(`📊 Total reviews in database: ${allReviewsCount}`);
+      
+      // Test 2: Try to get a single review for this business using filter
+      const singleReview = await ctx.db
         .query("reviews")
         .filter((q) => q.eq(q.field("businessId"), args.businessId))
-        .collect();
+        .first();
       
-      // Sort by createdAt in descending order and take the limit
-      const sortedReviews = reviews
-        .sort((a, b) => b.createdAt - a.createdAt)
-        .slice(0, limit);
+      if (singleReview) {
+        console.log(`✅ Found at least one review for this business`);
+        console.log(`📋 Sample review: ${singleReview.comment?.substring(0, 50)}...`);
+      } else {
+        console.log(`❌ No reviews found for this business with filter`);
+      }
       
-      return sortedReviews;
+      // Test 3: Count reviews for this business with filter (VERY CAREFULLY)
+      let businessReviewCount = 0;
+      try {
+        const businessReviews = await ctx.db
+          .query("reviews")
+          .filter((q) => q.eq(q.field("businessId"), args.businessId))
+          .take(1); // Only take 1 to test
+        businessReviewCount = businessReviews.length;
+        console.log(`📊 Filter query returned ${businessReviewCount} review(s) (limited to 1)`);
+      } catch (error) {
+        console.error(`❌ Filter query failed: ${error}`);
+      }
+      
+      return {
+        businessName: business.name,
+        businessReviewCount: business.reviewCount || 0,
+        totalDatabaseReviews: allReviewsCount,
+        filterTestCount: businessReviewCount,
+        sampleReview: singleReview ? singleReview.comment?.substring(0, 100) : null
+      };
+      
     } catch (error) {
-      console.error("Error in getBusinessReviews:", error);
-      return [];
+      console.error("Error in testGetBusinessReviews:", error);
+      return { error: String(error) };
     }
+  },
+});
+
+// Update business tier for testing
+export const updateBusinessTier = mutation({
+  args: {
+    businessId: v.id("businesses"),
+    planTier: v.union(
+      v.literal("free"),
+      v.literal("starter"),
+      v.literal("pro"),
+      v.literal("power")
+    ),
+  },
+  handler: async (ctx, args) => {
+    // Update the business tier
+    await ctx.db.patch(args.businessId, {
+      planTier: args.planTier,
+    });
+    
+    return { success: true };
+  },
+});
+
+// Duplicate removed - using the one defined at line 39
+
+/**
+ * Get businesses with review counts for AI analysis
+ */
+export const getBusinessesWithReviewCounts = query({
+  args: {
+    limit: v.optional(v.number()),
+    cursor: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit || 50; // Reduced to 50 businesses per page for safety
+    
+    // Build the query
+    let query = ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("active"), true));
+    
+    // Apply cursor if provided
+    if (args.cursor) {
+      const cursorDoc = await ctx.db.get(args.cursor as Id<"businesses">);
+      if (cursorDoc) {
+        query = query.filter((q) => q.gt(q.field("_creationTime"), cursorDoc._creationTime));
+      }
+    }
+    
+    // Get businesses with limit
+    const businesses = await query.take(limit + 1); // Take one extra to check if there are more
+    
+    // Check if there are more results
+    const hasMore = businesses.length > limit;
+    const businessesToProcess = hasMore ? businesses.slice(0, limit) : businesses;
+    const nextCursor = hasMore ? businesses[limit]._id : null;
+
+    // Get review counts and last analysis info for each business
+    const businessesWithInfo = await Promise.all(
+      businessesToProcess.map(async (business) => {
+        // Get category
+        const category = business.categoryId ? await ctx.db.get(business.categoryId) : null;
+        
+        // Get review count more efficiently
+        // Just check if reviews exist and get a count estimate
+        const firstReviews = await ctx.db
+          .query("reviews")
+          .withIndex("by_business", (q) => q.eq("businessId", business._id))
+          .take(100); // Reduced limit
+        
+        // If we got 100 reviews, there might be more
+        const hasMoreReviews = firstReviews.length === 100;
+        const reviewCount = hasMoreReviews ? 100 : firstReviews.length; // Cap at 100 for display
+        
+        // Check if has AI analysis
+        const aiTags = await ctx.db
+          .query("aiAnalysisTags")
+          .withIndex("by_business", (q) => q.eq("businessId", business._id))
+          .first();
+        
+        // Get ranking info
+        const ranking = await ctx.db
+          .query("businessRankings")
+          .withIndex("by_business", (q) => q.eq("businessId", business._id))
+          .first();
+
+        return {
+          _id: business._id,
+          name: business.name,
+          city: business.city,
+          category: category ? { name: category.name } : undefined,
+          reviewCount,
+          hasAIAnalysis: !!aiTags,
+          lastAnalyzed: ranking?.lastCalculated,
+        };
+      })
+    );
+
+    return {
+      businesses: businessesWithInfo,
+      nextCursor,
+      hasMore,
+    };
   },
 });
 

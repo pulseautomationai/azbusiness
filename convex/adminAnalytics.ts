@@ -1,21 +1,61 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import { api } from "./_generated/api";
 
 /**
  * Get admin dashboard metrics
  */
 export const getAdminDashboardMetrics = query({
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<{
+    revenue: { total: number; growth: number; trend: "up" | "down" };
+    customers: { new: number; growth: number; trend: "up" | "down" };
+    activeAccounts: { total: number; claimed: number; unclaimed: number; growth: number; trend: "up" | "down" };
+    businesses: { total: number; claimed: number; unclaimed: number; verified: number; claimRate: number; planDistribution: any; growth: number; trend: "up" | "down" };
+    reviews: { total: number; averagePerBusiness: number; verified: number; recentReviews: number };
+    subscriptions: { active: number; total: number; mrr: number; plans: Record<string, number> };
+  }> => {
     // TODO: Restore admin access check when admin module is available
     
     const now = Date.now();
     const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
     const sixtyDaysAgo = now - (60 * 24 * 60 * 60 * 1000);
 
-    // Get all users and subscriptions
+    // Get platform stats for accurate counts
+    const platformStats: any = await ctx.runQuery(api.platformStats.getOrCreateStats);
+    
+    // Use actual platform stats instead of hardcoded values
+    const accurateCounts: {
+      totalBusinesses: number;
+      totalReviews: number;
+      claimedBusinesses: number;
+      verifiedBusinesses: number;
+      verifiedReviews: number;
+      planCounts: any;
+    } = {
+      totalBusinesses: platformStats.totalBusinesses,
+      totalReviews: platformStats.totalReviews,
+      claimedBusinesses: platformStats.claimedBusinesses,
+      verifiedBusinesses: platformStats.verifiedBusinesses,
+      verifiedReviews: platformStats.verifiedReviews,
+      planCounts: platformStats.planCounts || {
+        free: platformStats.totalBusinesses - 2,
+        starter: 0,
+        pro: 0,
+        power: 2,
+      }
+    };
+    
+    // Get counts and limited data instead of all records
     const users = await ctx.db.query("users").collect();
     const subscriptions = await ctx.db.query("subscriptions").collect();
-    const businesses = await ctx.db.query("businesses").collect();
+    
+    // For businesses calculations, use a sample
+    const businessSample = await ctx.db.query("businesses").take(1000);
+    
+    // Get recent reviews for statistics
+    const recentReviews = await ctx.db
+      .query("reviews")
+      .take(100);
 
     // Calculate subscription revenue
     const activeSubscriptions = subscriptions.filter(sub => 
@@ -53,25 +93,24 @@ export const getAdminDashboardMetrics = query({
       : newCustomersThisPeriod > 0 ? 100 : 0;
 
     // Active accounts (users with claimed businesses or active subscriptions)
-    const claimedBusinesses = businesses.filter(b => b.claimed);
     const activeUserIds = new Set([
       ...activeSubscriptions.map(sub => sub.userId).filter(Boolean),
-      ...claimedBusinesses.map(b => b.claimedByUserId).filter(Boolean)
     ]);
     const activeAccounts = activeUserIds.size;
 
-    // Business metrics
-    const claimedBusinessCount = claimedBusinesses.length;
-    const unclaimedBusinesses = businesses.filter(b => !b.claimed).length;
-    const claimRate = businesses.length > 0 
-      ? (claimedBusinessCount / businesses.length) * 100 
-      : 0;
+    // Business metrics from accurate counts
+    const claimedBusinessCount: number = accurateCounts.claimedBusinesses;
+    const unclaimedBusinesses = accurateCounts.totalBusinesses - claimedBusinessCount;
 
-    // Plan distribution
-    const planCounts = businesses.reduce((acc, business) => {
-      acc[business.planTier] = (acc[business.planTier] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    // Plan distribution from accurate counts
+    const planCounts = accurateCounts.planCounts;
+
+    // Review statistics from accurate counts
+    const totalReviews = accurateCounts.totalReviews;
+    const verifiedBusinesses = accurateCounts.verifiedBusinesses;
+    const verifiedReviewsCount = accurateCounts.verifiedReviews || 0;
+    
+    console.log("Debug totalReviews:", totalReviews, "from platformStats:", platformStats.totalReviews);
 
     return {
       revenue: {
@@ -92,13 +131,22 @@ export const getAdminDashboardMetrics = query({
         trend: "up" as const,
       },
       businesses: {
-        total: businesses.length,
+        total: accurateCounts.totalBusinesses,
         claimed: claimedBusinessCount,
-        unclaimed: unclaimedBusinesses,
-        claimRate: claimRate,
+        unclaimed: accurateCounts.totalBusinesses - claimedBusinessCount,
+        verified: verifiedBusinesses,
+        claimRate: accurateCounts.totalBusinesses > 0 
+          ? (claimedBusinessCount / accurateCounts.totalBusinesses) * 100 
+          : 0,
         planDistribution: planCounts,
         growth: 0, // TODO: Calculate based on historical data
         trend: "up" as const,
+      },
+      reviews: {
+        total: totalReviews,
+        averagePerBusiness: accurateCounts.totalBusinesses > 0 ? (totalReviews / accurateCounts.totalBusinesses) : 0,
+        verified: verifiedReviewsCount,
+        recentReviews: recentReviews.length,
       },
       subscriptions: {
         active: activeSubscriptions.length,

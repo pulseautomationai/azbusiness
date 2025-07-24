@@ -63,7 +63,7 @@ export function BusinessInfoSidebar({
                 planTier={business.planTier}
                 showUpgrade={false}
               >
-                <Shield className="h-4 w-4 text-green-600" />
+                <Shield className="h-4 w-4 text-turquoise-sky" />
               </FeatureGate>
             )}
           </CardTitle>
@@ -87,7 +87,7 @@ export function BusinessInfoSidebar({
                   className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
                 >
                   {copiedField === 'phone' ? (
-                    <Check className="h-3 w-3 text-green-600" />
+                    <Check className="h-3 w-3 text-turquoise-sky" />
                   ) : (
                     <Copy className="h-3 w-3" />
                   )}
@@ -120,7 +120,7 @@ export function BusinessInfoSidebar({
                   className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
                 >
                   {copiedField === 'email' ? (
-                    <Check className="h-3 w-3 text-green-600" />
+                    <Check className="h-3 w-3 text-turquoise-sky" />
                   ) : (
                     <Copy className="h-3 w-3" />
                   )}
@@ -159,7 +159,7 @@ export function BusinessInfoSidebar({
                   className="opacity-0 group-hover:opacity-100 transition-opacity p-1 h-auto"
                 >
                   {copiedField === 'address' ? (
-                    <Check className="h-3 w-3 text-green-600" />
+                    <Check className="h-3 w-3 text-turquoise-sky" />
                   ) : (
                     <Copy className="h-3 w-3" />
                   )}
@@ -235,7 +235,7 @@ export function BusinessInfoSidebar({
                   )}
                 >
                   <span className="capitalize">{day}</span>
-                  <span className={hours ? "text-green-600" : "text-red-600"}>
+                  <span className={hours ? "text-turquoise-sky" : "text-ocotillo-red"}>
                     {hours || "Closed"}
                   </span>
                 </div>
@@ -246,8 +246,8 @@ export function BusinessInfoSidebar({
           {/* Current Status */}
           <div className="mt-3 pt-3 border-t">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-green-600">Open Now</span>
+              <div className="w-2 h-2 bg-turquoise-sky rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-turquoise-sky">Open Now</span>
               <span className="text-xs text-muted-foreground">• Closes at 6:00 PM</span>
             </div>
           </div>
@@ -274,9 +274,9 @@ export function BusinessInfoSidebar({
               }
             >
               {business.verified && (
-                <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-lg">
-                  <Shield className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Verified Business</span>
+                <div className="flex items-center gap-2 p-2 bg-agave-cream border border-gray-200 rounded-lg">
+                  <Shield className="h-4 w-4 text-turquoise-sky" />
+                  <span className="text-sm font-medium text-ironwood-charcoal">Verified Business</span>
                 </div>
               )}
             </FeatureGate>
@@ -300,10 +300,10 @@ export function BusinessInfoSidebar({
                   href={business.socialLinks.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg bg-blue-50 p-3 hover:bg-blue-100 transition-colors"
+                  className="rounded-lg bg-agave-cream p-3 hover:bg-gray-50 transition-colors border border-gray-200"
                   title="Facebook"
                 >
-                  <Facebook className="h-5 w-5 text-blue-600" />
+                  <Facebook className="h-5 w-5 text-turquoise-sky" />
                 </a>
               )}
               {business.socialLinks?.instagram && (
@@ -311,10 +311,10 @@ export function BusinessInfoSidebar({
                   href={business.socialLinks.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg bg-pink-50 p-3 hover:bg-pink-100 transition-colors"
+                  className="rounded-lg bg-agave-cream p-3 hover:bg-gray-50 transition-colors border border-gray-200"
                   title="Instagram"
                 >
-                  <Instagram className="h-5 w-5 text-pink-600" />
+                  <Instagram className="h-5 w-5 text-desert-marigold" />
                 </a>
               )}
               {business.socialLinks?.twitter && (
@@ -322,10 +322,10 @@ export function BusinessInfoSidebar({
                   href={business.socialLinks.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg bg-blue-50 p-3 hover:bg-blue-100 transition-colors"
+                  className="rounded-lg bg-agave-cream p-3 hover:bg-gray-50 transition-colors border border-gray-200"
                   title="Twitter"
                 >
-                  <Twitter className="h-5 w-5 text-blue-500" />
+                  <Twitter className="h-5 w-5 text-turquoise-sky" />
                 </a>
               )}
               {business.socialLinks?.linkedin && (
@@ -333,10 +333,10 @@ export function BusinessInfoSidebar({
                   href={business.socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg bg-blue-50 p-3 hover:bg-blue-100 transition-colors"
+                  className="rounded-lg bg-agave-cream p-3 hover:bg-gray-50 transition-colors border border-gray-200"
                   title="LinkedIn"
                 >
-                  <Linkedin className="h-5 w-5 text-blue-700" />
+                  <Linkedin className="h-5 w-5 text-turquoise-sky" />
                 </a>
               )}
               

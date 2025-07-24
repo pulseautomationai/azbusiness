@@ -37,7 +37,6 @@ export const seedSampleBusinesses = mutation({
           saturday: "9:00 AM - 4:00 PM",
           sunday: "Emergency Service Only",
         },
-        claimed: true,
         ownerId: undefined,
         socialLinks: undefined,
         dataSource: {
@@ -96,8 +95,7 @@ export const seedSampleBusinesses = mutation({
             planTier: planTier,
             featured: planTier === "power" || (planTier === "pro" && Math.random() > 0.5),
             priority: planTier === "power" ? 100 : planTier === "pro" ? 50 : 0,
-            claimed: true,
-            verified: planTier !== "free" || Math.random() > 0.5,
+                verified: planTier !== "free" || Math.random() > 0.5,
             active: true,
             rating: Math.round((Math.random() * 2 + 3) * 10) / 10, // 3.0 - 5.0
             reviewCount: Math.floor(Math.random() * 150) + 10,

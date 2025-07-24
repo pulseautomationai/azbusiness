@@ -5,7 +5,7 @@ import { getAuth } from "@clerk/react-router/ssr.server";
 import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
-import BusinessProfile from "~/components/business/business-profile";
+import TierBasedBusinessProfile from "~/components/business/tier-based-business-profile";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../../convex/_generated/api";
 import type { Route } from "./+types/$slug";
@@ -112,6 +112,15 @@ export default function BusinessPage() {
     );
   }
 
+  // Fetch reviews for the business
+  const reviews = useQuery(
+    api.businesses.getBusinessReviews,
+    business ? {
+      businessId: business._id,
+      limit: 50
+    } : "skip"
+  );
+
   // Filter out the current business from related businesses and limit to 3
   const filteredRelatedBusinesses = relatedBusinesses 
     ? relatedBusinesses.filter(b => b._id !== business._id).slice(0, 3)
@@ -123,10 +132,10 @@ export default function BusinessPage() {
     <>
       <Header />
       <ComponentErrorBoundary componentName="Business Profile">
-        <BusinessProfile 
+        <TierBasedBusinessProfile 
           business={business}
           relatedBusinesses={filteredRelatedBusinesses}
-          reviews={[]} // Placeholder for reviews
+          reviews={reviews || []}
           isOwner={isOwner}
         />
       </ComponentErrorBoundary>

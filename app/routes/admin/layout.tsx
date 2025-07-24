@@ -13,15 +13,21 @@ import {
   IconUsers,
   IconTags,
   IconUpload,
-  IconTestPipe
+  IconTestPipe,
+  IconRefresh
 } from "@tabler/icons-react";
 
 // Admin-specific sidebar data
 const adminSidebarData = {
   navMain: [
     {
-      title: "Analytics",
+      title: "Dashboard",
       url: "/admin",
+      icon: IconChartBar,
+    },
+    {
+      title: "Analytics",
+      url: "/admin/analytics",
       icon: IconChartBar,
     },
     {
@@ -38,6 +44,11 @@ const adminSidebarData = {
       title: "Import Management",
       url: "/admin/imports",
       icon: IconUpload,
+    },
+    {
+      title: "Review Sync",
+      url: "/admin/review-sync",
+      icon: IconRefresh,
     },
     {
       title: "Customers",

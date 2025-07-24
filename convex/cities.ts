@@ -54,6 +54,9 @@ export const getCityBySlug = query({
   },
 });
 
+// Alias for getCityBySlug for consistency
+export const getBySlug = getCityBySlug;
+
 // Get cities with business count
 export const getCitiesWithCount = query({
   args: { region: v.optional(v.string()) },
@@ -73,27 +76,68 @@ export const getCitiesWithCount = query({
         .collect();
     }
     
-    // Get business count for each city
-    const citiesWithCount = await Promise.all(
-      cities.map(async (city) => {
-        // Get all active businesses and filter by city with case-insensitive matching
-        const allBusinesses = await ctx.db
-          .query("businesses")
-          .filter((q) => q.eq(q.field("active"), true))
-          .collect();
-        
-        // Filter businesses by city name (case-insensitive)
-        const cityNameLower = city.name.toLowerCase().trim();
-        const businesses = allBusinesses.filter(b => 
-          b.city.toLowerCase().trim() === cityNameLower
-        );
-        
-        return {
-          ...city,
-          businessCount: businesses.length,
-        };
-      })
-    );
+    // Get all active businesses once (not for each city)
+    const allBusinesses = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("active"), true))
+      .collect();
+    
+    // Create a map of city counts
+    const cityCountMap = new Map<string, number>();
+    
+    // Count businesses by city (case-insensitive)
+    allBusinesses.forEach(business => {
+      const cityLower = business.city.toLowerCase().trim();
+      cityCountMap.set(cityLower, (cityCountMap.get(cityLower) || 0) + 1);
+    });
+    
+    // Add counts to cities
+    const citiesWithCount = cities.map(city => {
+      const cityNameLower = city.name.toLowerCase().trim();
+      return {
+        ...city,
+        businessCount: cityCountMap.get(cityNameLower) || 0,
+      };
+    });
+    
+    // Sort by order
+    citiesWithCount.sort((a, b) => a.order - b.order);
+    
+    return citiesWithCount;
+  },
+});
+
+// Get all cities for admin interfaces (like bulk sync)
+export const getAllCities = query({
+  handler: async (ctx) => {
+    const cities = await ctx.db
+      .query("cities")
+      .withIndex("by_active", (q) => q.eq("active", true))
+      .collect();
+    
+    // Get all active businesses once (not for each city)
+    const allBusinesses = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("active"), true))
+      .collect();
+    
+    // Create a map of city counts
+    const cityCountMap = new Map<string, number>();
+    
+    // Count businesses by city (case-insensitive)
+    allBusinesses.forEach(business => {
+      const cityLower = business.city.toLowerCase().trim();
+      cityCountMap.set(cityLower, (cityCountMap.get(cityLower) || 0) + 1);
+    });
+    
+    // Add counts to cities
+    const citiesWithCount = cities.map(city => {
+      const cityNameLower = city.name.toLowerCase().trim();
+      return {
+        ...city,
+        businessCount: cityCountMap.get(cityNameLower) || 0,
+      };
+    });
     
     // Sort by order
     citiesWithCount.sort((a, b) => a.order - b.order);

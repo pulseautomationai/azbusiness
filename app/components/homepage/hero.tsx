@@ -17,7 +17,7 @@ export default function HeroSection() {
         </svg>
         
         <svg
-          className="absolute top-20 right-20 w-24 h-24 text-prickly-pear-pink"
+          className="absolute top-20 right-20 w-24 h-24 text-desert-marigold"
           viewBox="0 0 100 100"
           fill="currentColor"
         >
@@ -26,7 +26,7 @@ export default function HeroSection() {
         </svg>
 
         <svg
-          className="absolute bottom-10 left-1/4 w-20 h-20 text-cholla-green"
+          className="absolute bottom-10 left-1/4 w-20 h-20 text-turquoise-sky"
           viewBox="0 0 100 100"
           fill="currentColor"
         >
@@ -35,7 +35,7 @@ export default function HeroSection() {
         </svg>
 
         <svg
-          className="absolute bottom-20 right-1/3 w-16 h-16 text-desert-sky-blue"
+          className="absolute bottom-20 right-1/3 w-16 h-16 text-ocotillo-red"
           viewBox="0 0 100 100"
           fill="currentColor"
         >
@@ -44,9 +44,6 @@ export default function HeroSection() {
           <path d="M50 10 L50 25 M50 75 L50 90 M10 50 L25 50 M75 50 L90 50 M21.5 21.5 L32.5 32.5 M67.5 32.5 L78.5 21.5 M21.5 78.5 L32.5 67.5 M67.5 67.5 L78.5 78.5" strokeWidth="3" stroke="currentColor" fill="none" />
         </svg>
       </div>
-
-      {/* Gradient Overlay for Depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-agave-cream via-transparent to-agave-cream/50"></div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
@@ -64,15 +61,15 @@ export default function HeroSection() {
           {/* Trust indicators */}
           <div className="flex flex-wrap justify-center gap-6 text-sm text-ironwood-charcoal/70 mb-8">
             <div className="flex items-center gap-2">
-              <span className="text-cholla-green">✓</span>
+              <span className="text-turquoise-sky">✓</span>
               <span>500+ Verified Businesses</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cholla-green">✓</span>
+              <span className="text-turquoise-sky">✓</span>
               <span>15,000+ Customer Reviews</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-cholla-green">✓</span>
+              <span className="text-turquoise-sky">✓</span>
               <span>Arizona-Only Focus</span>
             </div>
           </div>

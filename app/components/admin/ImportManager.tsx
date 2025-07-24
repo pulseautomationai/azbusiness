@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "convex/_generated/api";
 import type { Id } from "convex/_generated/dataModel";
 import { useUser } from "@clerk/clerk-react";
@@ -64,6 +64,7 @@ export function ImportManager() {
     skipDuplicates: true,
     batchSize: 50,
     confidence: 85,
+    syncReviewsAfterImport: false,
   });
   const [importProgress, setImportProgress] = useState<ImportProgress>({
     status: "idle",
@@ -79,8 +80,10 @@ export function ImportManager() {
 
   const createImportBatch = useMutation(api.batchImport.createImportBatch);
   const batchImportBusinesses = useMutation(api.batchImport.batchImportBusinesses);
+  const importBusinessBatch = useMutation(api.businessImportOptimized.importBusinessBatch);
   const updateImportBatch = useMutation(api.batchImport.updateImportBatch);
   const validateImportBatch = useMutation(api.importValidation.validateImportBatch);
+  const startBulkSync = useAction(api.bulkSync.startBulkSync);
   const getValidationResults = useQuery(
     api.importValidation.getValidationResults,
     importProgress.batchId ? { batchId: importProgress.batchId } : "skip"
@@ -415,6 +418,33 @@ export function ImportManager() {
           // Extract description
           businessDescription = cleanedRow['Description'] || cleanedRow['Meta_Description'] || '';
           
+          // Clean business name by removing city suffix if present
+          if (businessName && businessCity) {
+            const cityVariations = [
+              businessCity,
+              businessCity.toLowerCase(),
+              businessCity.toUpperCase(),
+              businessCity.charAt(0).toUpperCase() + businessCity.slice(1).toLowerCase()
+            ];
+            
+            for (const cityVariation of cityVariations) {
+              const patterns = [
+                new RegExp(`\\s*[-–]\\s*${cityVariation}$`, 'i'),
+                new RegExp(`\\s+${cityVariation}$`, 'i'),
+                new RegExp(`\\s*,\\s*${cityVariation}$`, 'i')
+              ];
+              
+              for (const pattern of patterns) {
+                if (pattern.test(businessName)) {
+                  const cleanedName = businessName.replace(pattern, '').trim();
+                  console.log(`🧹 Cleaned business name: "${businessName}" → "${cleanedName}" (removed city: ${cityVariation})`);
+                  businessName = cleanedName;
+                  break;
+                }
+              }
+            }
+          }
+          
           // Fallback logic if header-based extraction fails
           if (!businessName || businessName.trim() === '') {
             // Look for any company-like name (but avoid Category+City like "Cleaning Service in Mesa")
@@ -505,9 +535,10 @@ export function ImportManager() {
           };
           const categoryName = categoryNames[detectedCategory as keyof typeof categoryNames] || 'Cleaning Services';
           
-          // Generate slug with business name (let duplicate detection handle conflicts)
-          const businessSlug = generateSlug(`${businessName}-${businessCity}`);
-          const urlPath = `/${detectedCategory}/${generateSlug(businessCity)}/${generateSlug(businessName)}`;
+          // Generate slug with business name only (no city)
+          // IMPORTANT: Never include city in the slug
+          const businessSlug = generateSlug(businessName).replace(new RegExp(`-?${generateSlug(businessCity)}$`, 'i'), '');
+          const urlPath = `/${detectedCategory}/${generateSlug(businessCity)}/${businessSlug}`;
 
           // Step 5: Generate default services
           const servicesByCategory = {
@@ -551,7 +582,10 @@ export function ImportManager() {
           };
 
           // Debug logging
-          console.log(`✅ Row ${i + 1}: ${businessName} → slug: ${businessSlug}`);
+          console.log(`✅ Row ${i + 1}: ${businessName} → slug: ${businessSlug} (city: ${businessCity})`);
+          if (businessSlug.includes(generateSlug(businessCity))) {
+            console.error(`⚠️ WARNING: Slug contains city! ${businessSlug} includes ${generateSlug(businessCity)}`);
+          }
           
           businesses.push(business);
           processedCount++;
@@ -583,22 +617,60 @@ export function ImportManager() {
         message: "Creating database records..." 
       }));
 
-      // Import businesses using the Convex function (disable duplicate check for debugging)
-      console.log(`🔄 Sending ${businesses.length} businesses to Convex for import...`);
+      // Import businesses using batched processing
+      console.log(`🔄 Starting batched import of ${businesses.length} businesses...`);
       
-      let results;
+      const BATCH_SIZE = 250; // Process 250 businesses at a time
+      const totalBatches = Math.ceil(businesses.length / BATCH_SIZE);
+      let overallResults = {
+        newBusinessesAdded: 0,
+        existingBusinessesSkipped: 0,
+        errors: 0,
+        errorMessages: [] as string[]
+      };
+      
       try {
-        results = await batchImportBusinesses({
-          businesses,
-          skipDuplicates: false, // Temporarily disable to see what happens
-          importSource: importConfig.source,
-          importBatchId: batchId,
-          sourceMetadata: {
-            fileName: selectedFile.name,
-            totalRows: businesses.length,
-          },
-        });
-        console.log(`✅ Convex import completed:`, results);
+        for (let i = 0; i < totalBatches; i++) {
+          const start = i * BATCH_SIZE;
+          const end = start + BATCH_SIZE;
+          const batch = businesses.slice(start, end);
+          
+          console.log(`Processing batch ${i + 1}/${totalBatches}: ${batch.length} businesses`);
+          
+          setImportProgress(prev => ({ 
+            ...prev, 
+            progress: 80 + ((i / totalBatches) * 15), 
+            message: `Processing batch ${i + 1} of ${totalBatches}...` 
+          }));
+
+          const batchResult = await importBusinessBatch({
+            businesses: batch,
+            importSource: importConfig.source,
+            skipDuplicateCheck: false,
+          });
+
+          // Accumulate results
+          overallResults.newBusinessesAdded += batchResult.newBusinessesAdded;
+          overallResults.existingBusinessesSkipped += batchResult.existingBusinessesSkipped;
+          overallResults.errors += batchResult.errors;
+          overallResults.errorMessages.push(...batchResult.errorMessages);
+
+          console.log(`Batch ${i + 1} completed:`, batchResult);
+          
+          // Small delay to prevent overwhelming the system
+          if (i < totalBatches - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+
+        const results = {
+          successful: overallResults.newBusinessesAdded,
+          failed: overallResults.errors,
+          skipped: overallResults.existingBusinessesSkipped,
+          errors: overallResults.errorMessages,
+        };
+        
+        console.log(`✅ All batches completed:`, results);
       } catch (convexError) {
         console.error(`❌ Convex import error:`, convexError);
         throw new Error(`Convex import failed: ${convexError}`);
@@ -635,6 +707,38 @@ export function ImportManager() {
         title: "Import completed",
         description: `${results.successful} businesses imported successfully`,
       });
+
+      // Queue review syncs if enabled
+      if (importConfig.syncReviewsAfterImport && results.businessIds && results.businessIds.length > 0) {
+        setImportProgress(prev => ({ 
+          ...prev, 
+          message: "Queueing Google review syncs..." 
+        }));
+
+        try {
+          // Start bulk sync for all imported businesses
+          const syncResult = await startBulkSync({
+            filters: {
+              // We'll need to pass business IDs or modify the bulk sync to accept them
+              lastSyncBefore: -1, // Never synced
+            },
+            concurrency: 3,
+            skipErrors: true,
+          });
+
+          toast({
+            title: "Review sync queued",
+            description: `${syncResult.added} businesses queued for review sync`,
+          });
+        } catch (error) {
+          console.error("Failed to queue review syncs:", error);
+          toast({
+            title: "Review sync failed",
+            description: "Failed to queue review syncs. You can manually sync from the Review Sync dashboard.",
+            variant: "destructive",
+          });
+        }
+      }
 
     } catch (error) {
       // Update batch status to failed
@@ -1221,6 +1325,18 @@ Sample Business,123 Main St,Phoenix,AZ,85001,(602) 555-0123,info@samplebusiness.
                   }))}
                 />
                 <Label htmlFor="skipDuplicates">Skip Duplicate Businesses</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="syncReviews"
+                  checked={importConfig.syncReviewsAfterImport}
+                  onCheckedChange={(checked) => setImportConfig(prev => ({ 
+                    ...prev, 
+                    syncReviewsAfterImport: !!checked 
+                  }))}
+                />
+                <Label htmlFor="syncReviews">Sync Google Reviews After Import</Label>
               </div>
             </div>
 

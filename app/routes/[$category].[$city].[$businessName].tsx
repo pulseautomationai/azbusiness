@@ -1,11 +1,9 @@
-import { useParams, Navigate, redirect } from "react-router";
+import { useParams, Navigate } from "react-router";
 import { useQuery } from "convex/react";
 import { useUser } from "@clerk/react-router";
-import { getAuth } from "@clerk/react-router/ssr.server";
-import { fetchQuery } from "convex/nextjs";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
-import SinglePageBusinessProfile from "~/components/business/single-page-business-profile";
+import TierBasedBusinessProfile from "~/components/business/tier-based-business-profile";
 import { ComponentErrorBoundary } from "~/components/error-boundary";
 import { api } from "../../convex/_generated/api";
 import { SlugGenerator } from "~/utils/slug-generator";
@@ -143,7 +141,7 @@ export default function BusinessDetailPage() {
   // Get reviews for this business
   const reviews = useQuery(
     api.businesses.getBusinessReviews,
-    business ? { businessId: business._id } : "skip"
+    business ? { businessId: business._id, limit: 10 } : "skip"
   );
   
   // Validate URL parameters - after all hooks
@@ -152,7 +150,7 @@ export default function BusinessDetailPage() {
   }
 
   // If business queries are undefined, we're still loading
-  const isLoading = businessBySlug === undefined || (businessBySlug === null && businessByUrlPath === undefined);
+  const isLoading = businessBySlug === undefined || (businessBySlug === null && businessByUrlPath === undefined) || reviews === undefined;
   
   // If business is null (not found), try alternative slug formats or redirect
   if (!isLoading && !business) {
@@ -180,11 +178,23 @@ export default function BusinessDetailPage() {
 
   const isOwner = user?.id === business.ownerId;
 
+  // Debug logging for reviews
+  if (business && process.env.NODE_ENV === 'development') {
+    console.log('🔍 Business Page Debug:', {
+      businessName: business.name,
+      businessId: business._id,
+      reviewsData: reviews,
+      reviewsLength: reviews?.length,
+      reviewsType: typeof reviews,
+      isReviewsArray: Array.isArray(reviews)
+    });
+  }
+
   return (
     <>
       <Header />
       <ComponentErrorBoundary componentName="Business Profile">
-        <SinglePageBusinessProfile 
+        <TierBasedBusinessProfile 
           business={business}
           relatedBusinesses={filteredRelatedBusinesses}
           reviews={reviews || []}

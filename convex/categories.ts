@@ -42,6 +42,42 @@ export const getAllCategoriesForAdmin = query({
   },
 });
 
+// Get all active categories with business count
+export const getAllCategories = query({
+  handler: async (ctx) => {
+    const categories = await ctx.db
+      .query("categories")
+      .withIndex("by_active", (q) => q.eq("active", true))
+      .collect();
+    
+    // Get all active businesses once
+    const allBusinesses = await ctx.db
+      .query("businesses")
+      .filter((q) => q.eq(q.field("active"), true))
+      .collect();
+    
+    // Create a map of category counts
+    const categoryCountMap = new Map<string, number>();
+    
+    // Count businesses by category
+    allBusinesses.forEach(business => {
+      const categoryId = business.categoryId;
+      categoryCountMap.set(categoryId, (categoryCountMap.get(categoryId) || 0) + 1);
+    });
+    
+    // Add counts to categories
+    const categoriesWithCount = categories.map(category => ({
+      ...category,
+      businessCount: categoryCountMap.get(category._id) || 0,
+    }));
+    
+    // Sort by order
+    categoriesWithCount.sort((a, b) => a.order - b.order);
+    
+    return categoriesWithCount;
+  },
+});
+
 // Get categories with business count
 export const getCategoriesWithCount = query({
   handler: async (ctx) => {

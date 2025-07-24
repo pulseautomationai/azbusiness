@@ -4,6 +4,11 @@
  */
 
 import { ConvexHttpClient } from "convex/browser";
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
 
 const CONVEX_URL = process.env.CONVEX_URL || "https://YOUR_CONVEX_URL";
 

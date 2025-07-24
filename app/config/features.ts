@@ -36,29 +36,70 @@ export const features: Record<string, Feature> = {
     upgradeMessage: "Upgrade to Pro to customize your summary",
   },
 
-  // New Starter Features
+  // AI Features available from Free tier
   aiSummaryBasic: {
     id: "aiSummaryBasic",
-    name: "AI Business Summary",
-    description: "AI-generated business summary (non-editable)",
-    availableIn: ["starter", "pro", "power"],
-    upgradeMessage: "Upgrade to Starter for AI-generated summary",
+    name: "Basic AI Insights",
+    description: "Simple positive customer feedback summary",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
+
+  // Free tier features
+  basicListing: {
+    id: "basicListing",
+    name: "Basic Business Listing",
+    description: "Name, address, phone, hours (editable)",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
+
+  verifiedBadgeFree: {
+    id: "verifiedBadgeFree",
+    name: "Verified Business Badge",
+    description: "Verified by Business Owner badge",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available for all claimed businesses",
+  },
+
+  reviewDisplayBasic: {
+    id: "reviewDisplayBasic",
+    name: "Google Reviews Display (3)",
+    description: "Display up to 3 Google reviews",
+    availableIn: ["free", "starter"],
+    upgradeMessage: "Available in Free and Starter plans",
+  },
+
+  mobileOptimized: {
+    id: "mobileOptimized",
+    name: "Mobile-Optimized Profile",
+    description: "Responsive design for all devices",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
+
+  appearsInRankings: {
+    id: "appearsInRankings",
+    name: "Appears in AI Rankings",
+    description: "Competes in performance rankings",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
   },
 
   verifiedBadgeStarter: {
     id: "verifiedBadgeStarter", 
-    name: "Verification Badge",
-    description: "Show verified business badge",
+    name: "Starter Professional Badge",
+    description: "Enhanced verification badge for Starter plan",
     availableIn: ["starter", "pro", "power"],
-    upgradeMessage: "Upgrade to Starter to get verified",
+    upgradeMessage: "Upgrade to Starter for professional badge",
   },
 
   seoBacklink: {
     id: "seoBacklink",
     name: "SEO Backlink",
     description: "Direct SEO backlink to your website",
-    availableIn: ["free", "starter", "pro", "power"],
-    upgradeMessage: "Available in all plans",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter for SEO backlink",
   },
   
   // Service Features
@@ -76,6 +117,46 @@ export const features: Record<string, Feature> = {
     description: "Simple bullet-point service presentation",
     availableIn: ["starter", "pro", "power"],
     upgradeMessage: "Upgrade to Starter for service listing",
+  },
+
+  performanceDashboard: {
+    id: "performanceDashboard",
+    name: "Performance Dashboard",
+    description: "See ranking position and trends",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter to see your ranking position",
+  },
+
+  enhancedAIInsights: {
+    id: "enhancedAIInsights",
+    name: "Enhanced AI Insights",
+    description: "Detailed customer feedback analysis",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter for enhanced AI insights",
+  },
+
+  advancedBusinessEditing: {
+    id: "advancedBusinessEditing",
+    name: "Advanced Business Editing",
+    description: "Add services, specialties, certifications",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter for advanced editing",
+  },
+
+  reviewDisplayStarter: {
+    id: "reviewDisplayStarter",
+    name: "Google Reviews Display (8)",
+    description: "Display up to 8 Google reviews",
+    availableIn: ["starter"],
+    upgradeMessage: "Available in Starter plan",
+  },
+
+  reviewDisplayPro: {
+    id: "reviewDisplayPro",
+    name: "Google Reviews Display (15)",
+    description: "Display up to 15 Google reviews",
+    availableIn: ["pro"],
+    upgradeMessage: "Upgrade to Pro for more reviews",
   },
 
   featuredCategoryListing: {
@@ -144,21 +225,54 @@ export const features: Record<string, Feature> = {
     upgradeMessage: "Upgrade to Power for unlimited leads",
   },
   
+  // Professional Overview Features
+  professionalOverview: {
+    id: "professionalOverview",
+    name: "Professional Overview",
+    description: "AI-generated business overview",
+    availableIn: ["free", "starter", "pro", "power"],
+    upgradeMessage: "Available in all plans",
+  },
+
+  professionalOverviewEdit: {
+    id: "professionalOverviewEdit",
+    name: "Edit Professional Overview",
+    description: "Customize your business overview",
+    availableIn: ["pro", "power"],
+    upgradeMessage: "Upgrade to Pro to edit your overview",
+  },
+
+  professionalOverviewAI: {
+    id: "professionalOverviewAI",
+    name: "AI-Enhanced Overview",
+    description: "AI content generation with style options",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power for AI-enhanced content",
+  },
+
   // AI Features
   aiBusinessSummary: {
     id: "aiBusinessSummary",
     name: "AI Business Summary",
     description: "AI-generated business summary with key metrics",
-    availableIn: ["free", "starter", "pro", "power"],
-    upgradeMessage: "Available in all plans",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter for AI business summary",
   },
   
-  aiBusinessOverview: {
-    id: "aiBusinessOverview",
-    name: "AI Business Overview", 
-    description: "Advanced AI business insights and recommendations",
+  competitiveIntelligence: {
+    id: "competitiveIntelligence",
+    name: "Competitive Intelligence",
+    description: "AI-powered competitive analysis and market positioning",
     availableIn: ["power"],
-    upgradeMessage: "Upgrade to Power for AI business insights",
+    upgradeMessage: "Upgrade to Power for competitive intelligence",
+  },
+  
+  reviewIntelligence: {
+    id: "reviewIntelligence",
+    name: "Review Intelligence",
+    description: "AI-powered review sentiment and keyword analysis",
+    availableIn: ["power"],
+    upgradeMessage: "Upgrade to Power for review intelligence",
   },
   
   reviewAnalysis: {
@@ -309,8 +423,8 @@ export const features: Record<string, Feature> = {
     id: "logoUpload",
     name: "Logo Upload",
     description: "Upload custom business logo",
-    availableIn: ["free", "pro", "power"],
-    upgradeMessage: "Available in all plans",
+    availableIn: ["starter", "pro", "power"],
+    upgradeMessage: "Upgrade to Starter to upload your logo",
   },
 
   imageGallery: {
@@ -390,12 +504,12 @@ export const planComparison = {
     price: 0,
     features: getFeaturesForPlan("free"),
     highlights: [
-      "Basic listing with GMB data",
-      "AI Business Summary",
-      "Customer reviews display (3)",
-      "Map and directions",
-      "Basic contact info",
-      "SEO backlink",
+      "Basic business listing & contact info",
+      "Verified business badge",
+      "Basic AI insights",
+      "Appears in AI rankings",
+      "Google reviews display (3)",
+      "Mobile-optimized profile",
     ],
   },
   starter: {
@@ -403,12 +517,14 @@ export const planComparison = {
     price: 9,
     features: getFeaturesForPlan("starter"),
     highlights: [
-      "Professional business listing",
-      "AI Business Summary",
-      "Verification badge",
-      "SEO backlink",
-      "Google reviews (3)",
-      "Basic service list",
+      "Professional logo upload",
+      "Performance dashboard",
+      "Enhanced AI insights",
+      "Advanced business editing",
+      "Editable AI summary",
+      "SEO backlink to website",
+      "Google reviews display (8)",
+      "Starter Professional badge",
     ],
   },
   pro: {
@@ -417,11 +533,15 @@ export const planComparison = {
     features: getFeaturesForPlan("pro"),
     highlights: [
       "Everything in Starter",
-      "AI Business Summary",
-      "Featured category listing",
+      "Multiple featured placements",
       "Enhanced service cards",
-      "Google reviews (10)",
+      "Google reviews display (15)",
+      "Review response capability",
       "Active badge system",
+      "Content editing control",
+      "Basic competitive analysis",
+      "Monthly performance reports",
+      "Pro-Verified status",
     ],
   },
   power: {
@@ -430,13 +550,16 @@ export const planComparison = {
     features: getFeaturesForPlan("power"),
     highlights: [
       "Everything in Pro",
-      "AI Business Overview",
-      "Image Gallery (up to 10 photos)",
-      "Unlimited leads",
-      "Homepage featuring",
-      "Google reviews (unlimited)",
-      "AI review analysis",
-      "VIP support",
+      "Unlimited exclusive lead capture",
+      "Homepage featured placement",
+      "Professional image gallery",
+      "Google reviews display (unlimited)",
+      "Advanced AI review analysis",
+      "Real-time performance updates",
+      "Advanced competitive intelligence",
+      "Priority customer support",
+      "Power-Tier Verified status",
+      "Local market leader positioning",
     ],
   },
 };

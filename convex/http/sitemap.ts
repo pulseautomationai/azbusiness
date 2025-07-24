@@ -7,6 +7,45 @@ const http = httpRouter();
 // Helper to generate XML header
 const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n';
 
+// Static pages sitemap
+http.route({
+  path: "/sitemap-pages.xml",
+  method: "GET",
+  handler: httpAction(async (ctx) => {
+    const baseUrl = process.env.FRONTEND_URL || "https://azbusinessservices.com";
+    const currentDate = new Date().toISOString();
+    
+    const pages = [
+      { url: "/", priority: "1.0", changefreq: "daily" },
+      { url: "/rankings", priority: "0.9", changefreq: "hourly" },
+      { url: "/about", priority: "0.5", changefreq: "monthly" },
+      { url: "/pricing", priority: "0.8", changefreq: "weekly" },
+      { url: "/contact", priority: "0.5", changefreq: "monthly" },
+      { url: "/claim-business", priority: "0.7", changefreq: "weekly" },
+      { url: "/for-businesses", priority: "0.7", changefreq: "weekly" },
+    ];
+    
+    const urls = pages.map(page => `  <url>
+    <loc>${baseUrl}${page.url}</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('\n');
+
+    const sitemap = `${xmlHeader}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+
+    return new Response(sitemap, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/xml",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  }),
+});
+
 // Dynamic sitemap.xml generation
 http.route({
   path: "/sitemap.xml",
@@ -58,7 +97,7 @@ http.route({
     // Fetch all active businesses
     const businesses = await ctx.runQuery(api.sitemaps.getAllActiveBusinessesForSitemap);
     
-    const urls = businesses.map(business => {
+    const urls = businesses.map((business: any) => {
       const categorySlug = business.category?.slug || 'services';
       const citySlug = business.city.toLowerCase().replace(/\s+/g, '-');
       const businessSlug = business.name.toLowerCase()
@@ -112,7 +151,7 @@ http.route({
     // Fetch all active categories
     const categories = await ctx.runQuery(api.sitemaps.getAllActiveCategories);
     
-    const urls = categories.map(category => `  <url>
+    const urls = categories.map((category: any) => `  <url>
     <loc>${baseUrl}/${category.slug}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
@@ -144,8 +183,8 @@ http.route({
     // Fetch all active cities
     const cities = await ctx.runQuery(api.sitemaps.getAllActiveCities);
     
-    const urls = cities.map(city => `  <url>
-    <loc>${baseUrl}/city/${city.slug}</loc>
+    const urls = cities.map((city: any) => `  <url>
+    <loc>${baseUrl}/${city.slug}</loc>
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -180,8 +219,8 @@ http.route({
     ]);
     
     const combinations: Array<{url: string; priority: string}> = [];
-    categories.forEach(category => {
-      cities.forEach(city => {
+    categories.forEach((category: any) => {
+      cities.forEach((city: any) => {
         combinations.push({
           url: `/${category.slug}/${city.slug}`,
           priority: "0.7"

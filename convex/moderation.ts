@@ -64,9 +64,9 @@ export const submitClaimRequest = mutation({
       throw new Error("Business not found");
     }
 
-    // Check if business is already claimed
-    if (business.claimed && business.ownerId) {
-      throw new Error("Business is already claimed by another user");
+    // Check if business is already verified and owned
+    if (business.verified && business.ownerId) {
+      throw new Error("Business is already verified and claimed by another user");
     }
 
     // Check if user already has a pending claim for this business
@@ -367,14 +367,13 @@ export const processClaimRequest = mutation({
           }]
         });
 
-        // Update business to mark as claimed
+        // Update business to mark as verified
         await ctx.db.patch(claim.businessId, {
-          claimed: true,
           ownerId: claim.submittedBy,
           claimedAt: now,
           verified: true, // Claiming includes verification
-          // Keep existing plan tier or upgrade to pro
-          planTier: business.planTier === "free" ? "free" : business.planTier
+          // Keep existing plan tier
+          planTier: business.planTier
         });
 
         // Log approval event
@@ -551,7 +550,7 @@ export const searchExistingBusinesses = query({
           address: business.address,
           city: business.city,
           phone: business.phone,
-          claimed: business.claimed,
+          verified: business.verified,
           planTier: business.planTier,
           slug: business.slug,
           similarity: calculateSimilarity(args, business)

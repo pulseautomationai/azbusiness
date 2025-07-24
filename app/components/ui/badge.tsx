@@ -10,17 +10,17 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-ocotillo-red text-primary-foreground [a&]:hover:bg-ocotillo-red/90",
+          "border-transparent bg-ocotillo-red text-white [a&]:hover:bg-ocotillo-red/90",
         secondary:
-          "border-transparent bg-prickly-pear-pink text-ironwood-charcoal [a&]:hover:bg-prickly-pear-pink/80",
+          "border-transparent bg-desert-marigold text-white [a&]:hover:bg-desert-marigold/90",
         destructive:
           "border-transparent bg-ocotillo-red text-white [a&]:hover:bg-ocotillo-red/90 focus-visible:ring-ocotillo-red/20 dark:focus-visible:ring-ocotillo-red/40",
         outline:
-          "text-ironwood-charcoal border-prickly-pear-pink [a&]:hover:bg-prickly-pear-pink [a&]:hover:text-ironwood-charcoal",
+          "text-ironwood-charcoal border-gray-200 [a&]:hover:bg-agave-cream [a&]:hover:text-ironwood-charcoal",
         success:
-          "border-transparent bg-cholla-green text-white [a&]:hover:bg-cholla-green/90",
+          "border-transparent bg-turquoise-sky text-white [a&]:hover:bg-turquoise-sky/90",
         warning:
-          "border-transparent bg-desert-sky-blue text-ironwood-charcoal [a&]:hover:bg-desert-sky-blue/90",
+          "border-transparent bg-desert-marigold text-white [a&]:hover:bg-desert-marigold/90",
       },
     },
     defaultVariants: {

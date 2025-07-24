@@ -13,7 +13,8 @@ import {
   IconPhoto,
   IconStar,
   IconTrendingUp,
-  IconCrown
+  IconCrown,
+  IconTrophy
 } from "@tabler/icons-react";
 
 export default function CustomerDashboard() {
@@ -26,7 +27,8 @@ export default function CustomerDashboard() {
   );
 
   const userBusinesses = useQuery(
-    user ? api.businesses.getUserBusinesses : "skip"
+    api.businesses.getUserBusinesses,
+    user?.id ? { userId: user.id } : "skip"
   );
 
   const pendingClaims = userClaims?.filter(claim => claim.status === 'pending') || [];
@@ -158,6 +160,13 @@ export default function CustomerDashboard() {
                 <Button variant="outline" className="w-full justify-start">
                   <IconBuildingStore className="mr-2 h-4 w-4" />
                   Add New Business
+                </Button>
+              </Link>
+
+              <Link to="/dashboard/achievements">
+                <Button variant="outline" className="w-full justify-start">
+                  <IconTrophy className="mr-2 h-4 w-4" />
+                  View Achievements
                 </Button>
               </Link>
 

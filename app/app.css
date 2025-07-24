@@ -1,6 +1,186 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./styles/tier-styles.css";
+
+/* Custom Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+/* Achievement Badge Animations */
+@keyframes pulse-gold {
+  0%, 100% { 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), 0 0 16px rgba(255, 215, 0, 0.4);
+  }
+  50% { 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3), 0 0 24px rgba(255, 215, 0, 0.6);
+  }
+}
+
+@keyframes pulse-platinum {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4), 0 0 20px rgba(229, 228, 226, 0.5);
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5), 0 0 30px rgba(229, 228, 226, 0.7);
+  }
+}
+
+@keyframes rainbow-shimmer {
+  0% { 
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe, #93c5fd);
+    transform: scale(1);
+  }
+  25% { 
+    background: linear-gradient(135deg, #fce7f3, #fbcfe8, #f9a8d4);
+    transform: scale(1.03);
+  }
+  50% { 
+    background: linear-gradient(135deg, #fef3c7, #fde68a, #fcd34d);
+    transform: scale(1.05);
+  }
+  75% { 
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0, #6ee7b7);
+    transform: scale(1.03);
+  }
+  100% { 
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe, #93c5fd);
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer-effect {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 3s ease-in-out infinite;
+}
+
+.animate-pulse-platinum {
+  animation: pulse-platinum 4s ease-in-out infinite;
+}
+
+.animate-rainbow-shimmer {
+  animation: rainbow-shimmer 6s ease-in-out infinite;
+}
+
+/* Achievement Badge Tier Colors */
+:root {
+  /* Bronze Tier */
+  --bronze-primary: #CD7F32;
+  --bronze-secondary: #A0522D;
+  --bronze-accent: #DEB887;
+  --bronze-glow: rgba(205, 127, 50, 0.3);
+  
+  /* Silver Tier */
+  --silver-primary: #C0C0C0;
+  --silver-secondary: #A9A9A9;
+  --silver-accent: #E5E5E5;
+  --silver-glow: rgba(192, 192, 192, 0.3);
+  
+  /* Gold Tier */
+  --gold-primary: #FFD700;
+  --gold-secondary: #DAA520;
+  --gold-accent: #FFF8DC;
+  --gold-glow: rgba(255, 215, 0, 0.4);
+  
+  /* Platinum Tier */
+  --platinum-primary: #E5E4E2;
+  --platinum-secondary: #BCC6CC;
+  --platinum-accent: #F8F8FF;
+  --platinum-glow: rgba(229, 228, 226, 0.5);
+  
+  /* Diamond Tier */
+  --diamond-primary: #B9F2FF;
+  --diamond-secondary: #85D3FF;
+  --diamond-accent: #E0F6FF;
+  --diamond-glow: rgba(185, 242, 255, 0.6);
+}
+
+/* Achievement Showcase Styles */
+.achievement-showcase {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Compact Badge Display for Search Results */
+.badge-compact-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-preview {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.badge-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.badge-small.gold {
+  background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+  border: 1px solid var(--gold-accent);
+}
+
+.badge-small.silver {
+  background: linear-gradient(135deg, var(--silver-primary), var(--silver-secondary));
+  border: 1px solid var(--silver-accent);
+}
+
+.badge-small.bronze {
+  background: linear-gradient(135deg, var(--bronze-primary), var(--bronze-secondary));
+  border: 1px solid var(--bronze-accent);
+}
+
+.badge-more {
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 2px;
+}
+
+/* Glow effect for status indicators */
+.shadow-glow {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -44,58 +224,49 @@
     --radius-md: 10px;
     --radius-lg: 12px;
     --radius-xl: 16px;
-    /* Desert Bloom Custom Colors */
+    /* Desert Palette Custom Colors */
     --color-agave-cream: var(--color-agave-cream);
-    --color-prickly-pear-pink: var(--color-prickly-pear-pink);
-    --color-cholla-green: var(--color-cholla-green);
     --color-ocotillo-red: var(--color-ocotillo-red);
-    --color-desert-sky-blue: var(--color-desert-sky-blue);
+    --color-desert-marigold: var(--color-desert-marigold);
+    --color-turquoise-sky: var(--color-turquoise-sky);
     --color-ironwood-charcoal: var(--color-ironwood-charcoal);
-    /* Legacy color mappings */
-    --color-sandstone: var(--color-sandstone);
-    --color-clay-beige: var(--color-clay-beige);
-    --color-agave-green: var(--color-agave-green);
-    --color-saguaro-teal: var(--color-saguaro-teal);
-    --color-mesa-terracotta: var(--color-mesa-terracotta);
-    --color-desert-night: var(--color-desert-night);
-    --color-sun-gold: var(--color-sun-gold);
-    --color-cloud-white: var(--color-cloud-white);
+    /* REMOVED OLD COLORS: prickly-pear-pink, cholla-green, desert-sky-blue */
 }
 
 :root {
-    /* Desert Bloom Theme Colors */
+    /* Desert Palette Theme Colors */
     --background: #FDF8F3; /* Agave Cream - Main background */
     --foreground: #2B2A28; /* Ironwood Charcoal - Text */
-    --card: #FDF8F3; /* Agave Cream - Cards */
+    --card: #FFFFFF; /* White - Cards */
     --card-foreground: #2B2A28; /* Ironwood Charcoal - Card text */
-    --popover: #FDF8F3; /* Agave Cream - Popovers */
+    --popover: #FFFFFF; /* White - Popovers */
     --popover-foreground: #2B2A28; /* Ironwood Charcoal - Popover text */
     --primary: #E36450; /* Ocotillo Red - Primary buttons/links */
     --primary-foreground: #FFFFFF; /* White - Primary text */
-    --secondary: #DAB6AA; /* Prickly Pear Pink - Secondary elements */
-    --secondary-foreground: #2B2A28; /* Ironwood Charcoal - Secondary text */
-    --muted: #DAB6AA; /* Prickly Pear Pink - Muted backgrounds */
+    --secondary: #F4A259; /* Desert Marigold - Secondary buttons */
+    --secondary-foreground: #FFFFFF; /* White - Secondary button text */
+    --muted: rgba(43, 42, 40, 0.1); /* Light gray - Muted backgrounds */
     --muted-foreground: #666666; /* Muted text */
-    --accent: #E36450; /* Ocotillo Red - Accents */
-    --accent-foreground: #FFFFFF; /* White - Accent text */
+    --accent: #3AAFA9; /* Turquoise Sky - Links and accents */
+    --accent-foreground: #2B2A28; /* Ironwood Charcoal - Accent text */
     --destructive: #E36450; /* Ocotillo Red - Destructive actions */
     --destructive-foreground: #FFFFFF; /* White - Destructive text */
-    --border: #DAB6AA; /* Prickly Pear Pink - Borders */
-    --input: #FDF8F3; /* Agave Cream - Input backgrounds */
-    --ring: #E36450; /* Ocotillo Red - Focus rings */
+    --border: rgba(43, 42, 40, 0.1); /* Light gray - Borders */
+    --input: #FFFFFF; /* White - Input backgrounds */
+    --ring: #3AAFA9; /* Turquoise Sky - Focus rings */
     --chart-1: #E36450; /* Ocotillo Red */
-    --chart-2: #799C8D; /* Cholla Green */
-    --chart-3: #DAB6AA; /* Prickly Pear Pink */
-    --chart-4: #A3C6D2; /* Desert Sky Blue */
-    --chart-5: #DAB6AA; /* Prickly Pear Pink */
-    --sidebar: #DAB6AA; /* Prickly Pear Pink - Sidebar background */
+    --chart-2: #F4A259; /* Desert Marigold */
+    --chart-3: #3AAFA9; /* Turquoise Sky */
+    --chart-4: #2B2A28; /* Ironwood Charcoal */
+    --chart-5: #FDF8F3; /* Agave Cream */
+    --sidebar: #FDF8F3; /* Agave Cream - Sidebar background */
     --sidebar-foreground: #2B2A28; /* Ironwood Charcoal - Sidebar text */
     --sidebar-primary: #E36450; /* Ocotillo Red - Sidebar primary */
     --sidebar-primary-foreground: #FFFFFF; /* White - Sidebar primary text */
-    --sidebar-accent: #FDF8F3; /* Agave Cream - Sidebar accent */
-    --sidebar-accent-foreground: #2B2A28; /* Ironwood Charcoal - Sidebar accent text */
-    --sidebar-border: #DAB6AA; /* Prickly Pear Pink - Sidebar border */
-    --sidebar-ring: #E36450; /* Ocotillo Red - Sidebar focus */
+    --sidebar-accent: #F4A259; /* Desert Marigold - Sidebar accent */
+    --sidebar-accent-foreground: #FFFFFF; /* White - Sidebar accent text */
+    --sidebar-border: rgba(43, 42, 40, 0.1); /* Light gray - Sidebar border */
+    --sidebar-ring: #3AAFA9; /* Turquoise Sky - Sidebar focus */
     /* Desert Theme Fonts */
     --font-heading: "Playfair Display", "Cormorant Garamond", Georgia, serif;
     --font-body: "Inter", "DM Sans", "Work Sans", system-ui, sans-serif;
@@ -114,22 +285,20 @@
     --shadow-xl: 0px 12px 24px rgba(43, 42, 40, 0.12);
     --shadow-2xl: 0px 16px 32px rgba(43, 42, 40, 0.12);
     
-    /* Desert Bloom specific color utilities */
+    /* Desert Palette specific color utilities */
     --color-agave-cream: #FDF8F3;
-    --color-prickly-pear-pink: #DAB6AA;
-    --color-cholla-green: #799C8D;
     --color-ocotillo-red: #E36450;
-    --color-desert-sky-blue: #A3C6D2;
+    --color-desert-marigold: #F4A259;
+    --color-turquoise-sky: #3AAFA9;
     --color-ironwood-charcoal: #2B2A28;
-    /* Legacy color mappings for existing class names */
-    --color-sandstone: #FDF8F3; /* Now Agave Cream */
-    --color-clay-beige: #DAB6AA; /* Now Prickly Pear Pink */
-    --color-agave-green: #799C8D; /* Now Cholla Green */
-    --color-saguaro-teal: #E36450; /* Now Ocotillo Red */
-    --color-mesa-terracotta: #DAB6AA; /* Now Prickly Pear Pink */
-    --color-desert-night: #2B2A28; /* Now Ironwood Charcoal */
-    --color-sun-gold: #A3C6D2; /* Now Desert Sky Blue */
-    --color-cloud-white: #FDF8F3; /* Now Agave Cream */
+    /* Hover states */
+    --color-ocotillo-red-hover: #D55A47;
+    --color-desert-marigold-hover: #E8944F;
+    --color-turquoise-sky-hover: #359B96;
+    /* DEPRECATED - DO NOT USE - Only for backward compatibility */
+    --color-prickly-pear-pink: rgba(43, 42, 40, 0.1); /* Use border color instead */
+    --color-cholla-green: #3AAFA9; /* Use turquoise-sky instead */
+    --color-desert-sky-blue: #3AAFA9; /* Use turquoise-sky instead */
 }
 
 @layer base {
@@ -189,22 +358,22 @@
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
     
-    /* Subtle gradient backgrounds for badges */
+    /* Badge backgrounds - NO GRADIENTS */
     .badge-free-bg {
-        background: linear-gradient(135deg, #E1ECFF 0%, #D1E2FF 100%);
+        background: #E1ECFF;
         border-color: #B8D0FF;
     }
     
     .badge-premium-bg {
-        background: linear-gradient(135deg, #E1F5EB 0%, #D4F1E0 100%);
+        background: #E1F5EB;
     }
     
     /* Pricing plan badges - mobile vertical stacking ONLY */
     @media (max-width: 480px) {
         .pricing-plan-badges {
-            flex-direction: column !important;
-            align-items: flex-end !important;
-            gap: 0.25rem !important;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
         }
     }
     
@@ -294,8 +463,28 @@
     
     /* Focus states for accessibility */
     .focus-ring-enhanced:focus {
-        outline: 2px solid #E36450;
+        outline: 2px solid #3AAFA9;
         outline-offset: 2px;
+    }
+    
+    /* Desert Palette custom classes */
+    .bg-desert-marigold {
+        background-color: #F4A259;
+    }
+    .bg-desert-marigold-hover:hover {
+        background-color: #E8944F;
+    }
+    .text-desert-marigold {
+        color: #F4A259;
+    }
+    .text-turquoise-sky {
+        color: #3AAFA9;
+    }
+    .text-turquoise-sky-hover:hover {
+        color: #359B96;
+    }
+    .border-turquoise-sky {
+        border-color: #3AAFA9;
     }
     
     /* Featured business card enhancements */

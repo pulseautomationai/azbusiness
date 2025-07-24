@@ -15,6 +15,7 @@ import "./app.css";
 import { Analytics } from "@vercel/analytics/react";
 import { usePerformanceMonitoring } from "./hooks/usePerformanceMonitoring";
 import { HydrateFallback } from "./components/hydrate-fallback";
+import { AnalyticsProvider } from "./components/analytics-provider";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -37,10 +38,14 @@ export const links: Route.LinksFunction = () => [
     crossOrigin: "anonymous",
   },
   
-  // Font with display=swap for performance
+  // Fonts with display=swap for performance
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap",
   },
   
   // Favicon and Icons
@@ -106,9 +111,11 @@ export default function App() {
       signInFallbackRedirectUrl="/"
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <PerformanceMonitor>
-          <Outlet />
-        </PerformanceMonitor>
+        <AnalyticsProvider>
+          <PerformanceMonitor>
+            <Outlet />
+          </PerformanceMonitor>
+        </AnalyticsProvider>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );

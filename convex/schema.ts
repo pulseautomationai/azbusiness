@@ -78,6 +78,24 @@ export default defineSchema({
       lat: v.number(),
       lng: v.number(),
     })),
+    
+    // Tier-specific performance data
+    performanceData: v.optional(v.object({
+      ranking: v.optional(v.number()),
+      responseTime: v.optional(v.string()),
+      satisfaction: v.optional(v.number()),
+      areaAverage: v.optional(v.number()),
+      competitivePosition: v.optional(v.string()),
+      marketPosition: v.optional(v.string()),
+    })),
+    
+    // AI insights by tier level
+    aiInsights: v.optional(v.object({
+      basic: v.optional(v.array(v.string())),
+      enhanced: v.optional(v.array(v.string())),
+      professional: v.optional(v.array(v.string())),
+      premium: v.optional(v.array(v.string())),
+    })),
 
     // AI Ranking System Fields (NEW)
     // Review Import Limits by Tier
@@ -123,7 +141,7 @@ export default defineSchema({
     })),
     
     // Subscription & Features
-    planTier: v.string(),
+    planTier: v.union(v.literal("free"), v.literal("starter"), v.literal("pro"), v.literal("power")),
     featured: v.boolean(),
     priority: v.number(),
     
@@ -131,7 +149,6 @@ export default defineSchema({
     ownerId: v.optional(v.string()),
     claimedByUserId: v.optional(v.string()),
     claimedAt: v.optional(v.number()),
-    claimed: v.boolean(),
     verified: v.boolean(),
     active: v.boolean(),
     
@@ -165,6 +182,16 @@ export default defineSchema({
     gmbUrl: v.optional(v.string()),         // Google My Business profile URL  
     cid: v.optional(v.string()),            // Google Customer ID / Citation ID
     gmbClaimed: v.optional(v.boolean()),    // Whether business is claimed on GMB
+    
+    // Review Sync Configuration (Phase 2)
+    lastReviewSync: v.optional(v.number()),     // Timestamp of last review sync
+    geoScraperSyncEnabled: v.optional(v.boolean()), // Enable/disable auto sync (default true)
+    syncStatus: v.optional(v.union(
+      v.literal("idle"),
+      v.literal("syncing"),
+      v.literal("error")
+    )),
+    lastSyncError: v.optional(v.string()),      // Last sync error message
     
     // Ratings
     rating: v.number(),
@@ -869,4 +896,503 @@ export default defineSchema({
     .index("by_ranking_type", ["rankingType"])
     .index("by_expires_at", ["expiresAt"])
     .index("by_last_updated", ["lastUpdated"]),
+
+  // Review sync queue for GeoScraper API
+  reviewSyncQueue: defineTable({
+    businessId: v.id("businesses"),
+    placeId: v.string(),
+    priority: v.number(), // 1-10, higher is more important
+    status: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("completed"),
+      v.literal("failed")
+    ),
+    requestedAt: v.number(),
+    startedAt: v.optional(v.number()),
+    completedAt: v.optional(v.number()),
+    failedAt: v.optional(v.number()),
+    retryCount: v.number(),
+    lastError: v.optional(v.string()),
+    lastErrorAt: v.optional(v.number()),
+    results: v.optional(v.object({
+      fetched: v.number(),
+      filtered: v.number(),
+      imported: v.number(),
+      skipped: v.number(),
+    })),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_status", ["status"])
+    .index("by_priority_and_status", ["priority", "status"])
+    .index("by_requested_at", ["requestedAt"]),
+    
+  // GeoScraper API metrics
+  geoScraperMetrics: defineTable({
+    type: v.string(), // api_request, api_success, api_error, queue_depth, processing_time, reviews_fetched, reviews_imported
+    value: v.number(),
+    timestamp: v.number(),
+    hour: v.number(), // For hourly aggregation
+    day: v.number(), // For daily aggregation
+    metadata: v.optional(v.any()), // Additional context (error codes, business IDs, etc.)
+  })
+    .index("by_type", ["type"])
+    .index("by_timestamp", ["timestamp"])
+    .index("by_hour", ["hour"])
+    .index("by_day", ["day"])
+    .index("by_type_and_hour", ["type", "hour"]),
+    
+  // Review sync logs for tracking sync history (Phase 2)
+  reviewSyncLogs: defineTable({
+    businessId: v.id("businesses"),
+    syncStarted: v.number(),
+    syncCompleted: v.optional(v.number()),
+    reviewsFetched: v.number(),
+    reviewsFiltered: v.number(),
+    reviewsImported: v.number(),
+    reviewsDuplicate: v.number(),
+    error: v.optional(v.string()),
+    status: v.union(
+      v.literal("success"),
+      v.literal("partial"),
+      v.literal("failed")
+    ),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_sync_started", ["syncStarted"])
+    .index("by_status", ["status"]),
+    
+  // Platform statistics for efficient dashboard queries
+  platformStats: defineTable({
+    totalBusinesses: v.number(),
+    claimedBusinesses: v.number(), 
+    verifiedBusinesses: v.number(),
+    totalReviews: v.number(),
+    verifiedReviews: v.number(),
+    totalUsers: v.number(),
+    activeSubscriptions: v.number(),
+    planCounts: v.object({
+      free: v.number(),
+      starter: v.number(),
+      pro: v.number(),
+      power: v.number(),
+    }),
+    lastUpdated: v.number(),
+  }),
+  
+  // AI-powered ranking and achievement tables
+  businessRankings: defineTable({
+    businessId: v.id("businesses"),
+    
+    // Overall ranking data
+    overallScore: v.number(), // 0-100 weighted composite score
+    rankingPosition: v.number(), // Current rank in category/city
+    previousPosition: v.optional(v.number()), // For trend tracking
+    
+    // Category-specific scores from AI analysis
+    categoryScores: v.object({
+      qualityIndicators: v.number(), // 0-10
+      serviceExcellence: v.number(), // 0-10
+      customerExperience: v.number(), // 0-10
+      technicalMastery: v.number(), // 0-10
+      competitiveAdvantage: v.number(), // 0-10
+      operationalExcellence: v.number(), // 0-10
+    }),
+    
+    // Detailed performance metrics
+    performanceBreakdown: v.object({
+      speedScore: v.number(),
+      valueScore: v.number(),
+      qualityScore: v.number(),
+      reliabilityScore: v.number(),
+      expertiseScore: v.number(),
+      customerImpactScore: v.number(),
+    }),
+    
+    // Ranking context
+    category: v.string(),
+    city: v.string(),
+    totalBusinessesInCategory: v.number(),
+    
+    // Metadata
+    lastCalculated: v.number(),
+    reviewsAnalyzed: v.number(),
+    confidenceScore: v.number(), // 0-100% based on data quality
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_category_city", ["category", "city"])
+    .index("by_position", ["rankingPosition"])
+    .index("by_score", ["overallScore"]),
+    
+  achievements: defineTable({
+    businessId: v.id("businesses"),
+    
+    // Achievement identification
+    achievementType: v.string(), // "perfection_performer", "problem_solver", etc.
+    category: v.string(), // "service_excellence", "technical_mastery", etc.
+    
+    // Tier information
+    tierLevel: v.union(
+      v.literal("bronze"),
+      v.literal("silver"),
+      v.literal("gold"),
+      v.literal("platinum"),
+      v.literal("diamond") // For special competitive awards
+    ),
+    tierRequirement: v.union(
+      v.literal("free"),
+      v.literal("starter"),
+      v.literal("pro"),
+      v.literal("power")
+    ),
+    
+    // Achievement data
+    displayName: v.string(), // "Perfection Master", "Expert Craftsman", etc.
+    description: v.string(),
+    badgeIcon: v.optional(v.string()), // Emoji or icon identifier
+    
+    // Qualifying data that earned the achievement
+    qualifyingTags: v.any(), // Structured data from AI analysis
+    scoreRequirements: v.object({
+      metricName: v.string(),
+      requiredValue: v.number(),
+      actualValue: v.number(),
+      percentage: v.optional(v.number()),
+    }),
+    
+    // Display settings
+    displayPriority: v.number(), // 1-10, higher shows first
+    publicDisplay: v.boolean(), // Show on public profile
+    achievementStatus: v.union(
+      v.literal("active"),
+      v.literal("expired"),
+      v.literal("revoked")
+    ),
+    
+    // Metadata
+    earnedDate: v.number(),
+    expiryDate: v.optional(v.number()), // For time-based achievements
+    notificationSent: v.boolean(),
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_type", ["achievementType"])
+    .index("by_category", ["category"])
+    .index("by_tier", ["tierLevel"])
+    .index("by_status", ["achievementStatus"])
+    .index("by_earned_date", ["earnedDate"]),
+    
+  aiAnalysisTags: defineTable({
+    businessId: v.id("businesses"),
+    reviewId: v.id("reviews"),
+    
+    // Analysis metadata
+    analysisDate: v.number(),
+    modelVersion: v.string(), // "gpt-4", etc.
+    confidenceScore: v.number(), // 0-100%
+    
+    // Quality indicators analysis
+    qualityIndicators: v.object({
+      excellence: v.object({
+        mentioned: v.boolean(),
+        intensity: v.number(), // 0-10
+        exceeded_expectations: v.boolean(),
+        specific_examples: v.array(v.string()),
+      }),
+      firstTimeSuccess: v.object({
+        mentioned: v.boolean(),
+        precision_work: v.boolean(),
+        got_it_right_first: v.boolean(),
+        no_return_visits: v.boolean(),
+        single_visit_complete: v.boolean(),
+      }),
+      attentionToDetail: v.object({
+        mentioned: v.boolean(),
+        thoroughness: v.number(), // 0-10
+        cleanliness: v.boolean(),
+        careful_work: v.boolean(),
+      }),
+    }),
+    
+    // Service excellence analysis
+    serviceExcellence: v.object({
+      professionalism: v.object({
+        score: v.number(), // 0-10
+        punctual: v.boolean(),
+        courteous: v.boolean(),
+        knowledgeable: v.boolean(),
+      }),
+      communication: v.object({
+        score: v.number(), // 0-10
+        clear_explanation: v.boolean(),
+        responsive: v.boolean(),
+        kept_informed: v.boolean(),
+      }),
+      expertise: v.object({
+        expert_referenced: v.boolean(),
+        technical_competency: v.number(), // 0-10
+        specialist_noted: v.boolean(),
+        master_craftsman: v.boolean(),
+      }),
+    }),
+    
+    // Customer experience analysis
+    customerExperience: v.object({
+      emotionalImpact: v.object({
+        stress_relief: v.boolean(),
+        peace_of_mind: v.boolean(),
+        life_changing: v.boolean(),
+        emotional_intensity: v.number(), // 0-10
+      }),
+      businessImpact: v.object({
+        saved_money: v.boolean(),
+        improved_efficiency: v.boolean(),
+        prevented_disaster: v.boolean(),
+        business_value_score: v.number(), // 0-10
+      }),
+      relationshipBuilding: v.object({
+        trust_established: v.boolean(),
+        personal_connection: v.boolean(),
+        loyalty_indicated: v.boolean(),
+        future_service_planned: v.boolean(),
+        relationship_score: v.number(), // 0-10
+      }),
+    }),
+    
+    // Competitive markers
+    competitiveMarkers: v.object({
+      comparisonMentions: v.object({
+        better_than_others: v.boolean(),
+        best_in_area: v.boolean(),
+        tried_others_first: v.boolean(),
+        comparison_count: v.number(),
+      }),
+      marketPosition: v.object({
+        local_favorite: v.boolean(),
+        industry_leader: v.boolean(),
+        go_to_provider: v.boolean(),
+      }),
+      differentiation: v.object({
+        unique_approach: v.boolean(),
+        special_equipment: v.boolean(),
+        innovation_mentioned: v.boolean(),
+      }),
+    }),
+    
+    // Business performance
+    businessPerformance: v.object({
+      responseQuality: v.object({
+        quick_response_mentioned: v.boolean(),
+        same_day_service: v.boolean(),
+        emergency_available: v.boolean(),
+        response_speed_score: v.number(), // 0-10
+      }),
+      valueDelivery: v.object({
+        fair_pricing: v.boolean(),
+        worth_the_cost: v.boolean(),
+        transparent_costs: v.boolean(),
+        value_score: v.number(), // 0-10
+      }),
+      problemResolution: v.object({
+        fixed_others_couldnt: v.boolean(),
+        complex_issue_resolved: v.boolean(),
+        creative_solution: v.boolean(),
+        difficulty_level: v.number(), // 0-10
+      }),
+    }),
+    
+    // Recommendation strength
+    recommendationStrength: v.object({
+      would_recommend: v.boolean(),
+      already_recommended: v.boolean(),
+      tell_everyone: v.boolean(),
+      only_company_use: v.boolean(),
+      advocacy_score: v.number(), // 0-10
+    }),
+    
+    // Industry-specific tags (extensible)
+    industrySpecific: v.optional(v.any()),
+    
+    // Raw sentiment data
+    sentiment: v.object({
+      overall: v.number(), // -1 to 1
+      magnitude: v.number(), // 0 to 1
+      classification: v.union(
+        v.literal("positive"),
+        v.literal("neutral"),
+        v.literal("negative")
+      ),
+    }),
+    
+    // Keywords and topics
+    keywords: v.array(v.string()),
+    topics: v.array(v.string()),
+    
+    // NEW: Customer Voice Analysis for Power tier
+    customerVoiceAnalysis: v.optional(v.object({
+      topQuotes: v.array(v.string()),
+      commonPhrases: v.array(v.object({
+        phrase: v.string(),
+        frequency: v.number(),
+      })),
+      sentimentClusters: v.array(v.object({
+        topic: v.string(),
+        sentiment: v.number(), // -1 to 1
+        count: v.number(),
+      })),
+    })),
+    
+    // NEW: Communication Excellence for Power tier
+    communicationExcellence: v.optional(v.object({
+      explainsClarly: v.object({
+        mentioned: v.boolean(),
+        frequency: v.number(),
+      }),
+      proactiveUpdates: v.object({
+        mentioned: v.boolean(),
+        examples: v.array(v.string()),
+      }),
+      responsiveness: v.object({
+        avgResponseTime: v.string(),
+        consistency: v.number(), // 0-10
+      }),
+    })),
+    
+    // NEW: Value Transparency for Power tier
+    valueTransparency: v.optional(v.object({
+      fairPricing: v.object({
+        mentioned: v.boolean(),
+        frequency: v.number(),
+      }),
+      noSurpriseCharges: v.object({
+        mentioned: v.boolean(),
+        frequency: v.number(),
+      }),
+      priceComplaintRate: v.number(), // 0-1
+      valueForMoney: v.object({
+        score: v.number(), // 0-10
+        examples: v.array(v.string()),
+      }),
+    })),
+    
+    // NEW: Trust & Reliability Metrics for Power tier
+    trustReliability: v.optional(v.object({
+      customerRetention: v.object({
+        callThemBack: v.boolean(),
+        loyaltyIndicators: v.array(v.string()),
+      }),
+      consistentPerformance: v.object({
+        ratingStability: v.number(), // 0-10
+        timespan: v.string(),
+      }),
+      reliabilityMentions: v.object({
+        frequency: v.number(),
+        examples: v.array(v.string()),
+      }),
+    })),
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_review", ["reviewId"])
+    .index("by_analysis_date", ["analysisDate"])
+    .index("by_business_date", ["businessId", "analysisDate"]),
+    
+  achievementProgress: defineTable({
+    businessId: v.id("businesses"),
+    achievementType: v.string(),
+    
+    // Current progress
+    currentProgress: v.number(), // 0-100%
+    currentValue: v.number(), // Actual metric value
+    targetValue: v.number(), // Required value for achievement
+    
+    // Progress details
+    progressDetails: v.object({
+      metricName: v.string(),
+      unit: v.string(), // "percentage", "count", "score", etc.
+      trend: v.union(
+        v.literal("improving"),
+        v.literal("stable"),
+        v.literal("declining")
+      ),
+      daysToTarget: v.optional(v.number()), // Estimated based on trend
+    }),
+    
+    // Historical tracking
+    progressHistory: v.array(v.object({
+      date: v.number(),
+      value: v.number(),
+      percentageComplete: v.number(),
+    })),
+    
+    // Next tier information
+    nextTier: v.optional(v.object({
+      tierLevel: v.string(),
+      tierRequirement: v.string(),
+      lockedByPlan: v.boolean(),
+      qualifiesForTier: v.boolean(),
+    })),
+    
+    // Recommendations
+    recommendations: v.array(v.string()), // Tips to earn achievement
+    focusAreas: v.array(v.string()), // Specific areas to improve
+    
+    // Metadata
+    lastCalculated: v.number(),
+    notificationsEnabled: v.boolean(),
+    lastNotified: v.optional(v.number()),
+    
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_achievement", ["achievementType"])
+    .index("by_business_achievement", ["businessId", "achievementType"])
+    .index("by_progress", ["currentProgress"]),
+    
+  // Batch processing queue for AI analysis
+  processingQueue: defineTable({
+    type: v.union(
+      v.literal("ai_analysis"),
+      v.literal("ranking_calculation"),
+      v.literal("achievement_detection"),
+      v.literal("batch_processing")
+    ),
+    businessId: v.id("businesses"),
+    
+    // Queue management
+    status: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("completed"),
+      v.literal("failed"),
+      v.literal("retrying")
+    ),
+    priority: v.number(), // 1-10, higher is more important
+    attempts: v.number(),
+    
+    // Timing
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    startedAt: v.optional(v.number()),
+    completedAt: v.optional(v.number()),
+    lastAttemptAt: v.optional(v.number()),
+    
+    // Results and errors
+    error: v.optional(v.string()),
+    result: v.optional(v.any()),
+    metadata: v.optional(v.any()),
+  })
+    .index("by_business", ["businessId"])
+    .index("by_status", ["status"])
+    .index("by_type", ["type"])
+    .index("by_status_priority", ["status", "priority"])
+    .index("by_business_type_status", ["businessId", "type", "status"]),
 });

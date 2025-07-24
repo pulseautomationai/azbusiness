@@ -1,0 +1,13 @@
+Add these lines to your .env.local file:
+
+GEMINI_API_KEY=AIzaSyBSNPlATqhnKiYromfSaIjn3ehjNnL55_U
+AI_PROVIDER=gemini
+
+This will:
+1. Configure Gemini 2.0 Flash-Lite as your AI provider
+2. Use the faster, cheaper model for analysis
+3. Process 10 reviews per business (vs 5 for OpenAI)
+4. Use 500ms delays between requests (vs 1000ms for OpenAI)
+
+After adding to .env.local, run:
+npx tsx scripts/test-gemini.ts

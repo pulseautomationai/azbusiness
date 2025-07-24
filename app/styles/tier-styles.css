@@ -1,0 +1,247 @@
+/* Tier-based styling for business profiles */
+
+/* Base tier styles */
+.business-profile {
+  @apply transition-all duration-300;
+}
+
+/* Free Tier Styles */
+.business-profile.tier-free {
+  background-color: #fcf8f4; /* Light cream background matching homepage nav */
+}
+
+.tier-free .business-header--basic {
+  @apply bg-white;
+}
+
+.tier-free .tier-badge--basic {
+  @apply bg-gray-100 text-gray-600 border-gray-300;
+}
+
+.tier-free .ai-insights--basic {
+  @apply bg-gray-50 border-gray-200;
+}
+
+.tier-free .services--bullets {
+  @apply text-gray-700;
+}
+
+.tier-free .reviews--basic {
+  @apply bg-gray-50;
+}
+
+/* Starter Tier Styles */
+.business-profile.tier-starter {
+  @apply bg-white;
+}
+
+.tier-starter .business-header--professional {
+  @apply bg-white border-b-2 border-gray-200;
+}
+
+.tier-starter .tier-badge--enhanced {
+  @apply bg-agave-cream text-ironwood-charcoal border-gray-200 shadow-sm;
+}
+
+.tier-starter .ai-insights--enhanced {
+  @apply bg-white border-gray-200 shadow-sm;
+}
+
+.tier-starter .services--enhanced-bullets {
+  @apply text-ironwood-charcoal;
+}
+
+.tier-starter .reviews--enhanced {
+  @apply bg-white border-gray-200;
+}
+
+/* Pro Tier Styles */
+.business-profile.tier-pro {
+  @apply bg-white;
+}
+
+.tier-pro .business-header--featured {
+  @apply bg-white border-b-2 border-gray-200 shadow-md;
+}
+
+.tier-pro .tier-badge--featured {
+  @apply bg-turquoise-sky text-white border-turquoise-sky shadow-md font-semibold;
+}
+
+.tier-pro .ai-insights--professional {
+  @apply bg-white border-gray-200 shadow-lg;
+}
+
+.tier-pro .services--cards {
+  @apply shadow-md hover:shadow-xl transition-shadow;
+}
+
+.tier-pro .reviews--interactive {
+  @apply bg-white border-gray-200;
+}
+
+/* Power Tier Styles */
+.business-profile.tier-power {
+  @apply bg-white;
+}
+
+.tier-power .business-header--premium {
+  @apply relative overflow-hidden shadow-xl;
+}
+
+.tier-power .tier-badge--premium {
+  @apply bg-ocotillo-red text-white border-none shadow-lg font-bold px-4 py-2 text-sm;
+}
+
+.tier-power .ai-insights--premium {
+  @apply shadow-2xl border-0;
+}
+
+.tier-power .services--premium-cards {
+  @apply shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300;
+}
+
+.tier-power .reviews--advanced {
+  @apply bg-white border-gray-200;
+}
+
+/* Tier Badge Animations */
+.tier-badge {
+  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300;
+}
+
+.tier-badge--enhanced:hover {
+  @apply scale-105 shadow-md;
+}
+
+.tier-badge--featured {
+  @apply animate-pulse;
+}
+
+.tier-badge--premium {
+  @apply relative overflow-hidden;
+}
+
+.tier-badge--premium::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent;
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Component-specific tier styles */
+
+/* AI Insights tier variations */
+.ai-insights {
+  @apply rounded-lg p-6 mb-6 transition-all duration-300;
+}
+
+.ai-insights--enhanced .ai-insight-item {
+  @apply transform hover:scale-[1.02] transition-transform;
+}
+
+.ai-insights--professional .category-section {
+  @apply hover:shadow-lg transition-shadow;
+}
+
+.ai-insights--premium .insight-card {
+  @apply hover:shadow-2xl hover:scale-[1.01] transition-all;
+}
+
+/* Service display tier variations */
+.services--enhanced-bullets .service-item {
+  @apply hover:bg-agave-cream p-2 rounded transition-colors;
+}
+
+.services--cards .service-card {
+  @apply border-2 border-transparent hover:border-turquoise-sky transition-colors;
+}
+
+.services--premium-cards .premium-service {
+  @apply relative overflow-hidden;
+}
+
+.services--premium-cards .premium-service::after {
+  content: '';
+  @apply absolute inset-0 bg-agave-cream/30 opacity-0 hover:opacity-100 transition-opacity;
+}
+
+/* Contact section tier variations */
+.contact--minimal {
+  @apply bg-gray-50;
+}
+
+.contact--enhanced {
+  @apply bg-white border-gray-200;
+}
+
+.contact--professional {
+  @apply bg-white border-gray-200 shadow-md;
+}
+
+.contact--lead-focused {
+  @apply bg-white border-gray-200 shadow-xl;
+}
+
+/* Review section tier variations */
+.reviews--basic .review-item {
+  @apply p-4 bg-white rounded;
+}
+
+.reviews--enhanced .review-item {
+  @apply p-5 bg-agave-cream rounded-lg hover:bg-white transition-colors;
+}
+
+.reviews--interactive .review-item {
+  @apply p-6 bg-agave-cream rounded-xl hover:shadow-md transition-shadow;
+}
+
+.reviews--advanced .review-item {
+  @apply p-6 bg-agave-cream rounded-xl hover:shadow-lg transition-all;
+}
+
+/* Upgrade prompt styles */
+.upgrade-prompt {
+  @apply relative overflow-hidden rounded-xl border-2 border-dashed transition-all duration-300;
+}
+
+.upgrade-prompt:hover {
+  @apply border-solid shadow-md transform scale-[1.02];
+}
+
+/* Performance indicator styles */
+.performance-indicators .indicator {
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tier-power .business-header--premium {
+    @apply py-8;
+  }
+  
+  .tier-badge--premium {
+    @apply text-xs px-3 py-1;
+  }
+  
+  .ai-insights--premium {
+    @apply p-6;
+  }
+}
+
+/* Dark mode support - removed for now to fix free tier background issue */

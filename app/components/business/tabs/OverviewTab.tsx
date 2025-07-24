@@ -33,15 +33,15 @@ export function OverviewTab({ business, businessContent, isOwner }: OverviewTabP
                     <p className="text-muted-foreground blur-sm select-none">
                       {business.description.split('.').slice(1).join('.') || "This business offers professional services with experienced staff and excellent customer reviews. They are committed to quality and customer satisfaction."}
                     </p>
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-white/90 pointer-events-none" />
                   </div>
                 </div>
               </div>
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-800 font-medium">
+              <div className="mt-4 p-4 bg-agave-cream rounded-lg border border-gray-200">
+                <p className="text-sm text-ironwood-charcoal font-medium">
                   ✨ Upgrade to Power for AI-enhanced business summary
                 </p>
-                <p className="text-xs text-blue-600 mt-1">
+                <p className="text-xs text-ironwood-charcoal/80 mt-1">
                   Get AI-generated insights, tone customization, and detailed business analysis
                 </p>
               </div>
@@ -135,17 +135,17 @@ export function OverviewTab({ business, businessContent, isOwner }: OverviewTabP
             <CardContent>
               <div className="space-y-4">
                 {businessContent.customOffers.map((offer: any, index: number) => (
-                  <div key={index} className="border rounded-lg p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-                    <h4 className="font-semibold text-blue-900">{offer.title}</h4>
-                    <p className="text-sm text-blue-800 mt-1">{offer.description}</p>
+                  <div key={index} className="border rounded-lg p-4 bg-agave-cream border-gray-200">
+                    <h4 className="font-semibold text-ironwood-charcoal">{offer.title}</h4>
+                    <p className="text-sm text-ironwood-charcoal/80 mt-1">{offer.description}</p>
                     {offer.validUntil && (
-                      <p className="text-xs text-blue-600 mt-2">
+                      <p className="text-xs text-ironwood-charcoal/60 mt-2">
                         Valid until {new Date(offer.validUntil).toLocaleDateString()}
                       </p>
                     )}
                     {offer.code && (
                       <div className="mt-3">
-                        <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-mono">
+                        <span className="inline-block bg-white text-ironwood-charcoal border border-gray-200 px-2 py-1 rounded text-sm font-mono">
                           Code: {offer.code}
                         </span>
                       </div>
@@ -291,7 +291,7 @@ export function OverviewTab({ business, businessContent, isOwner }: OverviewTabP
               <div>
                 <p className="text-sm font-medium">Average Rating</p>
                 <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-4 w-4 fill-desert-marigold text-desert-marigold" />
                   <span className="text-sm text-muted-foreground">
                     {business.rating.toFixed(1)} ({business.reviewCount} reviews)
                   </span>

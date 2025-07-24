@@ -11,7 +11,8 @@ import {
   IconUpload,
   IconPhoto,
   IconCreditCard,
-  IconHelp
+  IconHelp,
+  IconTrophy
 } from "@tabler/icons-react";
 
 // Customer dashboard sidebar data
@@ -26,6 +27,11 @@ const customerSidebarData = {
       title: "My Claims",
       url: "/dashboard/claims",
       icon: IconBuildingStore,
+    },
+    {
+      title: "Achievements",
+      url: "/dashboard/achievements",
+      icon: IconTrophy,
     },
     {
       title: "Upload Documents", 

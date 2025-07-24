@@ -69,9 +69,7 @@ export function ImportHistory() {
   });
 
   // Get all validation results for the displayed batches
-  const allValidationResults = useQuery(api.importValidation.getAllValidationResults, {
-    limit: 50,
-  });
+  const allValidationResults = useQuery(api.importValidation.getAllValidationResults);
 
   // Create a map of batchId to validation results for quick lookup
   const validationResultsMap = new Map();

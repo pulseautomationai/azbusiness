@@ -92,7 +92,7 @@ export function ReviewImportManager() {
   const [fieldMapping, setFieldMapping] = useState<Record<string, string>>({});
   const [importOptions, setImportOptions] = useState({
     source: "admin_import" as "admin_import" | "google" | "yelp" | "manual",
-    skipDuplicates: true,
+    skipDuplicates: true, // Re-enabled with improved review ID generation
     requireBusinessMatch: true,
     minimumRating: 1,
     includeUnverified: false
@@ -114,14 +114,15 @@ export function ReviewImportManager() {
 
   // Plan limits configuration
   const REVIEW_LIMITS = {
-    free: 15,
-    starter: 15,
-    pro: 40,
-    power: 100
+    free: 100,
+    starter: 100,
+    pro: 100,
+    power: Number.MAX_SAFE_INTEGER // UNLIMITED for Power tier
   };
 
   // Required fields for review import
   const REQUIRED_FIELDS = {
+    reviewId: "Review ID",
     businessName: "Business Name",
     placeId: "Place ID (Optional)",
     rating: "Rating (1-5)",
@@ -154,6 +155,7 @@ export function ReviewImportManager() {
     
     // Field detection patterns
     const patterns = {
+      reviewId: ['review_id', 'reviewid', 'id', 'review_identifier', 'identifier', 'review id'],
       businessName: ['business_name', 'business name', 'title', 'name', 'business', 'company'],
       placeId: ['place_id', 'placeid', 'place id', 'google_place_id'],
       rating: ['rating', 'stars', 'star', 'score', 'review_rating'],
@@ -194,6 +196,9 @@ export function ReviewImportManager() {
 
   // Mutations for review import
   const batchImportReviews = useMutation(api.reviewImport.batchImportReviews);
+  const simpleImportReviews = useMutation(api.simpleReviewImport.simpleImportReviews);
+  const ultraSimpleImport = useMutation(api.simpleReviewImport2.ultraSimpleImport);
+  const importReviewBatch = useMutation(api.reviewImportOptimized.importReviewBatch);
   // const triggerAIAnalysis = useMutation(api.aiReviewAnalysis.triggerBusinessAnalysis);
   
   // Query for duplicate checking (we'll call this manually)
@@ -238,127 +243,7 @@ export function ReviewImportManager() {
     return matrix[str2.length][str1.length];
   };
 
-  // State for duplicate detection
-  const [duplicateInfo, setDuplicateInfo] = useState<{
-    totalReviews: number;
-    duplicateCount: number;
-    duplicateReviews: Array<{
-      csvRow: number;
-      reviewId: string;
-      userName: string;
-      businessName: string;
-      duplicateType: 'exact_id' | 'similar_content';
-      existingReview?: any;
-    }>;
-    newReviews: number;
-  } | null>(null);
-
-  // Duplicate detection function for preview stage
-  const detectDuplicateReviews = useCallback(async (csvRows: Record<string, any>[], fieldMapping: Record<string, string>) => {
-    const duplicateInfo = {
-      totalReviews: csvRows.length,
-      duplicateCount: 0,
-      duplicateReviews: [] as Array<{
-        csvRow: number;
-        reviewId: string;
-        userName: string;
-        businessName: string;
-        duplicateType: 'exact_id' | 'similar_content';
-        existingReview?: any;
-      }>,
-      newReviews: 0
-    };
-
-    // Check each review for duplicates using individual queries
-    for (let i = 0; i < Math.min(csvRows.length, 100); i++) { // Limit to first 100 for performance
-      const row = csvRows[i];
-      
-      // Extract review data using field mapping
-      const getMappedValue = (fieldKey: string) => {
-        const mappedHeader = fieldMapping[fieldKey];
-        return mappedHeader ? String(row[mappedHeader] || '') : '';
-      };
-
-      const reviewId = row.reviewId || row.review_id || `${getMappedValue('businessName') || 'unknown'}_${Date.now()}_${Math.random()}_${i}`;
-      const userName = getMappedValue('userName') || 'Anonymous';
-      const comment = getMappedValue('comment') || '';
-      const businessName = getMappedValue('businessName') || '';
-
-      try {
-        // Make individual query to check for duplicates using Convex client
-        const duplicateCheck = await convex.query(api.reviewImport.checkDuplicateReviews, {
-          reviewId,
-          userName,
-          comment,
-          businessName
-        });
-
-        if (duplicateCheck.isDuplicate) {
-          duplicateInfo.duplicateCount++;
-          duplicateInfo.duplicateReviews.push({
-            csvRow: i + 1,
-            reviewId,
-            userName,
-            businessName,
-            duplicateType: duplicateCheck.duplicateType,
-            existingReview: duplicateCheck.existingReview
-          });
-        }
-      } catch (error) {
-        console.error(`Error checking duplicate for row ${i + 1}:`, error);
-        // Continue processing other reviews
-      }
-    }
-
-    duplicateInfo.newReviews = duplicateInfo.totalReviews - duplicateInfo.duplicateCount;
-    return duplicateInfo;
-  }, []);
-
-  // Function to check duplicates after CSV is parsed
-  const handleCheckDuplicates = useCallback(async () => {
-    if (!csvPreview || !file) {
-      toast({
-        title: "No CSV file",
-        description: "Please upload and parse a CSV file first.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setProgress({ status: "parsing", progress: 25, message: "Checking for duplicates..." });
-
-    try {
-      // Re-parse the full CSV to check all rows for duplicates
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: async (results) => {
-          const allRows = results.data as Record<string, any>[];
-          
-          setProgress({ status: "matching", progress: 50, message: "Analyzing duplicates..." });
-          
-          const duplicates = await detectDuplicateReviews(allRows, fieldMapping);
-          setDuplicateInfo(duplicates);
-          
-          setProgress({ status: "idle", progress: 0, message: "" });
-          
-          toast({
-            title: "Duplicate check complete",
-            description: `Found ${duplicates.duplicateCount} duplicates out of ${duplicates.totalReviews} reviews.`,
-            variant: duplicates.duplicateCount > 0 ? "default" : "default",
-          });
-        }
-      });
-    } catch (error) {
-      console.error('Error checking duplicates:', error);
-      setProgress({ status: "failed", progress: 0, message: "Failed to check duplicates" });
-      toast({
-        title: "Duplicate check failed",
-        description: "An error occurred while checking for duplicates.",
-        variant: "destructive",
-      });
-    }
-  }, [csvPreview, file, fieldMapping, detectDuplicateReviews]);
+  // Removed separate duplicate detection - now handled automatically during import
 
   const handleFileSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -397,114 +282,143 @@ export function ReviewImportManager() {
           const allRows = results.data as Record<string, any>[];
           const sampleRows = allRows.slice(0, 5);
 
-          // Extract unique business names for matching
+          // Extract unique business names for matching (will be updated after field mapping)
           const businessNames = new Set<string>();
+
+          // Auto-detect field mapping
+          const detectedMapping = autoDetectFieldMapping(headers);
+          console.log(`CSV Headers:`, headers);
+          console.log(`Detected field mapping:`, detectedMapping);
+          setFieldMapping(detectedMapping);
           
-          // Try to find business name column before auto-detection
-          const businessNameFields = headers.filter(h => 
-            h.toLowerCase().includes('business') || 
-            h.toLowerCase().includes('title') || 
-            h.toLowerCase() === 'name'
-          );
-          
-          if (businessNameFields.length > 0) {
+          // Extract unique business names using the detected field mapping
+          if (detectedMapping.businessName) {
             allRows.forEach(row => {
-              const businessName = row[businessNameFields[0]];
+              const businessName = row[detectedMapping.businessName!];
               if (businessName && businessName.trim()) {
                 businessNames.add(businessName.trim());
               }
             });
+            console.log(`Found ${businessNames.size} unique businesses in CSV:`, Array.from(businessNames).slice(0, 10));
+          } else {
+            console.warn(`No business name field detected in mapping:`, detectedMapping);
           }
 
-          // Auto-detect field mapping
-          const detectedMapping = autoDetectFieldMapping(headers);
-          setFieldMapping(detectedMapping);
-          
-          // Field mapping is now always shown by default
-
           setProgress({ status: "matching", progress: 50, message: "Matching businesses..." });
-
-          // Business names already extracted above from Papa Parse data
 
           // Implement client-side business matching for preview
           const businessMatches: BusinessMatch[] = [];
           
-          if (allBusinesses) {
+          console.log(`🔍 Pre-matching check:`, {
+            allBusinesses: allBusinesses ? allBusinesses.length : 'null/undefined',
+            businessNames: businessNames.size,
+            businessNamesArray: Array.from(businessNames),
+            allBusinessesStatus: allBusinesses === undefined ? 'undefined' : allBusinesses === null ? 'null' : 'loaded'
+          });
+          
+          // Wait for allBusinesses to load before proceeding
+          if (!allBusinesses) {
+            console.warn(`⚠️ allBusinesses not loaded yet, skipping matching for now`);
+            // Set a basic preview without matching for now
+            setCsvPreview({
+              headers,
+              sampleRows,
+              totalRows: allRows.length,
+              businessMatches: [],
+              unmatchedBusinesses: Array.from(businessNames),
+              fieldMapping: detectedMapping
+            });
+            setProgress({ status: "idle", progress: 0, message: "" });
+            return;
+          }
+          
+          if (allBusinesses && businessNames.size > 0) {
+            console.log(`Matching ${businessNames.size} businesses against ${allBusinesses.length} database businesses`);
+            console.log(`First 5 database businesses:`, allBusinesses.slice(0, 5).map(b => ({ name: b.name, placeId: b.placeId })));
+            
             for (const businessName of Array.from(businessNames)) {
               try {
-                const normalizedSearchName = businessName.toLowerCase().replace(/[^\w\s]/g, '').trim();
+                console.log(`\n🔍 Matching business: "${businessName}"`);
                 
-                // Find potential matches using string similarity
-                const potentialMatches = allBusinesses
-                  .map((business: any) => {
-                    const normalizedBusinessName = business.name.toLowerCase().replace(/[^\w\s]/g, '').trim();
-                    const similarity = calculateStringSimilarity(normalizedSearchName, normalizedBusinessName);
-                    return {
-                      business,
-                      similarity
-                    };
-                  })
-                  .filter((match: any) => match.similarity > 0.6) // Only show matches with >60% similarity
-                  .sort((a: any, b: any) => b.similarity - a.similarity)
-                  .slice(0, 5); // Top 5 matches
-
-                const bestMatch = potentialMatches[0];
+                // Find a sample row for this business to get Place_ID
+                const sampleRow = allRows.find(row => row[detectedMapping.businessName!] === businessName);
+                console.log(`🔍 Sample row for "${businessName}":`, sampleRow);
+                console.log(`🔍 Place_ID field mapping:`, detectedMapping.placeId);
                 
-                // Get plan validation info for best match
-                let planInfo: any = {};
-                if (bestMatch && businessesNeedingReviews) {
-                  const businessWithReviews = businessesNeedingReviews.find((b: any) => b._id === bestMatch.business._id);
-                  if (businessWithReviews) {
-                    planInfo = {
-                      planTier: businessWithReviews.planTier,
-                      currentReviews: businessWithReviews.currentReviews,
-                      reviewLimit: businessWithReviews.reviewLimit,
-                      canAcceptReviews: businessWithReviews.reviewsNeeded > 0
-                    };
+                const placeId = sampleRow ? (sampleRow[detectedMapping.placeId!] || sampleRow.place_id || sampleRow.businessPlaceId) : null;
+                
+                console.log(`🎯 Place_ID for "${businessName}": ${placeId || 'Not found'}`);
+                console.log(`🎯 Available fields in sample row:`, sampleRow ? Object.keys(sampleRow) : 'No sample row');
+                
+                let matchedBusiness = null;
+                
+                // Strategy 1: Try Place_ID match first (highest priority - just like backend)
+                if (placeId) {
+                  matchedBusiness = allBusinesses.find((business: any) => business.placeId === placeId);
+                  if (matchedBusiness) {
+                    console.log(`✅ PLACE_ID MATCH FOUND: ${matchedBusiness.name}`);
                   } else {
-                    // Business not in "needing reviews" list means it's at capacity
-                    planInfo = {
-                      planTier: bestMatch.business.planTier || 'free',
-                      currentReviews: REVIEW_LIMITS[bestMatch.business.planTier as keyof typeof REVIEW_LIMITS] || REVIEW_LIMITS.free,
-                      reviewLimit: REVIEW_LIMITS[bestMatch.business.planTier as keyof typeof REVIEW_LIMITS] || REVIEW_LIMITS.free,
-                      canAcceptReviews: false
-                    };
+                    console.log(`❌ No Place_ID match found for: ${placeId}`);
+                    console.log(`🔍 Available Place_IDs in DB:`, allBusinesses.filter(b => b.placeId).map(b => b.placeId).slice(0, 5));
                   }
                 }
+                
+                // Strategy 2: Fallback to name matching only if no Place_ID match
+                const potentialMatches = !matchedBusiness ? (() => {
+                  const normalizedSearchName = businessName.toLowerCase().replace(/[^\w\s]/g, '').trim();
+                  console.log(`🔍 Falling back to name matching for: "${normalizedSearchName}"`);
+                  
+                  return allBusinesses
+                    .map((business: any) => {
+                      const normalizedBusinessName = business.name.toLowerCase().replace(/[^\w\s]/g, '').trim();
+                      const similarity = calculateStringSimilarity(normalizedSearchName, normalizedBusinessName);
+                      return {
+                        business,
+                        similarity
+                      };
+                    })
+                    .filter((match: any) => match.similarity > 0.3) // TEMPORARILY LOWERED - Only show matches with >30% similarity
+                    .sort((a: any, b: any) => b.similarity - a.similarity)
+                    .slice(0, 5); // Top 5 matches
+                })() : [];
+                
+                console.log(`🔍 Best matches for "${businessName}":`, potentialMatches.map(m => ({ name: m.business.name, similarity: m.similarity })));
 
-                const matchedBusiness = bestMatch && bestMatch.similarity > 0.85 ? {
-                  _id: bestMatch.business._id,
-                  name: bestMatch.business.name,
-                  city: bestMatch.business.city,
-                  confidence: Math.round(bestMatch.similarity * 100),
+                // Use Place_ID match if found, otherwise use best name match
+                const finalMatch = matchedBusiness || (potentialMatches.length > 0 ? potentialMatches[0].business : null);
+                
+                // Simplified plan validation - assume all businesses can accept reviews with new higher limits
+                const planInfo = {
+                  planTier: finalMatch?.planTier || 'free',
+                  currentReviews: 0, // We'll get the actual count during import
+                  reviewLimit: REVIEW_LIMITS[finalMatch?.planTier as keyof typeof REVIEW_LIMITS] || REVIEW_LIMITS.free,
+                  canAcceptReviews: true // With new higher limits (100+), assume all businesses can accept reviews
+                };
+                console.log(`✅ Simplified plan info for ${finalMatch?.name}:`, planInfo);
+
+                const finalMatchedBusiness = finalMatch ? {
+                  _id: finalMatch._id,
+                  name: finalMatch.name,
+                  city: finalMatch.city,
+                  confidence: matchedBusiness ? 100 : (potentialMatches[0] ? Math.round(potentialMatches[0].similarity * 100) : 0),
                   ...planInfo
                 } : null;
 
                 const possibleMatches = potentialMatches.map((match: any) => {
-                  let possiblePlanInfo: any = {};
-                  if (businessesNeedingReviews) {
-                    const businessWithReviews = businessesNeedingReviews.find((b: any) => b._id === match.business._id);
-                    if (businessWithReviews) {
-                      possiblePlanInfo = {
-                        planTier: businessWithReviews.planTier,
-                        currentReviews: businessWithReviews.currentReviews,
-                        reviewLimit: businessWithReviews.reviewLimit
-                      };
-                    }
-                  }
-                  
                   return {
                     _id: match.business._id,
                     name: match.business.name,
                     city: match.business.city,
                     confidence: Math.round(match.similarity * 100),
-                    ...possiblePlanInfo
+                    planTier: match.business.planTier || 'free',
+                    currentReviews: 0, // Simplified - will be checked during actual import
+                    reviewLimit: REVIEW_LIMITS[match.business.planTier as keyof typeof REVIEW_LIMITS] || REVIEW_LIMITS.free
                   };
                 });
 
                 businessMatches.push({
                   csvBusinessName: businessName,
-                  matchedBusiness,
+                  matchedBusiness: finalMatchedBusiness,
                   possibleMatches
                 });
               } catch (error) {
@@ -516,21 +430,47 @@ export function ReviewImportManager() {
                 });
               }
             }
+          } else {
+            console.error(`❌ Matching skipped:`, {
+              allBusinesses: allBusinesses ? 'exists' : 'null/undefined',
+              businessNamesSize: businessNames.size,
+              reason: !allBusinesses ? 'allBusinesses is null/undefined' : 
+                      businessNames.size === 0 ? 'no business names found' : 'unknown'
+            });
           }
+
+          console.log(`Final business matches:`, businessMatches);
+          console.log(`Business matches with matchedBusiness:`, businessMatches.filter(m => m.matchedBusiness));
+          console.log(`Business matches array details:`, businessMatches.map(m => ({
+            csvBusinessName: m.csvBusinessName,
+            hasMatchedBusiness: !!m.matchedBusiness,
+            matchedBusinessName: m.matchedBusiness?.name,
+            confidence: m.matchedBusiness?.confidence,
+            canAcceptReviews: m.matchedBusiness?.canAcceptReviews
+          })));
+          
+          // Calculate unmatched businesses (those without successful matches)
+          const matchedBusinessNames = new Set(
+            businessMatches
+              .filter(match => match.matchedBusiness)
+              .map(match => match.csvBusinessName)
+          );
+          const unmatchedBusinessNames = Array.from(businessNames).filter(
+            name => !matchedBusinessNames.has(name)
+          );
 
           setCsvPreview({
             headers,
             sampleRows,
             totalRows: allRows.length,
             businessMatches,
-            unmatchedBusinesses: Array.from(businessNames),
+            unmatchedBusinesses: unmatchedBusinessNames,
             fieldMapping: detectedMapping
           });
 
           setProgress({ status: "idle", progress: 0, message: "" });
           
-          // Reset duplicate info when new file is loaded
-          setDuplicateInfo(null);
+          // Duplicate detection now handled automatically during import
 
           toast({
             title: "CSV parsed successfully",
@@ -561,17 +501,18 @@ export function ReviewImportManager() {
 
   // Re-run business matching when field mapping changes
   const updateBusinessMatching = useCallback(() => {
-    if (!csvPreview || !allBusinesses || !fieldMapping.businessName) return;
+    setCsvPreview(prev => {
+      if (!prev || !allBusinesses || !fieldMapping.businessName) return prev;
 
-    const businessNames = new Set<string>();
-    
-    // Extract business names using current field mapping
-    csvPreview.sampleRows.forEach(row => {
-      const businessName = row[fieldMapping.businessName!];
-      if (businessName && businessName.trim()) {
-        businessNames.add(businessName.trim());
-      }
-    });
+      const businessNames = new Set<string>();
+      
+      // Extract business names using current field mapping
+      prev.sampleRows.forEach(row => {
+        const businessName = row[fieldMapping.businessName!];
+        if (businessName && businessName.trim()) {
+          businessNames.add(businessName.trim());
+        }
+      });
 
     // Re-run business matching
     const businessMatches: BusinessMatch[] = [];
@@ -589,9 +530,9 @@ export function ReviewImportManager() {
             return {
               ...business,
               confidence: Math.round(similarity * 100),
-              currentReviews: 0, // This would be populated from actual data
-              reviewLimit: REVIEW_LIMITS[business.planTier as keyof typeof REVIEW_LIMITS] || 15,
-              canAcceptReviews: true // This would be calculated based on current reviews vs limit
+              currentReviews: 0, // Simplified - will be checked during actual import
+              reviewLimit: REVIEW_LIMITS[business.planTier as keyof typeof REVIEW_LIMITS] || REVIEW_LIMITS.free,
+              canAcceptReviews: true // With new higher limits (100+), assume all businesses can accept reviews
             };
           })
           .filter((business: any) => business.confidence > 70)
@@ -614,18 +555,35 @@ export function ReviewImportManager() {
       }
     }
 
-    // Update the CSV preview with new business matches
-    setCsvPreview(prev => prev ? {
-      ...prev,
-      businessMatches,
-      unmatchedBusinesses: Array.from(businessNames)
-    } : null);
-  }, [csvPreview, allBusinesses, fieldMapping, calculateStringSimilarity]);
+    // Calculate unmatched businesses (those without successful matches)
+    const matchedBusinessNames = new Set(
+      businessMatches
+        .filter(match => match.matchedBusiness)
+        .map(match => match.csvBusinessName)
+    );
+    const unmatchedBusinessNames = Array.from(businessNames).filter(
+      name => !matchedBusinessNames.has(name)
+    );
+
+      // Return updated preview
+      return {
+        ...prev,
+        businessMatches,
+        unmatchedBusinesses: unmatchedBusinessNames
+      };
+    });
+  }, [allBusinesses, fieldMapping, calculateStringSimilarity]); // Removed csvPreview to prevent circular dependency
 
   // Update business matching whenever field mapping changes
   useEffect(() => {
-    updateBusinessMatching();
-  }, [updateBusinessMatching]);
+    if (csvPreview && allBusinesses) {
+      updateBusinessMatching();
+    }
+  }, [fieldMapping]); // Only run when fieldMapping changes, not updateBusinessMatching
+
+  // Remove the problematic useEffect that was causing infinite re-renders
+  // The business matching now happens automatically when the file is selected
+  // and allBusinesses is already loaded
 
   const handleImport = async () => {
     if (!file || !csvPreview || !user) return;
@@ -674,8 +632,9 @@ export function ReviewImportManager() {
                 return mappedHeader ? String(row[mappedHeader] || '') : '';
               };
               
-              // Generate unique review ID if not present
-              const reviewId = row.reviewId || row.review_id || `${getMappedValue('businessName') || 'unknown'}_${Date.now()}_${Math.random()}_${index}`;
+              // Use mapped reviewId from CSV, or generate one if not present
+              const reviewId = getMappedValue('reviewId') || row.reviewId || row.review_id || 
+                `${getMappedValue('businessName') || 'unknown'}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${index}`;
               
               return {
                 reviewId,
@@ -696,41 +655,99 @@ export function ReviewImportManager() {
             console.log('Frontend: Prepared review data sample:', reviewData.slice(0, 3));
             console.log('Frontend: Field mapping used:', fieldMapping);
             
-            // Call backend import function
-            const importResult = await batchImportReviews({
-              reviews: reviewData,
-              source: importOptions.source === "google" ? "gmb_import" : 
-                     importOptions.source === "yelp" ? "yelp_import" : 
-                     importOptions.source === "manual" ? "facebook_import" : "manual",
-              skipDuplicates: importOptions.skipDuplicates,
-              sourceMetadata: {
-                fileName: file.name,
-                csvType: "generic",
-              }
-            });
-
-            setProgress({ status: "importing", progress: 70, message: "Completing import..." });
-
-            // Skip AI analysis for now to avoid stack overflow issues
-            console.log('Skipping AI analysis to prevent stack overflow errors');
+            // Process in batches to handle large imports
+            console.log('🚀 Frontend: Starting batched import with reviewData length:', reviewData.length);
             
-            setProgress({ 
-              status: "completed", 
-              progress: 100, 
-              message: "Import completed successfully!",
-              results: {
-                successful: importResult.successful,
-                failed: importResult.failed,
-                skipped: importResult.skipped + importResult.duplicates,
-                businessesMatched: importResult.businessMatches.length,
-                businessesUnmatched: csvPreview.unmatchedBusinesses.length
-              }
-            });
+            const BATCH_SIZE = 500; // Process 500 reviews at a time
+            const totalBatches = Math.ceil(reviewData.length / BATCH_SIZE);
+            let overallResults = {
+              newReviewsAdded: 0,
+              existingReviewsSkipped: 0,
+              businessNotFound: 0,
+              errors: 0,
+              errorMessages: [] as string[]
+            };
+            
+            try {
+              for (let i = 0; i < totalBatches; i++) {
+                const start = i * BATCH_SIZE;
+                const end = start + BATCH_SIZE;
+                const batch = reviewData.slice(start, end);
+                
+                console.log(`Processing batch ${i + 1}/${totalBatches}: ${batch.length} reviews`);
+                
+                setProgress({ 
+                  status: "importing", 
+                  progress: 30 + ((i / totalBatches) * 60), 
+                  message: `Processing batch ${i + 1} of ${totalBatches}...` 
+                });
 
-            toast({
-              title: "Reviews imported successfully",
-              description: `Imported ${importResult.successful} reviews successfully. ${importResult.failed > 0 ? `${importResult.failed} failed.` : ''}`,
-            });
+                const batchResult = await importReviewBatch({
+                  reviews: batch.map(r => ({
+                    reviewId: r.reviewId,
+                    rating: r.rating,
+                    comment: r.comment,
+                    userName: r.userName,
+                    businessName: r.businessName,
+                    place_id: r.businessPlaceId,
+                    businessPlaceId: r.businessPlaceId,
+                  })),
+                  skipDuplicateCheck: false, // Set to true if you know there are no duplicates for faster processing
+                });
+
+                // Accumulate results
+                overallResults.newReviewsAdded += batchResult.newReviewsAdded;
+                overallResults.existingReviewsSkipped += batchResult.existingReviewsSkipped;
+                overallResults.businessNotFound += batchResult.businessNotFound;
+                overallResults.errors += batchResult.errors;
+                overallResults.errorMessages.push(...batchResult.errorMessages);
+
+                console.log(`Batch ${i + 1} completed:`, batchResult);
+                
+                // Small delay to prevent overwhelming the system
+                if (i < totalBatches - 1) {
+                  await new Promise(resolve => setTimeout(resolve, 100));
+                }
+              }
+
+              console.log('✅ All batches completed:', overallResults);
+              
+              setProgress({ 
+                status: "completed", 
+                progress: 100, 
+                message: "Import completed!",
+                results: {
+                  successful: overallResults.newReviewsAdded,
+                  failed: overallResults.errors,
+                  skipped: overallResults.existingReviewsSkipped,
+                  businessesMatched: reviewData.length - overallResults.businessNotFound,
+                  businessesUnmatched: overallResults.businessNotFound
+                }
+              });
+
+              // Create summary message
+              const successMsg = `✅ Added ${overallResults.newReviewsAdded} new reviews`;
+              const skipMsg = overallResults.existingReviewsSkipped > 0 ? `\n⏭️ Skipped ${overallResults.existingReviewsSkipped} duplicates` : '';
+              const errorMsg = overallResults.errors > 0 ? `\n❌ ${overallResults.errors} errors` : '';
+              const unmatched = overallResults.businessNotFound > 0 ? `\n🏢 ${overallResults.businessNotFound} businesses not found` : '';
+              
+              const description = successMsg + skipMsg + errorMsg + unmatched;
+
+              toast({
+                title: overallResults.newReviewsAdded > 0 ? "Import Successful!" : "Import Complete",
+                description: description,
+              });
+
+            } catch (importError) {
+              console.error('Simple import error:', importError);
+              setProgress({ status: "failed", progress: 0, message: "Import failed" });
+              toast({
+                title: "Import failed",
+                description: `Import error: ${importError}`,
+                variant: "destructive",
+              });
+              return;
+            }
 
           } catch (error) {
             console.error('Import error within Papa Parse:', error);
@@ -769,7 +786,6 @@ export function ReviewImportManager() {
     setCsvPreview(null);
     setProgress({ status: "idle", progress: 0, message: "" });
     setFieldMapping({});
-    setDuplicateInfo(null);
   };
 
   const downloadCSVTemplate = () => {
@@ -1091,116 +1107,51 @@ export function ReviewImportManager() {
                     </CardContent>
                   </Card>
 
-                  {/* Duplicate Detection */}
+                  {/* Import Preview Summary */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <RefreshCw className="h-5 w-5" />
-                        Duplicate Detection
+                        <CheckCircle className="h-5 w-5" />
+                        Import Preview
                       </CardTitle>
                       <CardDescription>
-                        Check for duplicate reviews that already exist in the database
+                        Ready to import with duplicate detection automatically enabled
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {!duplicateInfo && (
-                        <div className="text-center py-4">
-                          <Button
-                            onClick={handleCheckDuplicates}
-                            disabled={!csvPreview || progress.status !== "idle"}
-                            className="gap-2"
-                          >
-                            <Eye className="h-4 w-4" />
-                            Check for Duplicates
-                          </Button>
-                          <p className="text-sm text-muted-foreground mt-2">
-                            Click to analyze your reviews for potential duplicates
-                          </p>
-                        </div>
-                      )}
-                      
-                      {duplicateInfo && (
-                        <div className="space-y-4">
-                          {/* Summary */}
-                          <div className="grid grid-cols-3 gap-4 text-center">
-                            <div className="p-3 bg-blue-50 rounded-lg">
-                              <div className="text-2xl font-bold text-blue-600">
-                                {duplicateInfo.totalReviews}
-                              </div>
-                              <div className="text-sm text-blue-600">Total Reviews</div>
-                            </div>
-                            <div className="p-3 bg-orange-50 rounded-lg">
-                              <div className="text-2xl font-bold text-orange-600">
-                                {duplicateInfo.duplicateCount}
-                              </div>
-                              <div className="text-sm text-orange-600">Duplicates Found</div>
-                            </div>
-                            <div className="p-3 bg-green-50 rounded-lg">
-                              <div className="text-2xl font-bold text-green-600">
-                                {duplicateInfo.newReviews}
-                              </div>
-                              <div className="text-sm text-green-600">Will Import</div>
-                            </div>
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div className="p-3 bg-blue-50 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {csvPreview.totalRows}
                           </div>
-
-                          {/* Duplicate Details */}
-                          {duplicateInfo.duplicateCount > 0 && (
-                            <div>
-                              <h5 className="font-medium mb-3 text-orange-600">
-                                Duplicate Reviews (will be skipped)
-                              </h5>
-                              <div className="space-y-2 max-h-64 overflow-y-auto">
-                                {duplicateInfo.duplicateReviews.map((duplicate, index) => (
-                                  <div key={index} className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-200">
-                                    <div className="grid grid-cols-4 gap-2 text-sm">
-                                      <div>
-                                        <span className="font-medium">Row:</span> {duplicate.csvRow}
-                                      </div>
-                                      <div>
-                                        <span className="font-medium">Business:</span> {duplicate.businessName}
-                                      </div>
-                                      <div>
-                                        <span className="font-medium">Reviewer:</span> {duplicate.userName}
-                                      </div>
-                                      <div>
-                                        <Badge variant={duplicate.duplicateType === 'exact_id' ? 'destructive' : 'secondary'}>
-                                          {duplicate.duplicateType === 'exact_id' ? 'Exact ID Match' : 'Similar Content'}
-                                        </Badge>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {duplicateInfo.duplicateCount === 0 && (
-                            <div className="text-center py-4">
-                              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-2" />
-                              <p className="text-green-600 font-medium">No duplicates found!</p>
-                              <p className="text-sm text-muted-foreground">All reviews are unique and ready to import</p>
-                            </div>
-                          )}
-
-                          <div className="flex gap-2">
-                            <Button
-                              onClick={handleCheckDuplicates}
-                              variant="outline"
-                              size="sm"
-                              disabled={progress.status !== "idle"}
-                            >
-                              Re-check Duplicates
-                            </Button>
-                            <Button
-                              onClick={() => setDuplicateInfo(null)}
-                              variant="outline"
-                              size="sm"
-                            >
-                              Clear Results
-                            </Button>
-                          </div>
+                          <div className="text-sm text-blue-600">Total Reviews</div>
                         </div>
-                      )}
+                        <div className="p-3 bg-green-50 rounded-lg">
+                          <div className="text-2xl font-bold text-green-600">
+                            {csvPreview.businessMatches.filter(m => m.matchedBusiness).length}
+                          </div>
+                          <div className="text-sm text-green-600">Business Matches</div>
+                        </div>
+                        <div className="p-3 bg-purple-50 rounded-lg">
+                          <div className="text-2xl font-bold text-purple-600">
+                            {csvPreview.businessMatches.filter(m => m.matchedBusiness?.canAcceptReviews).length}
+                          </div>
+                          <div className="text-sm text-purple-600">Ready to Import</div>
+                        </div>
+                      </div>
+
+                      <Alert>
+                        <CheckCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          <strong>Automatic Duplicate Detection:</strong> During import, the system will automatically:
+                          <ul className="mt-2 space-y-1 text-sm">
+                            <li>• Skip reviews with exact matching review IDs</li>
+                            <li>• Skip reviews with 90%+ similar content from the same reviewer</li>
+                            <li>• Prioritize Google Place ID for 100% accurate business matching</li>
+                            <li>• Respect plan-based review limits for each business</li>
+                          </ul>
+                        </AlertDescription>
+                      </Alert>
                     </CardContent>
                   </Card>
 
@@ -1280,10 +1231,14 @@ export function ReviewImportManager() {
                   <Card>
                     <CardHeader className="pb-3">
                       <CardTitle className="text-sm">Import Options</CardTitle>
+                      <CardDescription>Configure how reviews are processed during import</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="skip-duplicates" className="text-sm">Skip duplicates</Label>
+                        <div>
+                          <Label htmlFor="skip-duplicates" className="text-sm font-medium">Skip duplicates</Label>
+                          <p className="text-xs text-muted-foreground">Skip reviews with exact IDs or 90%+ similar content</p>
+                        </div>
                         <input
                           id="skip-duplicates"
                           type="checkbox"
@@ -1295,7 +1250,10 @@ export function ReviewImportManager() {
                         />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="require-match" className="text-sm">Require business match</Label>
+                        <div>
+                          <Label htmlFor="require-match" className="text-sm font-medium">Require business match</Label>
+                          <p className="text-xs text-muted-foreground">Only import reviews for businesses found in database</p>
+                        </div>
                         <input
                           id="require-match"
                           type="checkbox"

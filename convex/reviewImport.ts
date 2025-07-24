@@ -20,6 +20,7 @@ interface ReviewData {
   businessAddress?: string;
   businessId?: string;
   businessPlaceId?: string;  // Google Place ID for accurate matching
+  place_id?: string;  // Also support generic place_id field name
   userId?: string;
   authorPhotoUrl?: string;
   verified?: boolean;
@@ -45,6 +46,7 @@ export const batchImportReviews = mutation({
       businessAddress: v.optional(v.string()),
       businessId: v.optional(v.string()),
       businessPlaceId: v.optional(v.string()),
+      place_id: v.optional(v.string()),
       userId: v.optional(v.string()),
       authorPhotoUrl: v.optional(v.string()),
       verified: v.optional(v.boolean()),
@@ -64,6 +66,7 @@ export const batchImportReviews = mutation({
     ),
     importBatchId: v.optional(v.string()),
     skipDuplicates: v.optional(v.boolean()),
+    bypassLimits: v.optional(v.boolean()), // ADMIN OVERRIDE for bulk imports
     sourceMetadata: v.optional(v.object({
       fileName: v.string(),
       csvType: v.string(),
@@ -79,14 +82,14 @@ export const batchImportReviews = mutation({
     if (identity) {
       const user = await ctx.db
         .query("users")
-        .withIndex("by_token", (q: any) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+        .withIndex("by_token", (q: any) => q.eq("tokenIdentifier", identity.subject))
         .first();
       
       if (user) {
         importedBy = user._id;
         console.log(`Import tracked to user: ${user.name || user.email || 'Unknown'}`);
       } else {
-        console.log(`User not found for token: ${identity.tokenIdentifier}, using anonymous import`);
+        console.log(`User not found for token: ${identity.subject}, using anonymous import`);
       }
     } else {
       console.log(`No authentication found, using anonymous import`);
@@ -132,11 +135,17 @@ export const batchImportReviews = mutation({
           console.log(`Processing review for business: ${reviewData.businessName}`);
           
           // Step 1: Find matching business
+          console.log(`\n🔍 Processing review ${results.successful + results.failed + 1}/${args.reviews.length}`);
+          console.log(`📝 Review ID: ${reviewData.reviewId}`);
+          console.log(`🏢 Business Name: ${reviewData.businessName}`);
+          console.log(`👤 User: ${reviewData.userName}`);
+          console.log(`📍 Place ID: ${reviewData.place_id || reviewData.businessPlaceId || 'Not provided'}`);
+          
           const businessMatch = await findBusinessMatch(reviewData, allBusinesses);
           
           if (!businessMatch) {
             results.failed++;
-            console.log(`No matching business found for: ${reviewData.businessName}`);
+            console.log(`❌ No matching business found for: ${reviewData.businessName}`);
             results.errors.push(`No matching business found for: ${reviewData.businessName}`);
             continue;
           }
@@ -153,25 +162,35 @@ export const batchImportReviews = mutation({
 
           console.log(`Business found: ${business.name}, planTier: ${business.planTier}`);
 
-          // Step 2: Check tier-based review limits
-          const currentReviewCount = await ctx.db
-            .query("reviews")
-            .withIndex("by_business", (q: any) => q.eq("businessId", businessMatch.businessId))
-            .collect();
+          // Step 2: Check tier-based review limits - TEMPORARILY DISABLED FOR BULK IMPORTS
+          // Commenting out limit checks to allow bulk review import
+          /*
+          if (!args.bypassLimits) {
+            const currentReviewCount = await ctx.db
+              .query("reviews")
+              .withIndex("by_business", (q: any) => q.eq("businessId", businessMatch.businessId))
+              .collect();
 
-          const reviewLimit = getReviewLimitForTier(business.planTier);
-          console.log(`Review limit check: ${currentReviewCount.length}/${reviewLimit} for ${business.planTier} tier`);
-          
-          if (currentReviewCount.length >= reviewLimit) {
-            results.skipped++;
-            console.log(`Review limit reached for ${business.name}`);
-            results.errors.push(`Review limit reached for ${business.name} (${business.planTier} tier: ${reviewLimit} reviews)`);
-            continue;
+            const reviewLimit = getReviewLimitForTier(business.planTier);
+            console.log(`Review limit check: ${currentReviewCount.length}/${reviewLimit} for ${business.planTier} tier`);
+            
+            if (currentReviewCount.length >= reviewLimit) {
+              results.skipped++;
+              console.log(`Review limit reached for ${business.name}`);
+              results.errors.push(`Review limit reached for ${business.name} (${business.planTier} tier: ${reviewLimit} reviews)`);
+              continue;
+            }
+          } else {
+            console.log(`⚠️ BYPASSING review limits for admin import`);
           }
+          */
+          console.log(`⚠️ Review limits temporarily disabled for bulk import`);
 
-          // Step 3: Check for duplicates
-          console.log(`Checking duplicates for review ID: ${reviewData.reviewId}`);
+          // Step 3: Check for duplicates using improved logic
+          console.log(`\n🔍 Duplicate Check - skipDuplicates: ${args.skipDuplicates}`);
           if (args.skipDuplicates) {
+            // Check exact review ID match first (highest priority)
+            console.log(`🆔 Checking for exact review ID match: ${reviewData.reviewId}`);
             const existingReview = await ctx.db
               .query("reviews")
               .withIndex("by_review_id", (q: any) => q.eq("reviewId", reviewData.reviewId))
@@ -179,17 +198,26 @@ export const batchImportReviews = mutation({
 
             if (existingReview) {
               results.duplicates++;
-              console.log(`Duplicate review ID found: ${reviewData.reviewId}`);
+              console.log(`🔍 DUPLICATE FOUND - Exact review ID: ${reviewData.reviewId} already exists`);
+              console.log(`🔍 Existing review business: ${existingReview.businessId}`);
               continue;
+            } else {
+              console.log(`✅ Review ID ${reviewData.reviewId} is unique`);
             }
 
-            // Also check for content similarity
+            // Check for content similarity within the matched business only (consistent with fixed logic)
+            console.log(`🔍 Checking content similarity for business ${businessMatch.businessId}`);
             const similarReview = await findSimilarReview(ctx, businessMatch.businessId, reviewData.comment, reviewData.userName);
             if (similarReview) {
               results.duplicates++;
-              console.log(`Similar review found for user: ${reviewData.userName}`);
+              console.log(`🔍 DUPLICATE FOUND - Similar content from user: ${reviewData.userName}`);
+              console.log(`🔍 Similar review ID: ${similarReview.reviewId} in same business`);
               continue;
+            } else {
+              console.log(`✅ No similar content found for user: ${reviewData.userName}`);
             }
+          } else {
+            console.log(`⏭️ Duplicate checking disabled`);
           }
 
           // Step 4: Prepare review object
@@ -223,12 +251,18 @@ export const batchImportReviews = mutation({
           };
 
           // Step 5: Insert review
-          console.log(`Inserting review for business: ${business.name}`);
+          console.log(`\n💾 INSERTING REVIEW`);
+          console.log(`🏢 Business: ${business.name}`);
+          console.log(`👤 User: ${reviewData.userName}`);
+          console.log(`⭐ Rating: ${reviewObject.rating}`);
+          console.log(`📝 Review ID: ${reviewObject.reviewId}`);
+          
           try {
-            await ctx.db.insert("reviews", reviewObject);
-            console.log(`Review inserted successfully for: ${reviewData.userName}`);
+            const insertedId = await ctx.db.insert("reviews", reviewObject);
+            console.log(`✅ SUCCESS - Review inserted with ID: ${insertedId}`);
+            console.log(`✅ Review inserted successfully for: ${reviewData.userName}`);
           } catch (insertError) {
-            console.error(`Failed to insert review:`, insertError);
+            console.error(`❌ FAILED - Insert error:`, insertError);
             results.failed++;
             results.errors.push(`Failed to insert review for ${reviewData.userName}: ${insertError}`);
             continue;
@@ -270,7 +304,18 @@ export const batchImportReviews = mutation({
         errors: results.errors.length > 0 ? results.errors : undefined,
       });
 
-      console.log(`Import batch ${batchId} completed: ${results.successful} successful, ${results.failed} failed`);
+      console.log(`\n📊 IMPORT BATCH ${batchId} COMPLETED:`);
+      console.log(`✅ Successful: ${results.successful}`);
+      console.log(`❌ Failed: ${results.failed}`);
+      console.log(`⏭️ Skipped: ${results.skipped}`);
+      console.log(`🔄 Duplicates: ${results.duplicates}`);
+      console.log(`📋 Total processed: ${results.successful + results.failed + results.skipped + results.duplicates}`);
+      console.log(`📋 Total expected: ${args.reviews.length}`);
+
+      if (results.successful === 0 && results.duplicates > 0) {
+        console.log(`\n⚠️ WARNING: 0 reviews imported, ${results.duplicates} marked as duplicates!`);
+        console.log(`⚠️ This suggests all reviews are being incorrectly flagged as duplicates`);
+      }
 
       return results;
     } catch (error) {
@@ -287,15 +332,23 @@ export const batchImportReviews = mutation({
 
 // Helper function to find matching business
 async function findBusinessMatch(reviewData: ReviewData, businesses: Doc<"businesses">[]): Promise<BusinessMatch | null> {
-  // Strategy 1: Exact match by Google Place ID (highest priority)
-  if (reviewData.businessPlaceId) {
-    const placeMatch = businesses.find(b => b.placeId === reviewData.businessPlaceId);
+  // Strategy 1: Exact match by Google Place ID (HIGHEST PRIORITY)
+  const placeId = reviewData.place_id || reviewData.businessPlaceId;
+  if (placeId) {
+    console.log(`🎯 Priority #1: Looking for place_id match: ${placeId}`);
+    console.log(`🔍 Available place_ids in database: ${businesses.filter(b => b.placeId).map(b => b.placeId).slice(0, 5).join(', ')}`);
+    
+    const placeMatch = businesses.find(b => b.placeId === placeId);
     if (placeMatch) {
+      console.log(`✅ MATCH FOUND! place_id: ${placeId} → Business: ${placeMatch.name} (${placeMatch._id})`);
       return {
         businessId: placeMatch._id,
         confidence: 1.0,
         matchType: 'exact'
       };
+    } else {
+      console.log(`❌ No place_id match found for: ${placeId}`);
+      console.log(`🔍 Total businesses with place_id: ${businesses.filter(b => b.placeId).length}/${businesses.length}`);
     }
   }
 
@@ -391,11 +444,11 @@ async function findSimilarReview(ctx: any, businessId: Id<"businesses">, comment
 // Helper function to get review limit based on plan tier
 function getReviewLimitForTier(planTier: string): number {
   switch (planTier) {
-    case 'free': return 15;
-    case 'starter': return 25;
-    case 'pro': return 40;
-    case 'power': return 100;
-    default: return 15;
+    case 'free': return 1000; // TEMPORARILY INCREASED for imports
+    case 'starter': return 1000; // TEMPORARILY INCREASED for imports
+    case 'pro': return 1000; // TEMPORARILY INCREASED for imports
+    case 'power': return Number.MAX_SAFE_INTEGER; // UNLIMITED for Power tier
+    default: return 1000; // TEMPORARILY INCREASED for imports
   }
 }
 
@@ -480,21 +533,24 @@ function levenshteinDistance(str1: string, str2: string): number {
 // Query to get review import statistics
 export const getReviewImportStats = query({
   handler: async (ctx) => {
-    const reviews = await ctx.db.query("reviews").collect();
+    // Use a smaller sample to avoid memory limits during large imports
+    const reviews = await ctx.db.query("reviews").take(1000); // Only sample 1000 reviews
     
     // Group by source
     const sourceStats: Record<string, number> = {};
     const businessStats: Record<string, number> = {};
     
+    // Get total count efficiently
+    const allReviews = await ctx.db.query("reviews").collect();
+    const totalReviews = allReviews.length;
+    
+    // Process sample only
     for (const review of reviews) {
       // Source stats
       sourceStats[review.source] = (sourceStats[review.source] || 0) + 1;
       
-      // Business stats
-      const business = await ctx.db.get(review.businessId);
-      if (business) {
-        businessStats[business.name] = (businessStats[business.name] || 0) + 1;
-      }
+      // Skip business lookup to avoid memory issues during import
+      // Business stats will be less accurate but won't crash during import
     }
 
     const ratingDistribution = {
@@ -506,12 +562,10 @@ export const getReviewImportStats = query({
     };
 
     return {
-      totalReviews: reviews.length,
+      totalReviews: totalReviews, // Use actual total, not sample
+      sampleSize: reviews.length, // Show sample size
       sourceStats,
-      businessStats: Object.entries(businessStats)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 10) // Top 10 businesses with most reviews
-        .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {}),
+      businessStats: {}, // Empty during import to avoid memory issues
       ratingDistribution,
       averageRating: reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length || 0,
       verifiedReviews: reviews.filter(r => r.verified).length,

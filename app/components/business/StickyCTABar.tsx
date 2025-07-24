@@ -18,13 +18,14 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
 
   useEffect(() => {
     // Determine which CTA to show based on business status and plan
-    if (!business.claimed && !isOwner) {
+    if (!business.verified && !isOwner) {
       setCTAType('claim');
     } else if (business.planTier !== 'power' && isOwner) {
       setCTAType('upgrade');
-    } else {
+    } else if (business.planTier === 'power') {
       setCTAType('contact');
     }
+    // For free/starter/pro tiers viewed by non-owners, don't show any CTA
   }, [business, isOwner]);
 
   const handleDismiss = () => {
@@ -43,8 +44,13 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
 
   if (!isVisible) return null;
 
+  // Don't show any CTA for free/starter/pro businesses to non-owners (customers)
+  if (!isOwner && business.planTier !== 'power' && business.verified) {
+    return null;
+  }
+
   const renderClaimCTA = () => (
-    <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white">
+    <div className="bg-desert-marigold text-white">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -53,7 +59,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
             </div>
             <div>
               <p className="font-medium">Is this your business?</p>
-              <p className="text-sm text-green-100">
+              <p className="text-sm text-white/90">
                 Claim your listing to edit details and get more customers
               </p>
             </div>
@@ -70,7 +76,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
             <Link to={`/claim-business?businessId=${business._id}`}>
               <Button 
                 size="sm" 
-                className="bg-white text-blue-600 hover:bg-gray-100 font-semibold"
+                className="bg-white text-ocotillo-red hover:bg-agave-cream font-semibold"
               >
                 Claim Business
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -86,10 +92,10 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
     const targetPlan = business.planTier === 'free' ? 'pro' : 'power';
     const planName = targetPlan === 'pro' ? 'Pro' : 'Power';
     const planPrice = targetPlan === 'pro' ? '$29' : '$97';
-    const planColor = targetPlan === 'pro' ? 'from-blue-500 to-indigo-600' : 'from-purple-500 to-pink-600';
+    const planColor = targetPlan === 'pro' ? 'bg-turquoise-sky' : 'bg-ocotillo-red';
     
     return (
-      <div className={`bg-gradient-to-r ${planColor} text-white`}>
+      <div className={`${planColor} text-white`}>
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -123,7 +129,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
               <Link to="/pricing">
                 <Button 
                   size="sm" 
-                  className="bg-white text-primary hover:bg-gray-100 font-semibold"
+                  className="bg-white text-ironwood-charcoal hover:bg-agave-cream font-semibold"
                 >
                   Upgrade Now
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -141,7 +147,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
       featureId="contactForm"
       planTier={business.planTier}
       fallback={
-        <div className="bg-gray-600 text-white">
+        <div className="bg-ironwood-charcoal text-white">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -150,7 +156,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
                 </div>
                 <div>
                   <p className="font-medium">Contact {business.name}</p>
-                  <p className="text-sm text-gray-200">
+                  <p className="text-sm text-white/80">
                     Upgrade to Pro to enable contact forms
                   </p>
                 </div>
@@ -167,7 +173,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
                 <Button 
                   size="sm" 
                   onClick={() => window.location.href = `tel:${business.phone}`}
-                  className="bg-white text-gray-600 hover:bg-gray-100 font-semibold"
+                  className="bg-white text-ironwood-charcoal hover:bg-agave-cream font-semibold"
                 >
                   <Phone className="w-4 h-4 mr-2" />
                   Call Now
@@ -178,7 +184,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
         </div>
       }
     >
-      <div className="bg-primary text-primary-foreground">
+      <div className="bg-ocotillo-red text-white">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -204,7 +210,7 @@ export function StickyCTABar({ business, isOwner, onContactClick }: StickyCTABar
               <Button 
                 size="sm" 
                 onClick={onContactClick}
-                className="bg-white text-primary hover:bg-gray-100 font-semibold"
+                className="bg-white text-ironwood-charcoal hover:bg-agave-cream font-semibold"
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Get Quote

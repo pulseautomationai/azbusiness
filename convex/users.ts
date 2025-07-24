@@ -238,7 +238,6 @@ export const removeBusinessClaim = mutation({
 
     // Remove the claim and reset to free tier
     await ctx.db.patch(args.businessId, {
-      claimed: false,
       claimedByUserId: undefined,
       claimedAt: undefined,
       verified: false,

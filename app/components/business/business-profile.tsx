@@ -40,7 +40,7 @@ interface BusinessProfileProps {
     featured: boolean;
     priority: number;
     ownerId?: string;
-    claimed: boolean;
+    verified: boolean;
     verified: boolean;
     active: boolean;
     socialLinks?: {
@@ -84,7 +84,7 @@ export default function BusinessProfile({
 
   return (
     <div className="min-h-screen bg-background pt-24">
-      {/* Claim Banner for Unclaimed Businesses */}
+      {/* Claim Banner for Unverified Businesses */}
       <div className="container mx-auto px-6 py-4">
         <ClaimBanner business={business} />
       </div>
@@ -217,7 +217,7 @@ export default function BusinessProfile({
                 </>
               )}
               
-              {!business.claimed && !isOwner && (
+              {!business.verified && !isOwner && (
                 <Button variant="ghost" size="sm" asChild>
                   <Link to={`/claim-business?businessId=${business._id}`}>
                     <Award className="mr-2 h-4 w-4" />

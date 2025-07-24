@@ -1,0 +1,47 @@
+[
+  {
+    "city": "Peoria",
+    "totalBusinesses": 156,
+    "eligibleForImport": 156
+  },
+  {
+    "city": "Surprise",
+    "totalBusinesses": 143,
+    "eligibleForImport": 143
+  },
+  {
+    "city": "South Tucson",
+    "totalBusinesses": 141,
+    "eligibleForImport": 141
+  },
+  {
+    "city": "Goodyear",
+    "totalBusinesses": 121,
+    "eligibleForImport": 121
+  },
+  {
+    "city": "Marana",
+    "totalBusinesses": 110,
+    "eligibleForImport": 110
+  },
+  {
+    "city": "Buckeye",
+    "totalBusinesses": 86,
+    "eligibleForImport": 86
+  },
+  {
+    "city": "Winslow",
+    "totalBusinesses": 42,
+    "eligibleForImport": 42
+  },
+  {
+    "city": "Sahuarita",
+    "totalBusinesses": 42,
+    "eligibleForImport": 42
+  },
+  {
+    "city": "Thatcher",
+    "totalBusinesses": 28,
+    "eligibleForImport": 28
+  }
+]

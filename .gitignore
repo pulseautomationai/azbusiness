@@ -8,3 +8,12 @@
 .env
 .env.local
 .env.production
+
+# Data files (CSV imports, etc.)
+/data/
+*.csv
+*.xlsx
+*.xls
+
+# Logs
+/logs/

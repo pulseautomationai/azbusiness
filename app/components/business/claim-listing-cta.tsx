@@ -11,7 +11,7 @@ interface ClaimListingCTAProps {
     _id: string;
     name: string;
     planTier: string;
-    claimed?: boolean;
+    verified?: boolean;
   };
   className?: string;
 }
@@ -20,8 +20,8 @@ export function ClaimListingCTA({ business, className }: ClaimListingCTAProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  // Only show for unclaimed businesses (regardless of plan tier)
-  if (business.claimed || isDismissed) {
+  // Only show for unverified businesses (regardless of plan tier)
+  if (business.verified || isDismissed) {
     return null;
   }
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, HelpCircle, Search, Shield, Users, Clock } from "lucide-react";
+import { ChevronDown, ChevronUp, HelpCircle, Search, Shield, Clock, Star, Phone, Brain, Building, MapPin, AlertCircle } from "lucide-react";
 
 interface FAQItem {
   id: string;
@@ -12,38 +12,191 @@ const consumerFaqItems: FAQItem[] = [
   {
     id: "what-is-az-business",
     question: "What is AZ Business Services?",
-    answer: "AZ Business Services is Arizona's trusted directory of verified local professionals. We connect homeowners and businesses with top-rated service providers across the state. All our professionals are verified, reviewed, and ready to help with your project needs.",
+    answer: `**Quick Answer:** Arizona's premier AI-powered business directory connecting you with verified, trusted local service providers.
+
+**Detailed Explanation:**
+• **AI-Powered Rankings** - Our intelligent system analyzes customer reviews, response times, and service quality to rank businesses by actual performance
+• **Verified Professionals** - Every business is verified with real Arizona business licenses and customer feedback
+• **Local Expertise** - Exclusively focused on Arizona businesses with deep understanding of local markets and needs
+• **Quality First** - Unlike national platforms, we prioritize service quality and customer satisfaction over who pays the most
+
+**Why Choose AZ Business:** Get matched with the best professionals, not just the highest bidders.`,
     icon: <HelpCircle className="h-5 w-5" />
   },
   {
     id: "how-to-find-pros",
     question: "How do I find the best service provider?",
-    answer: "Simply search by service type and location. Browse verified professional profiles, read real customer reviews, compare ratings and services, then contact providers directly. No bidding wars or shared leads - just direct communication with your chosen professional.",
+    answer: `**Quick Answer:** Use our AI-powered search and rankings to discover top-rated professionals in your area.
+
+**Detailed Explanation:**
+• **Smart Search** - Enter your service need and location - our AI instantly shows the best-ranked providers
+• **Performance Rankings** - Businesses are ranked by real customer satisfaction, response time, and service quality
+• **Detailed Insights** - See AI-generated summaries of what customers actually say about each business
+• **Local Focus** - Results prioritize Arizona businesses with proven local track records
+• **Multiple Options** - Compare 3-5 top providers to find your perfect match
+
+**Pro Tip:** Look for businesses with "Pro-Verified" or "Power-Tier" badges for enhanced service guarantees.`,
     icon: <Search className="h-5 w-5" />
   },
   {
     id: "are-businesses-verified",
     question: "Are the businesses verified?",
-    answer: "Yes! All professionals in our directory go through a verification process including business license validation, phone verification, and documentation review. Look for the verification badge on business profiles for added peace of mind.",
+    answer: `**Quick Answer:** Yes! All businesses are verified through multiple methods including licenses, customer feedback, and owner verification.
+
+**Detailed Explanation:**
+• **Business License Verification** - We confirm active Arizona business licenses and proper certifications
+• **Owner Verification** - Business owners must verify their identity and claim their listings
+• **Customer Review Authentication** - AI analyzes review patterns to ensure authentic feedback
+• **Continuous Monitoring** - Ongoing verification of business status and customer satisfaction
+• **Verification Badges** - Look for ✅ badges indicating verification level (Basic, Professional, Pro-Verified, Power-Tier)
+
+**Your Protection:** Verified businesses have proven track records and accountability you can trust.`,
     icon: <Shield className="h-5 w-5" />
   },
   {
     id: "is-service-free",
     question: "Is the service free for homeowners?",
-    answer: "Absolutely! Using AZ Business Services to find and contact professionals is completely free for customers. There are no hidden fees, membership costs, or charges to browse listings and connect with service providers.",
-    icon: <Users className="h-5 w-5" />
+    answer: `**Quick Answer:** Absolutely! Finding and connecting with service providers is completely free for customers.
+
+**Detailed Explanation:**
+• **No Hidden Fees** - Search, browse, and contact businesses at no cost to you
+• **Free AI Insights** - Access our intelligent business rankings and customer feedback analysis
+• **Direct Contact** - Connect directly with businesses - no middleman fees or markups
+• **Unlimited Searches** - Use our platform as much as you need to find the right professionals
+• **No Account Required** - Browse and search without creating an account (though accounts unlock helpful features)
+
+**The Value:** Businesses pay to be listed, so you get premium service discovery for free.`,
+    icon: <Building className="h-5 w-5" />
   },
   {
     id: "how-fast-response",
     question: "How quickly will professionals respond?",
-    answer: "Most verified professionals respond within 2-4 hours during business hours. Many offer same-day consultations or estimates. Response times vary by service type and professional availability, but our verified pros pride themselves on prompt communication.",
+    answer: `**Quick Answer:** Most verified businesses respond within 2-4 hours, with many offering same-day service.
+
+**Detailed Explanation:**
+• **AI-Tracked Response Times** - Our system monitors and displays average response times for each business
+• **Fast Responders Highlighted** - Businesses with quick response times get priority in rankings
+• **Emergency Services** - Many Power-tier businesses offer 24/7 emergency response
+• **Real-Time Availability** - Professional businesses update their availability and capacity regularly
+• **Response Guarantees** - Higher-tier businesses often guarantee response times
+
+**Typical Response Times:**
+- **Emergency Services:** 15-30 minutes
+- **Standard Requests:** 2-4 hours  
+- **Project Estimates:** Same or next day`,
     icon: <Clock className="h-5 w-5" />
   },
   {
     id: "quality-guarantee",
     question: "What if I'm not satisfied with the service?",
-    answer: "While we don't directly provide the services, we carefully vet all professionals in our directory. If you have concerns about a service provider, please contact us immediately. We take feedback seriously and maintain high standards for all listed professionals.",
-    icon: <Shield className="h-5 w-5" />
+    answer: `**Quick Answer:** We prioritize customer satisfaction with review systems, business accountability, and resolution support.
+
+**Detailed Explanation:**
+• **Review System** - Leave honest reviews that help other customers and hold businesses accountable
+• **Business Response** - Verified businesses can respond to reviews and address concerns publicly
+• **Quality Monitoring** - Poor-performing businesses are flagged and may lose verification status
+• **Direct Resolution** - Contact businesses directly for immediate issue resolution
+• **Community Standards** - We maintain high standards and remove businesses that consistently underperform
+
+**Your Voice Matters:** Your reviews directly impact business rankings and help protect other customers.`,
+    icon: <AlertCircle className="h-5 w-5" />
+  },
+  {
+    id: "ai-ranking-system",
+    question: "How does the AI ranking system work?",
+    answer: `**Quick Answer:** Our AI analyzes customer reviews, response times, service quality, and business performance to rank providers by actual results.
+
+**Detailed Explanation:**
+• **Review Analysis** - AI reads and understands customer feedback to identify service quality patterns
+• **Performance Metrics** - Response time, completion rates, and customer satisfaction scores
+• **Local Optimization** - Rankings consider Arizona-specific factors like seasonal demand and local expertise
+• **Real-Time Updates** - Rankings update continuously as new reviews and performance data comes in
+• **Transparency** - See why businesses rank where they do with clear performance indicators
+
+**The Result:** Get matched with businesses that actually perform, not just those who pay for placement.`,
+    icon: <Brain className="h-5 w-5" />
+  },
+  {
+    id: "vs-competitors",
+    question: "How is this different from Thumbtack or Angi?",
+    answer: `**Quick Answer:** We focus on quality over quantity with exclusive Arizona expertise, AI-powered insights, and no middleman markups.
+
+**Detailed Explanation:**
+• **Local Expertise** - Arizona-only focus with deep understanding of local markets and regulations
+• **AI-Powered Quality** - Smart rankings based on actual performance, not who pays most for leads
+• **Direct Connections** - Contact businesses directly without platform fees affecting their pricing
+• **Exclusive Leads** - Our businesses get exclusive customer inquiries, ensuring better attention to your project
+• **Professional Standards** - Higher verification standards and ongoing quality monitoring
+
+**Key Differences:**
+- **Thumbtack/Angi:** National platforms with shared leads and bidding wars
+- **AZ Business:** Local expertise with quality-focused, direct connections`,
+    icon: <Star className="h-5 w-5" />
+  },
+  {
+    id: "service-types",
+    question: "What types of services can I find?",
+    answer: `**Quick Answer:** Over 38 service categories including HVAC, plumbing, landscaping, contractors, and professional services.
+
+**Detailed Explanation:**
+• **Home Services** - HVAC, plumbing, electrical, roofing, landscaping, pest control
+• **Contractors** - General contractors, remodeling, flooring, painting, drywall
+• **Professional Services** - Legal, accounting, real estate, insurance, consulting
+• **Specialty Services** - Pool maintenance, security systems, cleaning services, pet care
+• **Emergency Services** - 24/7 availability for urgent home and business needs
+• **Seasonal Services** - Arizona-specific needs like AC maintenance and desert landscaping
+
+**Browse by Category:** Easily find exactly what you need with our organized service categories.`,
+    icon: <Building className="h-5 w-5" />
+  },
+  {
+    id: "mobile-friendly",
+    question: "Can I use this on my phone?",
+    answer: `**Quick Answer:** Yes! Our platform is fully optimized for mobile with easy search, calling, and messaging features.
+
+**Detailed Explanation:**
+• **Mobile-Optimized** - Fast, responsive design that works perfectly on phones and tablets
+• **One-Tap Calling** - Call businesses directly from their listing with one tap
+• **Easy Navigation** - Intuitive mobile interface for quick searching and browsing
+• **Location Services** - Automatically find services near your current location
+• **Offline Access** - Save favorite businesses and access key information without internet
+
+**On-the-Go Convenience:** Find help when you need it, wherever you are in Arizona.`,
+    icon: <Phone className="h-5 w-5" />
+  },
+  {
+    id: "best-businesses",
+    question: "How do I know which businesses are the best?",
+    answer: `**Quick Answer:** Look for AI rankings, verification badges, detailed customer insights, and response time indicators.
+
+**Detailed Explanation:**
+• **AI Performance Rankings** - Businesses ranked #1-5 in each category have proven track records
+• **Verification Levels** - ✅ Basic → 🌟 Pro-Verified → ⚡ Power-Tier (increasing quality assurance)
+• **Customer Insight Summaries** - AI-generated summaries of what customers actually say
+• **Response Time Indicators** - See average response times and availability
+• **Service Quality Metrics** - Performance indicators based on completion rates and satisfaction
+
+**Quality Indicators to Look For:**
+- **Top 3 AI Rankings** in your area
+- **Pro-Verified or Power-Tier** badges
+- **Fast response times** (under 4 hours)
+- **Positive AI insights** from customer reviews`,
+    icon: <Star className="h-5 w-5" />
+  },
+  {
+    id: "arizona-focus",
+    question: "Why focus only on Arizona businesses?",
+    answer: `**Quick Answer:** Arizona has unique needs, regulations, and challenges that local experts understand best.
+
+**Detailed Explanation:**
+• **Climate Expertise** - Desert climate requires specialized knowledge for HVAC, landscaping, and construction
+• **Local Regulations** - Arizona-specific licensing, permits, and building codes
+• **Seasonal Patterns** - Understanding peak seasons, monsoon preparations, and desert living needs
+• **Community Focus** - Supporting local Arizona businesses and keeping money in our communities
+• **Faster Service** - Local businesses can respond quickly and understand your neighborhood
+
+**Arizona Advantage:** Get service from professionals who truly understand desert living and local requirements.`,
+    icon: <MapPin className="h-5 w-5" />
   }
 ];
 
@@ -71,7 +224,7 @@ export default function ConsumerFAQ({ className = "" }: ConsumerFAQProps) {
             Frequently Asked Questions
           </h2>
           <p className="text-lg text-ironwood-charcoal/70 max-w-2xl mx-auto">
-            Everything you need to know about finding trusted professionals in Arizona
+            Everything you need to know about finding trusted Arizona service providers with AI-powered rankings
           </p>
         </div>
 
@@ -113,13 +266,51 @@ export default function ConsumerFAQ({ className = "" }: ConsumerFAQProps) {
                 <div
                   id={`faq-answer-${item.id}`}
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
                   <div className="px-6 pb-6">
                     <div className="border-t border-prickly-pear-pink/20 pt-4">
-                      <div className="text-ironwood-charcoal/70 leading-relaxed">
-                        <p>{item.answer}</p>
+                      <div className="text-ironwood-charcoal/70 leading-relaxed space-y-3">
+                        {item.answer.split('\n\n').map((paragraph, idx) => {
+                          // Handle bullet points
+                          if (paragraph.includes('•')) {
+                            const lines = paragraph.split('\n');
+                            return (
+                              <div key={idx} className="space-y-1">
+                                {lines.map((line, lineIdx) => {
+                                  if (line.trim().startsWith('•')) {
+                                    return (
+                                      <div key={lineIdx} className="flex items-start ml-4">
+                                        <span className="text-ocotillo-red mr-2 flex-shrink-0">•</span>
+                                        <span dangerouslySetInnerHTML={{ 
+                                          __html: line.replace(/•\s*/, '')
+                                            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-ironwood-charcoal">$1</strong>')
+                                        }} />
+                                      </div>
+                                    );
+                                  } else if (line.trim()) {
+                                    return (
+                                      <div key={lineIdx} dangerouslySetInnerHTML={{ 
+                                        __html: line
+                                          .replace(/\*\*(.*?)\*\*/g, '<strong class="text-ironwood-charcoal">$1</strong>')
+                                      }} />
+                                    );
+                                  }
+                                  return null;
+                                })}
+                              </div>
+                            );
+                          }
+                          
+                          // Handle regular paragraphs with markdown
+                          return (
+                            <p key={idx} dangerouslySetInnerHTML={{ 
+                              __html: paragraph
+                                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-ironwood-charcoal">$1</strong>')
+                            }} />
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -130,24 +321,31 @@ export default function ConsumerFAQ({ className = "" }: ConsumerFAQProps) {
         </div>
 
         {/* Call to Action */}
-        <div className="mt-12 text-center">
-          <p className="text-ironwood-charcoal/70 mb-4">
-            Still have questions? We're here to help.
+        <div className="mt-16 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-8 text-center">
+          <h3 className="text-2xl font-bold text-ironwood-charcoal mb-4">
+            Ready to find your perfect Arizona service provider?
+          </h3>
+          <p className="text-lg text-ironwood-charcoal/80 mb-6 max-w-2xl mx-auto">
+            Join thousands of Arizona homeowners who trust our AI-powered rankings to connect with verified local professionals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a 
-              href="mailto:support@azbusinessservices.com"
-              className="inline-flex items-center px-6 py-3 bg-ocotillo-red text-white rounded-lg hover:bg-ocotillo-red/90 transition-colors font-medium"
+              href="/search"
+              className="inline-flex items-center px-8 py-4 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold text-lg shadow-lg"
             >
-              Contact Support
+              <Search className="mr-2 h-5 w-5" />
+              Find a Professional
             </a>
             <a 
-              href="/about"
-              className="inline-flex items-center px-6 py-3 border border-ocotillo-red text-ocotillo-red rounded-lg hover:bg-ocotillo-red hover:text-white transition-colors font-medium"
+              href="/for-businesses"
+              className="inline-flex items-center px-6 py-3 border-2 border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-600 hover:text-white transition-all font-medium"
             >
-              Learn More
+              Are You a Business? Learn More
             </a>
           </div>
+          <p className="text-sm text-ironwood-charcoal/60 mt-4">
+            100% Free for homeowners • No hidden fees • Direct connections
+          </p>
         </div>
       </div>
     </section>

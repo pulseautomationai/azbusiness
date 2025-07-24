@@ -38,14 +38,13 @@ export class SlugGenerator {
   }
 
   /**
-   * Generate full business slug in format: category-city-businessname
+   * Generate full business slug (business name only, no city or category)
+   * @deprecated Use generateBusinessNameSlug instead
    */
   static generateFullBusinessSlug(businessName: string, cityName: string, categoryName: string): string {
-    const categorySlug = this.generateCategorySlug(categoryName);
-    const citySlug = this.generateCitySlug(cityName);
-    const businessSlug = this.generateBusinessNameSlug(businessName);
-    
-    return `${categorySlug}-${citySlug}-${businessSlug}`;
+    // Changed to only return business name slug, ignoring city and category
+    // This maintains backward compatibility while fixing the slug issue
+    return this.generateBusinessNameSlug(businessName);
   }
 
   /**

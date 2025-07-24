@@ -1,4 +1,3 @@
-import { Building2 } from "lucide-react";
 import { Link } from "react-router";
 
 const footerLinks = {
@@ -102,12 +101,14 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-ocotillo-red text-agave-cream">
-                <Building2 className="h-5 w-5" />
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="AZ Business Services Logo" 
+                className="h-8 w-8 rounded-lg"
+              />
               <span className="font-bold text-agave-cream">AZ Business Services</span>
             </Link>
-            <p className="mt-4 text-sm text-prickly-pear-pink">
+            <p className="mt-4 text-sm text-agave-cream/80">
               Connecting Arizona residents with trusted local service providers.
             </p>
           </div>
@@ -115,13 +116,13 @@ export default function Footer() {
           {/* Links Columns */}
           {Object.entries(footerLinks).map(([key, section]) => (
             <div key={key}>
-              <h3 className="font-semibold text-desert-sky-blue">{section.title}</h3>
+              <h3 className="font-semibold text-turquoise-sky">{section.title}</h3>
               <ul className="mt-4 space-y-2">
                 {section.links.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-sm text-prickly-pear-pink hover:text-desert-sky-blue transition-colors"
+                      className="text-sm text-agave-cream/70 hover:text-turquoise-sky transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -132,8 +133,8 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 border-t border-prickly-pear-pink/20 pt-8">
-          <p className="text-center text-sm text-prickly-pear-pink">
+        <div className="mt-12 border-t border-agave-cream/20 pt-8">
+          <p className="text-center text-sm text-agave-cream/70">
             © {new Date().getFullYear()} AZ Business Services. All rights reserved.
           </p>
         </div>

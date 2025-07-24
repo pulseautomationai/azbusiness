@@ -1,0 +1,65 @@
+{
+  "timestamp": "2025-07-24T16:05:14.249Z",
+  "business": {
+    "id": "jn77gkwyvzqketaxttb2nfd99s7m3vcm",
+    "name": "Greenleaf Pest Control"
+  },
+  "results": {
+    "gemini": {
+      "provider": "gemini",
+      "businessName": "Greenleaf Pest Control",
+      "reviewsAnalyzed": 5,
+      "processingTime": 51.546,
+      "overallScore": 47,
+      "modelVersion": "gemini-1.5-flash",
+      "sampleAnalysis": {
+        "modelVersion": "gemini-2.0-flash-lite",
+        "confidenceScore": 90,
+        "sentiment": {
+          "classification": "negative",
+          "magnitude": 0.5,
+          "overall": 0.2
+        },
+        "keywords": [
+          "polite",
+          "job",
+          "communicate"
+        ],
+        "qualityScore": 7,
+        "serviceScore": 7
+      }
+    },
+    "mock": {
+      "provider": "mock",
+      "businessName": "Greenleaf Pest Control",
+      "reviewsAnalyzed": 5,
+      "processingTime": 51.828,
+      "overallScore": 51,
+      "modelVersion": "mock-v1",
+      "sampleAnalysis": {
+        "modelVersion": "gemini-2.0-flash-lite",
+        "confidenceScore": 80,
+        "sentiment": {
+          "classification": "negative",
+          "magnitude": 0.5,
+          "overall": 0.3
+        },
+        "keywords": [
+          "polite",
+          "job",
+          "communicate"
+        ],
+        "qualityScore": 7,
+        "serviceScore": 7
+      }
+    }
+  },
+  "comparison": {
+    "speedRatio": 1.0054708415783962,
+    "scoreDifference": 4
+  },
+  "environment": {
+    "convexUrl": "https://calm-dalmatian-709.convex.cloud",
+    "hadGeminiKey": true
+  }
+}

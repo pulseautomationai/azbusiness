@@ -121,17 +121,17 @@ export function BusinessInsights({
   const recommendations = getRecommendations();
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-turquoise-sky";
+    if (score >= 60) return "text-desert-marigold";
+    return "text-ocotillo-red";
   };
 
   const getRecommendationType = (type: string) => {
     switch (type) {
-      case "critical": return { color: "bg-red-100 text-red-800", icon: AlertTriangle };
-      case "important": return { color: "bg-yellow-100 text-yellow-800", icon: Target };
-      case "opportunity": return { color: "bg-blue-100 text-blue-800", icon: TrendingUp };
-      case "growth": return { color: "bg-green-100 text-green-800", icon: Lightbulb };
+      case "critical": return { color: "bg-agave-cream text-ocotillo-red border border-ocotillo-red", icon: AlertTriangle };
+      case "important": return { color: "bg-agave-cream text-desert-marigold border border-desert-marigold", icon: Target };
+      case "opportunity": return { color: "bg-agave-cream text-turquoise-sky border border-turquoise-sky", icon: TrendingUp };
+      case "growth": return { color: "bg-agave-cream text-ironwood-charcoal border border-gray-200", icon: Lightbulb };
       default: return { color: "bg-gray-100 text-gray-800", icon: Lightbulb };
     }
   };
@@ -174,7 +174,7 @@ export function BusinessInsights({
                   <div>
                     <span className="text-muted-foreground">Rating</span>
                     <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 fill-current text-yellow-500" />
+                      <Star className="h-4 w-4 fill-current text-desert-marigold" />
                       <span className="font-medium">{business.rating}</span>
                     </div>
                   </div>
@@ -267,10 +267,10 @@ export function BusinessInsights({
                     const IconComponent = typeConfig.icon;
                     
                     return (
-                      <Card key={index} className="border-l-4 border-l-blue-500">
+                      <Card key={index} className="border-l-4 border-l-turquoise-sky">
                         <CardContent className="pt-4">
                           <div className="flex items-start space-x-3">
-                            <IconComponent className="h-5 w-5 text-blue-600 mt-0.5" />
+                            <IconComponent className="h-5 w-5 text-turquoise-sky mt-0.5" />
                             <div className="flex-1 space-y-2">
                               <div className="flex items-center justify-between">
                                 <h4 className="font-medium">{rec.title}</h4>
@@ -370,7 +370,7 @@ export function BusinessInsights({
                     <div className="space-y-2">
                       {reviewAnalysis.highlights.map((highlight, index) => (
                         <div key={index} className="flex items-start space-x-2">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                          <div className="w-2 h-2 bg-turquoise-sky rounded-full mt-2"></div>
                           <span className="text-sm">{highlight}</span>
                         </div>
                       ))}
@@ -389,7 +389,7 @@ export function BusinessInsights({
                     <div className="space-y-2">
                       {reviewAnalysis.improvements.map((improvement, index) => (
                         <div key={index} className="flex items-start space-x-2">
-                          <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                          <div className="w-2 h-2 bg-desert-marigold rounded-full mt-2"></div>
                           <span className="text-sm">{improvement}</span>
                         </div>
                       ))}
@@ -432,17 +432,17 @@ export function BusinessInsights({
                   
                   <div className="grid gap-4 md:grid-cols-3">
                     <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">+12%</div>
+                      <div className="text-2xl font-bold text-turquoise-sky">+12%</div>
                       <div className="text-sm text-muted-foreground">Page Views</div>
                       <div className="text-xs text-muted-foreground">vs last month</div>
                     </div>
                     <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">+8%</div>
+                      <div className="text-2xl font-bold text-turquoise-sky">+8%</div>
                       <div className="text-sm text-muted-foreground">Lead Submissions</div>
                       <div className="text-xs text-muted-foreground">vs last month</div>
                     </div>
                     <div className="text-center p-4 border rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">+15%</div>
+                      <div className="text-2xl font-bold text-desert-marigold">+15%</div>
                       <div className="text-sm text-muted-foreground">Phone Clicks</div>
                       <div className="text-xs text-muted-foreground">vs last month</div>
                     </div>
@@ -505,15 +505,15 @@ export function BusinessInsights({
                       <h4 className="font-medium mb-2">AI-Powered Recommendations</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex items-start space-x-2">
-                          <Lightbulb className="h-4 w-4 text-yellow-500 mt-0.5" />
+                          <Lightbulb className="h-4 w-4 text-desert-marigold mt-0.5" />
                           <span>Consider adding weekend hours to capture 23% more potential customers</span>
                         </div>
                         <div className="flex items-start space-x-2">
-                          <Lightbulb className="h-4 w-4 text-yellow-500 mt-0.5" />
+                          <Lightbulb className="h-4 w-4 text-desert-marigold mt-0.5" />
                           <span>Your response time is 2x faster than competitors - highlight this advantage</span>
                         </div>
                         <div className="flex items-start space-x-2">
-                          <Lightbulb className="h-4 w-4 text-yellow-500 mt-0.5" />
+                          <Lightbulb className="h-4 w-4 text-desert-marigold mt-0.5" />
                           <span>Customers mention "reliability" 40% more than average - emphasize this in your profile</span>
                         </div>
                       </div>
