@@ -8,6 +8,7 @@ import {
 export default [
   index("routes/home.tsx"),
   route("for-businesses", "routes/for-businesses.tsx"),
+  route("how-rankings-work", "routes/how-rankings-work.tsx"),
   route("sign-in/*", "routes/sign-in.tsx"),
   route("sign-up/*", "routes/sign-up.tsx"),
   route("pricing", "routes/pricing.tsx"),
@@ -17,7 +18,7 @@ export default [
   // Business directory routes
   route("categories", "routes/categories.tsx"),
   route("cities", "routes/cities.tsx"),
-  route("city/:city", "routes/city/$city.tsx"),
+  route("rankings", "routes/rankings.tsx"),
   
   // New URL structure: /[category]/[city]/[businessName]
   route(":category/:city/:businessName", "routes/[$category].[$city].[$businessName].tsx"),
@@ -25,8 +26,8 @@ export default [
   // Category/City combination pages: /[category]/[city]
   route(":category/:city", "routes/[$category].[$city].tsx"),
   
-  // Category routes at root level (must come after more specific routes)
-  route(":category", "routes/$category.tsx"),
+  // Single slug handler for both cities and categories
+  route(":slug", "routes/$slug.tsx"),
   
   // Keep old business route temporarily for migration
   route("business/:slug", "routes/business/$slug.tsx"),
@@ -53,6 +54,7 @@ export default [
   layout("routes/dashboard/layout.tsx", [
     route("dashboard", "routes/dashboard/index.tsx"),
     route("dashboard/claims", "routes/dashboard/claims.tsx"),
+    route("dashboard/achievements", "routes/dashboard/achievements.tsx"),
     route("dashboard/documents", "routes/dashboard/documents.tsx"),
     route("dashboard/media", "routes/dashboard/media.tsx"),
     route("dashboard/billing", "routes/dashboard/billing.tsx"),
@@ -62,13 +64,16 @@ export default [
   // Admin Dashboard
   layout("routes/admin/layout.tsx", [
     route("admin", "routes/admin/index.tsx"),
+    route("admin/analytics", "routes/admin/analytics.tsx"),
     route("admin/moderation", "routes/admin/moderation.tsx"),
     route("admin/customers", "routes/admin/customers.tsx"),
-    route("admin/businesses", "routes/admin/businesses.tsx"),
+    route("admin/businesses", "routes/admin/businesses-optimized.tsx"),
     route("admin/businesses/create", "routes/admin/businesses/create.tsx"),
     route("admin/businesses/edit/:businessId", "routes/admin/businesses/edit.$businessId.tsx"),
     route("admin/imports", "routes/admin/imports.tsx"),
+    route("admin/review-sync", "routes/admin/review-sync.tsx"),
     route("admin/categories", "routes/admin/categories.tsx"),
+    route("admin/ai-ranking-tests", "routes/admin/ai-ranking-tests.tsx"),
     route("admin/settings", "routes/admin/settings.tsx"),
   ]),
 ] satisfies RouteConfig;

@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 const menuItems = [
-  { name: "How It Works", href: "/about" },
+  { name: "How Rankings Work", href: "/how-rankings-work" },
   { name: "About", href: "/about" },
 ];
 
@@ -58,7 +58,7 @@ export const Header = () => {
         className="fixed z-99 w-full px-2"
       >
         <div
-          className="mx-auto mt-2 max-w-7xl px-6 lg:px-12 bg-agave-cream/90 rounded-2xl border border-prickly-pear-pink/30 backdrop-blur-lg"
+          className="mx-auto mt-2 max-w-7xl px-6 lg:px-12 bg-agave-cream/90 rounded-2xl border border-gray-200 backdrop-blur-lg"
         >
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-0.5 lg:gap-0 lg:py-1">
             <div className="flex w-full justify-between lg:w-auto">
@@ -100,7 +100,7 @@ export const Header = () => {
                   <button
                     onClick={handleBrowseToggle}
                     onKeyDown={handleKeyDown}
-                    className="text-ironwood-charcoal hover:text-desert-sky-blue duration-150 transition-colors flex items-center gap-1"
+                    className="text-ironwood-charcoal hover:text-turquoise-sky duration-150 transition-colors flex items-center gap-1"
                     aria-expanded={browseDropdownOpen}
                     aria-haspopup="true"
                   >
@@ -111,13 +111,13 @@ export const Header = () => {
                     )} />
                   </button>
                   {browseDropdownOpen && (
-                    <ul className="absolute top-full left-0 mt-2 w-48 bg-white border border-prickly-pear-pink/20 rounded-lg shadow-lg py-2 z-50">
+                    <ul className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
                       {browseItems.map((item, index) => (
                         <li key={index}>
                           <Link
                             to={item.href}
                             onClick={() => handleNavClick(item.href)}
-                            className="block px-4 py-2 text-sm text-ironwood-charcoal hover:bg-agave-cream hover:text-desert-sky-blue transition-colors"
+                            className="block px-4 py-2 text-sm text-ironwood-charcoal hover:bg-agave-cream hover:text-turquoise-sky transition-colors"
                             prefetch="viewport"
                           >
                             {item.name}
@@ -136,7 +136,7 @@ export const Header = () => {
                     className="block duration-150 transition-colors"
                     prefetch="viewport"
                   >
-                    <span className="bg-prickly-pear-pink text-ironwood-charcoal px-4 py-2 rounded-lg text-sm font-medium hover:bg-prickly-pear-pink/80 transition-colors inline-block">
+                    <span className="bg-desert-marigold text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-desert-marigold-hover transition-colors inline-block">
                       For Business Owners
                     </span>
                   </Link>
@@ -148,7 +148,7 @@ export const Header = () => {
                     <Link
                       to={item.href}
                       onClick={() => handleNavClick(item.href)}
-                      className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors"
+                      className="text-ironwood-charcoal hover:text-turquoise-sky block duration-150 transition-colors"
                       prefetch="viewport"
                     >
                       <span>{item.name}</span>
@@ -170,7 +170,7 @@ export const Header = () => {
                           <Link
                             to={item.href}
                             onClick={() => handleNavClick(item.href)}
-                            className="text-ironwood-charcoal/80 hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
+                            className="text-ironwood-charcoal/80 hover:text-turquoise-sky block duration-150 transition-colors w-full text-left"
                             prefetch="viewport"
                           >
                             <span>{item.name}</span>
@@ -185,7 +185,7 @@ export const Header = () => {
                     <Link
                       to="/for-businesses"
                       onClick={() => handleNavClick("/for-businesses")}
-                      className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
+                      className="text-ironwood-charcoal hover:text-turquoise-sky block duration-150 transition-colors w-full text-left"
                       prefetch="viewport"
                     >
                       <span>For Business Owners</span>
@@ -198,7 +198,7 @@ export const Header = () => {
                       <Link
                         to={item.href}
                         onClick={() => handleNavClick(item.href)}
-                        className="text-ironwood-charcoal hover:text-desert-sky-blue block duration-150 transition-colors w-full text-left"
+                        className="text-ironwood-charcoal hover:text-turquoise-sky block duration-150 transition-colors w-full text-left"
                         prefetch="viewport"
                       >
                         <span>{item.name}</span>
