@@ -1,5 +1,5 @@
-import { type MetaFunction } from "@remix-run/react";
-import { Link } from "@remix-run/react";
+import { type MetaFunction } from "react-router";
+import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Header } from "~/components/homepage/header";
 import Footer from "~/components/homepage/footer";
