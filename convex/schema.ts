@@ -153,7 +153,7 @@ export default defineSchema({
     active: v.boolean(),
     
     // Data Source Tracking
-    dataSource: v.object({
+    dataSource: v.optional(v.object({
       primary: v.union(
         v.literal("gmb_api"),      // Via GMB OAuth
         v.literal("admin_import"), // Admin scraped/imported
@@ -163,7 +163,7 @@ export default defineSchema({
       lastSyncedAt: v.optional(v.number()),
       syncStatus: v.optional(v.string()), // "synced", "pending", "failed"
       gmbLocationId: v.optional(v.string()), // If GMB connected
-    }),
+    })),
     
     // Track which fields have been manually edited
     editedFields: v.optional(v.array(v.string())), // ["description", "hours"]
